@@ -1,12 +1,15 @@
 import { useEffect } from 'react';
-import { Route, Router, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 
 import Login from './pages/Login';
 import NavBar from './components/NavBar';
-import Sidebar from './components/SideBar';
 import UnauthenticatedLayout from './layouts/UnauthenticatedLayout';
 import AuthenticatedLayout from './layouts/AuthenticatedLayout';
+import {  useSelector } from 'react-redux';
+import type { AppState } from './redux/app/store';
+import Dashboard from './pages/Dashboard';
+
 
 
 async function loadPreline() {
@@ -14,7 +17,7 @@ async function loadPreline() {
 }
 function App() {
   const location = useLocation();
-
+  const auth = useSelector((state: AppState) => state.auth);
   useEffect(() => {
     const initPreline = async () => {
       await loadPreline();
@@ -30,18 +33,19 @@ function App() {
     initPreline();
   }, [location.pathname]);
   return (
-     
+      <>
+       <NavBar />
       <Routes>
       
-        <Route element={<UnauthenticatedLayout />}>
+        <Route element={<UnauthenticatedLayout isLoggedIn={auth.isLoggedIn}/>}>
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<>Not found page</>} />
         </Route>
-        <Route element={<AuthenticatedLayout />}>
-          <Route path="/" element={<>Home page</>} />
-          
+        <Route element={<AuthenticatedLayout isLoggedIn={auth.isLoggedIn} />}>
+          <Route path="/" element={<Dashboard/>} />
         </Route>
       </Routes>
+      </>
 
   );
 }
@@ -61,3 +65,5 @@ export default App;
             <Route path="/tasks/:id" element={<TaskDetails />} />
             <Route path="/notifications" element={<Notifications />} />
             */}
+
+
