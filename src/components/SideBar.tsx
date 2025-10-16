@@ -2,10 +2,13 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setIsOpened } from "../redux/features/global/globalSlice";
 import type { RootState } from "../redux/app/rootReducer";
+import { Link, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
     const isOpened = useSelector((state: RootState) => state.global.isOpened);
     const dispatch = useDispatch();
+
+    const navigate = useNavigate()
 
     const handleToggle = () => {
         dispatch(setIsOpened(!isOpened));
@@ -36,7 +39,7 @@ const Sidebar = () => {
 
                         {/* Desktop Toggle Button */}
                         <div className={`vmin-h-[36px] flex justify-${isOpened ? 'between' : 'center'} items-center gap-x-1.5 py-2 px-2 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-white`}>
-                            <a className={`flex-none focus:outline-hidden focus:opacity-80  ${isOpened ? 'block' : 'hidden'} `}>
+                            <a onClick={handleToggle} className={`flex-none focus:outline-hidden focus:opacity-80  ${isOpened ? 'block' : 'hidden'} `}>
 
                                 <svg className="w-10 h-auto" width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <rect width="100" height="100" rx="10" fill="black" />
@@ -91,15 +94,16 @@ const Sidebar = () => {
                         <div className=" pb-0 px-2  w-full flex flex-col flex-wrap" >
                             <ul className={`space-y-1 ${!isOpened && 'flex'}  flex-col justify-center  items-center`}>
                                 <li>
-                                    <a className="min-h-[36px] flex items-center gap-x-1.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-white" href="#">
+                                  <Link to={"/"}>   <a className="min-h-[36px] flex items-center gap-x-1.5 py-2 px-2.5 bg-gray-100 text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-white" href="#">
                                         <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
                                         {
                                             isOpened && <>
 
-                                                <span className="hs-overlay-minified:hidden">Dashboard</span>
+                                               <span className="hs-overlay-minified:hidden" >Dashboard</span>
                                             </>
                                         }
                                     </a>
+                                    </Link>
                                 </li>
 
                                 <li>

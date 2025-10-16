@@ -1,9 +1,12 @@
 import { useDispatch } from "react-redux";
 import { logout } from "../redux/features/auth/authSlice";
 import { BellAlertIcon, MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/24/solid";
+import { Link, useNavigate } from "react-router-dom";
 
 function NavBar() {
   const dispatch = useDispatch();
+
+  const navigate = useNavigate()
 
   return (
     <>
@@ -62,10 +65,10 @@ function NavBar() {
                       type="text"
                       id="hs-leading-icon"
                       name="hs-leading-icon"
-                      className="py-2 px-2.5 ps-11 block w-full border border-gray-200 rounded-lg sm:text-sm focus:z-10 focus:outline-none focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                      className="py-2 px-2.5 ps-11 block w-full border border-gray-200 rounded-lg sm:text-sm focus:z-10 focus:outline-none focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 OS dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
                       placeholder="Search Here"
                     />
-                    <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4">
+                    <div className="absolute inset-y-0 start-0 flex items-center pointer-events-none z-20 ps-4 dark:text-white">
                       <MagnifyingGlassIcon height={20} width={20} />
                     </div>
                   </div>
@@ -74,7 +77,7 @@ function NavBar() {
                     <BellAlertIcon height={20} width={20} />
                   </div>
 
-                  <button
+                  <button onClick={()=>navigate('new-meeting')}
                     type="button"
                     className="py-2 px-2.5 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
                   >
@@ -82,16 +85,20 @@ function NavBar() {
                     <PlusIcon height={20} width={20} />
                   </button>
                   {/* </div> */}
-                  <div className="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--adaptive:adaptive]">
+                 
+                </div>
+                 <div className="hs-dropdown [--strategy:static] sm:[--strategy:fixed] [--adaptive:none] sm:[--adaptive:adaptive]">
                     <button id="hs-navbar-example-dropdown" type="button" className="p-2 rounded-md border border-blue-600 hs-dropdown-toggle flex items-center w-full text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 font-medium dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500" aria-haspopup="menu" aria-expanded="false" aria-label="Mega Menu">
                       Menu
                       <svg className="hs-dropdown-open:-rotate-180 sm:hs-dropdown-open:rotate-0 duration-300 ms-1 shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
                     </button>
 
                     <div className="relative z-60 hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 sm:shadow-md rounded-lg p-1 space-y-1 bg-white dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute top-full sm:border border-gray-200 before:-top-5 before:start-0 before:w-full before:h-5 hidden" role="menu" aria-orientation="vertical" aria-labelledby="hs-navbar-example-dropdown">
+                      <Link to={'profile'}>
                       <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300" href="#">
-                        About
+                        Profile
                       </a>
+                      </Link>
                       <div className="hs-dropdown [--strategy:static] sm:[--strategy:absolute] [--adaptive:none] relative">
                         <button id="hs-navbar-example-dropdown-sub" type="button" className="hs-dropdown-toggle w-full flex justify-between items-center text-sm text-gray-800 rounded-lg py-2 px-3 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300">
                           Sub Menu
@@ -101,7 +108,7 @@ function NavBar() {
                         <div className="hs-dropdown-menu transition-[opacity,margin] ease-in-out duration-[150ms] hs-dropdown-open:opacity-100 opacity-0 sm:w-48 hidden z-10 sm:mt-2 bg-white sm:shadow-md rounded-lg dark:bg-neutral-800 sm:dark:border dark:border-neutral-700 dark:divide-neutral-700 before:absolute sm:border border-gray-200 before:-end-5 before:top-0 before:h-full before:w-5 sm:mx-2.5! top-0 end-full" role="menu" aria-orientation="vertical" aria-labelledby="hs-navbar-example-dropdown-sub">
                           <div className="p-1 space-y-1">
                             <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300" href="#">
-                              About
+                              xxxxxxxxxxxxxxxxxxx
                             </a>
                             <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700 dark:focus:text-neutral-300" href="#">
                               Downloads
@@ -123,7 +130,6 @@ function NavBar() {
                       </a>
                     </div>
                   </div>
-                </div>
               </div>
             </div>
           </nav>

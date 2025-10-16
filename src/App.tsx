@@ -9,6 +9,10 @@ import AuthenticatedLayout from './layouts/AuthenticatedLayout';
 import {  useSelector } from 'react-redux';
 import type { AppState } from './redux/app/store';
 import Dashboard from './pages/Dashboard';
+import NewMeeting from './pages/NewMeeting';
+
+import Test from './pages/Test';
+import ProfileView from './pages/ProfileView';
 
 
 
@@ -43,6 +47,9 @@ function App() {
         </Route>
         <Route element={<AuthenticatedLayout isLoggedIn={auth.isLoggedIn} />}>
           <Route path="/" element={<Dashboard/>} />
+          <Route path="/profile" element={<ProfileView/>} />
+          <Route path="/new-meeting" element={<NewMeeting/>} />
+          <Route path="/test" element={<Test/>} />
         </Route>
       </Routes>
       </>

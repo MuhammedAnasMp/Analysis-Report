@@ -17,5 +17,6 @@ export const useApiQuery = <T = any>(
       return data;
     },
     enabled,
+    refetchOnWindowFocus:false
   });
 };
