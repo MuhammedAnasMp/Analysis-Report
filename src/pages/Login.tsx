@@ -43,7 +43,7 @@ export default function Login() {
     mutate({ username: formData.username, password: formData.password },
       {
         onSuccess: (responseData) => {
-          dispatch(login({ user: responseData.user, token: responseData.token }));
+          dispatch(login({ user: responseData.user, token: responseData.token  }));
         },
         onError: (err:any) => {
           console.log()

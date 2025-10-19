@@ -28,6 +28,7 @@ interface ApiUser {
     name?: string;
     username?: string;
     avatar?: string;
+    meeting_access?: boolean;
 }
 
 interface UserOption {
@@ -35,7 +36,7 @@ interface UserOption {
     name: string;
     description: string;
     selected: boolean;
-    disabled: boolean;
+    meeting_access: boolean;
     avatar: string;
 }
 
@@ -217,7 +218,7 @@ function NewMeeting() {
         name: user.username || 'Unnamed',
         description: user.username || 'No description',
         selected: false,
-        disabled: false,
+        meeting_access: user.meeting_access || false,
         avatar: user.avatar || `https://ui-avatars.com/api/?name=${user.name || 'User'}` // fallback avatar
     })) || [];
 
@@ -268,7 +269,7 @@ function NewMeeting() {
 
                         <div className="sm:col-span-3">
                             <label htmlFor="af-account-gender-checkbox" className="inline-block text-sm text-gray-800 mt-2.5 dark:text-neutral-200">
-                                Meeting Invitations 
+                                Meeting Invitations
                             </label>
                         </div>
                         {/* End Col */}

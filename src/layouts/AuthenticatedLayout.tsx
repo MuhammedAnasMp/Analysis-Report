@@ -10,7 +10,7 @@ const AuthenticatedLayout = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       <NavBar />
       <div className="flex justify-center dark:bg-neutral-800 h-full">
         <Sidebar />
-        <div className="pt-17 sm:pt-16 px-2 md:px-3 lg:pl-18 max-w-7xl flex-1">
+        <div className="pt-17 sm:pt-16 px-2 md:px-3 lg:pl-18 max-w-7xl flex-1 ">
           <Outlet />
         </div>
 

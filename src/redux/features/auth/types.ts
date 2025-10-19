@@ -4,6 +4,10 @@ export interface User {
   name: string;
   role: 'ADMIN' | 'USER' | string; 
   token: string | null;
+  profile_image : string;
+  first_name :string;
+  last_name :string;
+  department : string;
 }
 
 

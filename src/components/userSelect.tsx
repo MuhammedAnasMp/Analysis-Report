@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import type { AppState } from '../redux/app/store';
 
 interface UserOption {
     id: string | number;
     name: string;
     description: string;
     selected: boolean;
-    disabled: boolean;
+    meeting_access: boolean;
     avatar: string;
 }
 
@@ -19,13 +21,14 @@ const MeetingInvitation: React.FC<MeetingInvitationProps> = ({ usersFromApi, onU
     const [selectedUsers, setSelectedUsers] = useState<UserOption[]>(
         usersFromApi.filter((user) => user.selected)
     );
+    const auth = useSelector((state: AppState) => state.auth);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const wrapperRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const toggleUser = (user: UserOption) => {
-        if (user.disabled) return;
+        if (!user.meeting_access) return;
 
         const alreadySelected = selectedUsers.some((u) => u.id === user.id);
         const updated = alreadySelected
@@ -38,6 +41,7 @@ const MeetingInvitation: React.FC<MeetingInvitationProps> = ({ usersFromApi, onU
     };
 
     const removeUser = (id: string | number) => {
+        
         setSelectedUsers((prev) => prev.filter((user) => user.id !== id));
     };
 
@@ -57,7 +61,7 @@ const MeetingInvitation: React.FC<MeetingInvitationProps> = ({ usersFromApi, onU
 
     const filteredUsers = usersFromApi.filter(
         (user) =>
-            user.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            user.name.toLowerCase().includes(searchQuery.toLowerCase()) && user.meeting_access && user.id !== auth.user?.id &&
             !selectedUsers.some((u) => u.id === user.id)
     );
 
@@ -121,7 +125,7 @@ const MeetingInvitation: React.FC<MeetingInvitationProps> = ({ usersFromApi, onU
                             <div
                                 key={user.id}
                                 onClick={() => toggleUser(user)}
-                                className={`flex items-center justify-between p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 ${user.disabled ? 'opacity-50 cursor-not-allowed' : ''
+                                className={`flex items-center justify-between p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-neutral-800 ${!user.meeting_access ? 'opacity-50 cursor-not-allowed' : ''
                                     }`}
                             >
                                 <div className="flex items-center">

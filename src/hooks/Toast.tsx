@@ -40,7 +40,7 @@ const useToast = () => {
       if (!avatar) return "";
       if (typeof avatar === "string") {
         // If avatar is a URL or raw SVG string
-        return avatar.includes("<svg") ? avatar : `<img class="inline-block size-8 rounded-full" src="${avatar}" alt="Avatar" />`;
+        return avatar.includes("<svg") ? avatar : `<img class="object-cover inline-block size-8 rounded-full" src="${avatar}" alt="Avatar" />`;
       }
 
       // If avatar is a React component, render it to static HTML
