@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import type { AppState } from "../redux/app/store";
 import { useApiMutation } from "../api/useApiMutation";
 import useToast from "../hooks/Toast";
+import { useApiQuery } from "../api/useApiQuery";
 
 function generateRandomUsername() {
     const randomStr = Math.random().toString(36).substring(2, 10); // 8 chars
@@ -16,7 +17,7 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
         first_name: '',
         last_name: '',
         role: '',
-        department: auth.user?.department || '',
+        department: auth.user?.department || undefined,
         added_by: auth.user?.id,
         username: generateRandomUsername()
 
@@ -39,13 +40,13 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
     const formatId = (s: string) => s.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     const handleSubmit = () => {
         let newFormData = { ...formData };
-
-
-
-
+        
+        newFormData.department = auth.user?.department
+        
+        
         if (formData.last_name === "") {
             const names = formData.first_name.trim().split(" ");
-
+            
             if (names.length > 1) {
                 newFormData.first_name = names[0];
                 newFormData.last_name = names.slice(1).join(" ");
@@ -54,14 +55,16 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
                 newFormData.last_name = formData.first_name;
             }
         }
-
-
+        
+        
         const newErrors: Record<string, string> = {};
-
-        Object.entries(formData).forEach(([key, value]) => {
+        
+        console.log(newErrors)
+        console.log("formData",formData)
+        Object.entries(newFormData).forEach(([key, value]) => {
             if (typeof value === 'string') {
                 if (value.trim() === '') {
-                    if (key === 'department') {
+                    if (key === 'department' ) {
                         newErrors[key] = `You must complete you're profile for add new member in team `;
                     }
                     else {
@@ -83,11 +86,11 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
                     duration: 3000,
                 })
             });
-
+            
             return;
         }
-
-
+        
+        
         mutate(newFormData,
             {
                 onSuccess: () => {
@@ -95,6 +98,75 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
                         type: "markup1",
                         title: "Member has been added",
                         message: `Nem member ${formData.first_name} beed added to ${ownerdepartment} department `,
+                        avatar: auth.user?.profile_image,
+                        // actionText: "Go to meetings",
+                        // actionLink: "/",
+                        duration: 4000,
+                    })
+                    
+                    setFormData((prev) => ({
+                        ...prev,
+                        ['first_name']: '',
+                        ["last_name"]: '',
+                        ["role"]: '',
+                        
+                    }));
+                    
+                },
+                onError: (err: any) => {
+                    console.log(err.response.data);
+                    
+                    const errorData = err.response.data;
+
+                    const firstErrorMessage = String(
+                        Object.values(errorData).flat().shift() ?? "An error occurred"
+                    );
+                    
+                    showToast({
+                        type: "markup2",
+                        message: firstErrorMessage,
+                        status: "normal",
+                        avatar: <BeakerIcon className="size-6 text-blue-500" />,
+                        duration: 3000,
+                    });
+                }
+                
+                
+            }
+        );
+    }
+    
+    
+    const { data: userData, } = useApiQuery(['teamMembers'], '/api/users/user/', {department:auth.user?.department} ,true);
+    
+    const [selectedUserForDelete , setSelectedUserForDelete] = useState<number>(); 
+    const { mutate: deleteMutate, isPending:isDeleting } = useApiMutation('DELETE', `/api/users/user/${selectedUserForDelete}/`, ['teamMembers']);
+
+
+    const handleDelete = (name:string , id:number)=>{
+        console.log('id',id  )
+        console.log('auth',auth.user?.id  )
+        if ( id === auth.user?.id ){
+            showToast({
+                        type: "markup1",
+                        title: `You can't remove you're self`,
+                        message: ``,
+                        avatar: auth.user?.profile_image,
+                        // actionText: "Go to meetings",
+                        // actionLink: "/",
+                        duration: 4000,
+                    })
+                    return
+        }
+
+
+        deleteMutate({},
+            {
+                onSuccess: () => {
+                    showToast({
+                        type: "markup1",
+                        title: `Member has been deleted`,
+                        message: `Member ${name} has beed deleted from ${ownerdepartment} department `,
                         avatar: auth.user?.profile_image,
                         // actionText: "Go to meetings",
                         // actionLink: "/",
@@ -134,14 +206,10 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
     }
 
 
-
-
-    
-
     return (
         <div>{/* Hero */}
             <div className="relative bg-linear-to-bl .from-blue-100 via-transparent dark:from-blue-950 dark:via-transparent">
-                <div className="max-w-[85rem]  py-10 px-2  mx-auto ">
+                <div className="max-w-[85rem]   px-2  mx-auto ">
                     {/* Grid */}
                     <div className="grid  md:grid-cols-2 gap-8 lg:gap-12">
                         <div className="">
@@ -293,16 +361,20 @@ export default function TeamForm({ ownerdepartment }: { ownerdepartment: string 
                                             <tbody className="divide-y divide-gray-200 dark:divide-neutral-700">
                                             
                                                 
-
+                                            {
+                                               userData && userData.map((user:any)=>(
 
                                                 <tr>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">Joe Black</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">31</td>
-                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">Sidney No. 1 Lake Park</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-neutral-200">{user.first_name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{user.last_name}</td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">{user.role}</td>
                                                     <td className="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-                                                        <button type="button" className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Delete</button>
+                                                        <button type="button" onClick={()=>{setSelectedUserForDelete(user.id); handleDelete(user.first_name,user.id)}} className="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 focus:outline-hidden focus:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:text-blue-400">Delete</button>
                                                     </td>
                                                 </tr>
+                                                ))
+                                            }
+
                                             </tbody>
                                         </table>
                                     </div>

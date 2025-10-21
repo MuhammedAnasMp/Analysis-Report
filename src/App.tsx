@@ -13,6 +13,8 @@ import NewMeeting from './pages/NewMeeting';
 
 import Test from './pages/Test';
 import ProfileView from './pages/ProfileView';
+import Footer from './components/Footer';
+import LiveMeetings from './pages/LiveMeetings';
 
 
 
@@ -37,7 +39,7 @@ function App() {
     initPreline();
   }, [location.pathname]);
   return (
-      <>
+      <div className='h-'>
        <NavBar />
       <Routes>
       
@@ -49,10 +51,12 @@ function App() {
           <Route path="/" element={<Dashboard/>} />
           <Route path="/profile" element={<ProfileView/>} />
           <Route path="/new-meeting" element={<NewMeeting/>} />
+          <Route path="/meeting/:meetingId" element={<LiveMeetings />} />
           <Route path="/test" element={<Test/>} />
         </Route>
       </Routes>
-      </>
+      
+      </div>
 
   );
 }

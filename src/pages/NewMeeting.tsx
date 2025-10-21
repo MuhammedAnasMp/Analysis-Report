@@ -9,7 +9,7 @@ import { BeakerIcon, ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import useToast from "../hooks/Toast";
 import { useApiQuery } from "../api/useApiQuery";
 import MeetingInvitation from "../components/userSelect";
-import { Form } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 
 interface FormData {
@@ -89,7 +89,7 @@ function NewMeeting() {
 
     });
 
-
+    const navigate = useNavigate()
     const [updateUserList, setUpdatedUserList] = useState<UserOption[]>([]);
 
 
@@ -188,6 +188,7 @@ function NewMeeting() {
                         actionLink: "/",
                         duration: 4000,
                     })
+                    navigate('/')
                 },
                 onError: (err: any) => {
                     console.log()
@@ -199,6 +200,7 @@ function NewMeeting() {
                         avatar: <BeakerIcon className="size-6 text-blue-500" />,
                         duration: 3000,
                     })
+                    
                 }
             }
         );
@@ -254,7 +256,7 @@ function NewMeeting() {
 
                         <div className="sm:col-span-9">
                             <div className="flex items-center gap-5">
-                                <img className="inline-block size-16 rounded-full ring-2 ring-white dark:ring-neutral-900" src="https://preline.co/assets/img/160x160/img1.jpg" alt="Avatar" />
+                                <img className="inline-block size-16 rounded-full ring-2 ring-white dark:ring-neutral-900 object-cover" src={`${auth.user?.profile_image ? auth.user?.profile_image: 'https://preline.co/assets/img/160x160/img1.jpg'}`} alt="Avatar" />
                                 <div className="flex gap-x-2">
 
                                     {/* <div className="sm:flex"> */}

@@ -2,7 +2,7 @@ export interface User {
   id: number;
   user_name: string;
   name: string;
-  role: 'ADMIN' | 'USER' | string; 
+  role:  string; 
   token: string | null;
   profile_image : string;
   first_name :string;

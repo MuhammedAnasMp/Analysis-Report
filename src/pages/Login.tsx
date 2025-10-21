@@ -40,9 +40,10 @@ export default function Login() {
       // if (formData.username == '' && formData.password == '') {
       //   alert("username passoword are rquired")
       // }
-    mutate({ username: formData.username, password: formData.password },
-      {
-        onSuccess: (responseData) => {
+      mutate({ username: formData.username, password: formData.password },
+        {
+          onSuccess: (responseData) => {
+          console.log("responseData.user",responseData.user)
           dispatch(login({ user: responseData.user, token: responseData.token  }));
         },
         onError: (err:any) => {
