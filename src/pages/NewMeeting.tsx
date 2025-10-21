@@ -326,6 +326,7 @@ function NewMeeting() {
 
                         <div className="sm:col-span-9 ">
                             <TipTapEditor name="agenda" error={errors['agenda'] ? true : false} onChange={handleInputChange} />
+                   
                         </div>
                         {/* End Col */}
 

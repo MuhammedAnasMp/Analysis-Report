@@ -1,3 +1,5 @@
+
+import Chat from "../components/Chat";
 import ToastTester from "../components/ToastTested";
 
 
@@ -7,7 +9,8 @@ export default function Test() {
 
       <div className='w-full flex justify-center items-center'>
 
-              <ToastTester/>
+              {/* <ToastTester/> */}
+              <Chat roomName="anas"/>
         
       </div>
     </div>
