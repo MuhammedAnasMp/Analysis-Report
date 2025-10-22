@@ -10,7 +10,7 @@ export default function Test() {
       <div className='w-full flex justify-center items-center'>
 
               {/* <ToastTester/> */}
-              <Chat roomName="anas"/>
+              <Chat roomName="56"/>
         
       </div>
     </div>

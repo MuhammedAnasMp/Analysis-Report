@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import useWebSocket from '../api/useWebSocket';
+import useWebSocketTest from '../api/useWebSocketTest';
 
 const Chat: React.FC<{ roomName: string }> = ({ roomName }) => {
-    const { messages, sendMessage, sendCommand } = useWebSocket(roomName);
+    const { messages, sendMessage, sendCommand } = useWebSocketTest(roomName);
     const [input, setInput] = useState('');
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const prevScrollHeight = useRef<number>(0);
     const prevMessageCount = useRef<number>(0);
     const [loadingOlder, setLoadingOlder] = useState(false);
+    const [showScrollButton, setShowScrollButton] = useState(false);
 
     // NEW: track if user just sent a message
     const userJustSentMessage = useRef(false);
@@ -15,6 +16,10 @@ const Chat: React.FC<{ roomName: string }> = ({ roomName }) => {
     const handleScroll = () => {
         const container = scrollContainerRef.current;
         if (!container || loadingOlder) return;
+
+        // Show "scroll to bottom" if user is far from bottom
+        const nearBottom = isUserNearBottom();
+        setShowScrollButton(!nearBottom);
 
         if (container.scrollTop === 0) {
             const oldestMessage = messages[0];
@@ -30,6 +35,14 @@ const Chat: React.FC<{ roomName: string }> = ({ roomName }) => {
             }
         }
     };
+    const scrollToBottom = () => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            setShowScrollButton(false);
+        }
+    };
+
 
     const isUserNearBottom = () => {
         const container = scrollContainerRef.current;
@@ -37,33 +50,33 @@ const Chat: React.FC<{ roomName: string }> = ({ roomName }) => {
         return container.scrollHeight - container.scrollTop - container.clientHeight < 100;
     };
     const firstLoad = useRef(true);
-useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
 
-    if (loadingOlder) {
-        const newMessagesAdded = messages.length > prevMessageCount.current;
-        if (newMessagesAdded) {
-            const newScrollHeight = container.scrollHeight;
-            const scrollOffset = newScrollHeight - prevScrollHeight.current;
-            container.scrollTop = scrollOffset;
-        }
-        setLoadingOlder(false);
-        userJustSentMessage.current = false;
-    } else {
-        if (firstLoad.current && messages.length > 0) {
-            setTimeout(() => {
-                if (container) {
-                    container.scrollTop = container.scrollHeight;
-                    firstLoad.current = false;
-                }
-            }, 50);
-        } else if (userJustSentMessage.current || isUserNearBottom()) {
-            container.scrollTop = container.scrollHeight;
+        if (loadingOlder) {
+            const newMessagesAdded = messages.length > prevMessageCount.current;
+            if (newMessagesAdded) {
+                const newScrollHeight = container.scrollHeight;
+                const scrollOffset = newScrollHeight - prevScrollHeight.current;
+                container.scrollTop = scrollOffset;
+            }
+            setLoadingOlder(false);
             userJustSentMessage.current = false;
+        } else {
+            if (firstLoad.current && messages.length > 0) {
+                setTimeout(() => {
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                        firstLoad.current = false;
+                    }
+                }, 50);
+            } else if (userJustSentMessage.current || isUserNearBottom()) {
+                container.scrollTop = container.scrollHeight;
+                userJustSentMessage.current = false;
+            }
         }
-    }
-}, [messages]);
+    }, [messages]);
 
     const handleSend = () => {
         if (input.trim()) {
@@ -80,7 +93,7 @@ useEffect(() => {
         }
     };
     return (
-        <div style={{ margin: 'auto' }}>
+       <div style={{ position: 'relative', margin: 'auto' }}>
             <h2>Room: {roomName}</h2>
 
             <div
@@ -94,7 +107,7 @@ useEffect(() => {
                     backgroundColor: '#fafafa',
                 }}
                 onScroll={handleScroll}
-            >
+                >
                 {loadingOlder && (
                     <div style={{ textAlign: 'center', marginBottom: 10 }}>
                         Loading older messages...
@@ -113,10 +126,29 @@ useEffect(() => {
                         <strong>{msg.user}:</strong> {msg.message}
                         <br />
                         <small style={{ color: '#888' }}>
-                            {new Date(msg.timestamp).toLocaleTimeString()}
+                          {new Date(msg.timestamp || Date.now()).toLocaleTimeString()} <br />
                         </small>
                     </div>
                 ))}
+                {showScrollButton && (
+                <button
+                    onClick={scrollToBottom}
+                    style={{
+                        position: 'absolute',
+                        bottom: '80px',
+                        right: '30px',
+                        padding: '8px 12px',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        zIndex: 1,
+                    }}
+                >
+                    ⬇ Scroll to Bottom
+                </button>
+                )}
             </div>
 
             <input

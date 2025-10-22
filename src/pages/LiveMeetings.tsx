@@ -4,12 +4,13 @@ import { useApiQuery } from "../api/useApiQuery";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
+import useWebSocket from "../api/useWebSocket";
+import { useSelector } from "react-redux";
+import type { AppState } from "../redux/app/store";
 const extensions = [
     StarterKit,
     TextStyle,
 ]
-
-
 interface CurrentMeeting {
     id: number;
     location_display: string;
@@ -20,16 +21,54 @@ interface CurrentMeeting {
     agenda: string | undefined;
     host: number;
 }
+
+
+
+interface MessageBody {
+    payload_type?: string;
+    id?: number;
+    type?: string;
+    message?: string;
+    description?: null;
+    timestamp?: string;
+    created_by?: Createdby;
+    data?: null;
+}
+
+interface Createdby {
+    id: number;
+    username: string;
+    profile_image: string;
+}
+
+
+type SentingMessageBody = {
+    type: string;
+    message: string;
+    created_by: number | undefined;
+    meeting: any;
+
+    description?: string;
+    status?: 'pending' | 'in_progress' | 'completed';
+    priority?: 'low' | 'medium' | 'high';
+    deadline?: string;
+    assignee?: number;
+    assigned_by?: number;
+};
+
+
+
+
+
+
+
 export default function LiveMeetings() {
     const { meetingId } = useParams()
     const [scrolled, setScrolled] = useState(false);
-    const scrollContainerRef = useRef<any>(null);
-
+    const scrollContainerRefThis = useRef<any>(null);
     const { data: currentMeeting } = useApiQuery<CurrentMeeting>(['currentMeeting'], `/api/meetings/meetings/${meetingId}`, undefined, true);
-
-
     useEffect(() => {
-        const scrollElement = scrollContainerRef.current;
+        const scrollElement = scrollContainerRefThis.current;
 
         const handleScroll = () => {
             if (scrollElement.scrollTop > 60) {
@@ -50,8 +89,6 @@ export default function LiveMeetings() {
             }
         };
     }, []);
-
-
     const editor = useEditor({
         extensions,
         content: '', // Start empty
@@ -63,6 +100,111 @@ export default function LiveMeetings() {
             editor.commands.setContent(currentMeeting.agenda);
         }
     }, [editor, currentMeeting?.agenda]);
+
+
+
+
+    const auth = useSelector((state: AppState) => (state.auth))
+
+    const initialMessageState: SentingMessageBody = {
+        type: '',
+        message: '',
+        created_by: auth.user?.id,
+        meeting: meetingId,
+    };
+
+    const [messageData, setMessageData] = useState<SentingMessageBody>(initialMessageState);
+
+
+    const { messages, sendMessage, sendCommand } = useWebSocket(meetingId);
+    const [input, setInput] = useState('');
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const prevScrollHeight = useRef<number>(0);
+    const prevMessageCount = useRef<number>(0);
+    const [loadingOlder, setLoadingOlder] = useState(false);
+    const [showScrollButton, setShowScrollButton] = useState(false);
+
+    // NEW: track if user just sent a message
+    const userJustSentMessage = useRef(false);
+
+    const handleScroll = () => {
+        const container = scrollContainerRef.current;
+        if (!container || loadingOlder) return;
+
+        // Show "scroll to bottom" if user is far from bottom
+        const nearBottom = isUserNearBottom();
+        setShowScrollButton(!nearBottom);
+
+        if (container.scrollTop === 0) {
+            const oldestMessage = messages[0];
+            if (oldestMessage) {
+                prevScrollHeight.current = container.scrollHeight;
+                prevMessageCount.current = messages.length;
+                setLoadingOlder(true);
+
+                sendCommand({
+                    payload_type: 'load_older',
+                    before: oldestMessage.timestamp,
+                });
+            }
+        }
+    };
+    const scrollToBottom = () => {
+        const container = scrollContainerRef.current;
+        if (container) {
+            container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+            setShowScrollButton(false);
+        }
+    };
+
+
+    const isUserNearBottom = () => {
+        const container = scrollContainerRef.current;
+        if (!container) return false;
+        return container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+    };
+    const firstLoad = useRef(true);
+    useEffect(() => {
+        const container = scrollContainerRef.current;
+        if (!container) return;
+
+        if (loadingOlder) {
+            const newMessagesAdded = messages.length > prevMessageCount.current;
+            if (newMessagesAdded) {
+                const newScrollHeight = container.scrollHeight;
+                const scrollOffset = newScrollHeight - prevScrollHeight.current;
+                container.scrollTop = scrollOffset;
+            }
+            setLoadingOlder(false);
+            userJustSentMessage.current = false;
+        } else {
+            if (firstLoad.current && messages.length > 0) {
+                setTimeout(() => {
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                        firstLoad.current = false;
+                    }
+                }, 50);
+            } else if (userJustSentMessage.current || isUserNearBottom()) {
+                container.scrollTop = container.scrollHeight;
+                userJustSentMessage.current = false;
+            }
+        }
+    }, [messages]);
+
+    const handleSend = (id: number | undefined) => {
+        if (messageData.message.trim())
+            userJustSentMessage.current = true;  // mark user sent message
+        sendMessage({
+            "type": "note",
+            "created_by": id ? id : messageData.created_by ?? 0,
+            "message": messageData.message,
+            "meeting": messageData.meeting
+        });
+
+        setMessageData(initialMessageState)
+    }
+
 
     return (
         <div>
@@ -100,7 +242,7 @@ export default function LiveMeetings() {
 
             <div className=" relative grid grid-row-2  overflow-hidden  border rounded-lg bg-gray-100  border-gray-100   ">
 
-                <div ref={scrollContainerRef} className="h-[calc(100vh-18rem)] overflow-y-auto relative border border-gray-100 rounded-lg   bg-gray-
+                <div ref={scrollContainerRefThis} className="h-[calc(100vh-18rem)] overflow-y-auto relative border border-gray-100 rounded-lg   bg-gray-
             
                                 [&::-webkit-scrollbar]:w-1
                     [&::-webkit-scrollbar-track]:rounded-full
@@ -139,7 +281,7 @@ export default function LiveMeetings() {
                                                 {currentMeeting?.title}
                                             </p>
                                             <p className="text-sm md:text-base text-gray-800 dark:text-neutral-200">
-                                             
+
                                             </p>
                                         </div>
                                     </div>
@@ -167,9 +309,112 @@ export default function LiveMeetings() {
                     </div>
 
 
-                    <div className="space-y-5 px-2 mt-3 pb-4">
+                    <div className="">
 
-                        chat here
+                        <div
+                            className="space-y-5 px-2 mt-3 pb-4"
+                            ref={scrollContainerRef}
+                            style={{
+                                height: '600px',
+
+                                overflowY: 'auto',
+                                border: '1px solid #ccc',
+                                padding: '10px',
+                                backgroundColor: '#fafafa',
+                            }}
+                            onScroll={handleScroll}
+                        >
+                            {loadingOlder && (
+                                <div style={{ textAlign: 'center', marginBottom: 10 }}>
+                                    Loading older messages...
+                                </div>
+                            )}
+
+                            {messages.map((msg: MessageBody, i) => (
+
+                                <>
+
+                                    {
+                                        msg.created_by?.id === auth.user?.id ? <>
+
+                                            <li key={i} className="flex ms-auto gap-x-2 sm:gap-x-4">
+                                                <div className="grow text-end space-y-3">
+                                                    <div className="inline-flex flex-col justify-end">
+                                                        {/* Card */}
+                                                        <div className="inline-block bg-blue-600 rounded-2xl p-4 shadow-2xs">
+                                                            <p className="text-sm text-white whitespace-pre-line text-left">
+
+                                                                {msg.message}
+
+                                                            </p>
+                                                        </div>
+                                                        {/* End Card */}
+
+                                                        <span className="mt-1.5 ms-auto flex items-center gap-x-1 text-xs text-gray-500 dark:text-neutral-500">
+                                                            <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path d="M18 6 7 17l-5-5"></path>
+                                                                <path d="m22 10-7.5 7.5L13 16"></path>
+                                                            </svg>
+                                                            Sent
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <img className="inline-block size-9 rounded-full object-cover border border-gray-3" src={`${msg.created_by?.profile_image}`} alt={`${msg.created_by?.username}`} />
+                                            </li>
+
+                                        </> :
+                                            <>
+
+                                                <li key={i} className="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
+                                                    <img className="inline-block size-9 rounded-full object-cover border border-gray-3" src={`${msg.created_by?.profile_image}`} alt={`${msg.created_by?.username}`} />
+
+                                                    <div>
+                                                        {/* Card */}
+                                                        <div className="bg-white border border-gray-200 rounded-2xl p-4 space-y-3 dark:bg-neutral-900 dark:border-neutral-700">
+                                                            <p className="text-sm text-gray-800 dark:text-white whitespace-pre-line">
+                                                                {msg.message}
+                                                            </p>
+
+                                                        </div>
+
+                                                        <span className="mt-1.5 ms-auto flex items-center gap-x-1 text-xs text-gray-500 dark:text-neutral-500">
+                                                            <svg className="shrink-0 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                                <path d="M18 6 7 17l-5-5"></path>
+                                                                <path d="m22 10-7.5 7.5L13 16"></path>
+                                                            </svg>
+                                                            Sent
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            </>
+                                    }
+
+
+                                </>
+
+
+                            ))}
+                            {showScrollButton && (
+                                <button
+                                    onClick={scrollToBottom}
+                                    style={{
+                                        position: 'absolute',
+                                        bottom: '80px',
+                                        right: '30px',
+                                        padding: '8px 12px',
+                                        backgroundColor: '#007bff',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        zIndex: 1,
+                                    }}
+                                >
+                                    ⬇ Scroll to Bottom
+                                </button>
+                            )}
+                        </div>
 
                     </div>
                 </div>
@@ -179,10 +424,25 @@ export default function LiveMeetings() {
 
                     {/* Textarea */}
                     <div className="bg-white border border-gray-300 rounded-2xl shadow-xs dark:bg-neutral-800 dark:border-neutral-600">
-                        <label htmlFor="hs-pro-aimt" className="sr-only">Ask anything...</label>
+                        <label htmlFor="hs-pro-aimt" className="sr-only">Message...</label>
 
                         <div className="pb-2 px-2">
-                            <textarea id="hs-pro-aimt" className="max-h-36  pt-4 pb-2 ps-2 pe-4 block w-full bg-transparent border-transparent resize-none text-gray-800 placeholder-gray-500 focus:outline-hidden focus:border-transparent focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:text-neutral-200 dark:placeholder-neutral-500 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500" placeholder="Ask anything..." data-hs-textarea-auto-height></textarea>
+                            <textarea id="hs-pro-aimt"
+
+                                value={messageData.message}
+
+                                onChange={(e) => setMessageData(prev => ({
+                                    ...prev,
+                                    ["message"]: e.target.value
+                                }))}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && !e.shiftKey) {
+                                        e.preventDefault();
+                                        handleSend(undefined);
+                                    }
+                                }}
+
+                                className="max-h-36  pt-4 pb-2 ps-2 pe-4 block w-full bg-transparent border-transparent resize-none text-gray-800 placeholder-gray-500 focus:outline-hidden focus:border-transparent focus:ring-transparent disabled:opacity-50 disabled:pointer-events-none dark:bg-transparent dark:text-neutral-200 dark:placeholder-neutral-500 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500" placeholder="Message..." data-hs-textarea-auto-height></textarea>
 
                             <div className="pt-2 flex justify-between items-center gap-x-1">
                                 {/* Button Group */}
@@ -263,11 +523,12 @@ export default function LiveMeetings() {
                                     {/* End Button */}
 
                                     {/* Send Button */}
-                                    <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 text-sm font-medium rounded-lg text-white bg-cyan-700 hover:bg-cyan-600 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-cyan-600">
+                                    <button onClick={() => handleSend(undefined)} type="button" className="inline-flex shrink-0 justify-center items-center size-8 text-sm font-medium rounded-lg text-white bg-cyan-700 hover:bg-cyan-600 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-cyan-600">
                                         <span className="sr-only">Send</span>
                                         <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 7-7 7 7" /><path d="M12 19V5" /></svg>
                                     </button>
                                     {/* End Send Button */}
+
                                 </div>
                                 {/* End Button Group */}
                             </div>
@@ -280,7 +541,28 @@ export default function LiveMeetings() {
 
 
 
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+                <input type="text" onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleSend(63);
 
+                }}
+                    value={messageData.message}
+
+                    onChange={(e) => setMessageData(prev => ({
+                        ...prev,
+                        ["message"]: e.target.value
+                    }))}
+                    placeholder="hai" className="inline-flex shrink-0 justify-center items-center size-8 text-sm font-medium rounded-lg text-white bg-yellow-700 hover:bg-cyan-600 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-cyan-600 w-full px-3" />
+
+                <input type="text" onKeyDown={(e) => { if (e.key === 'Enter') handleSend(65); }}
+                    value={messageData.message}
+
+                    onChange={(e) => setMessageData(prev => ({
+                        ...prev,
+                        ["message"]: e.target.value
+                    }))}
+                    placeholder="hai" className="inline-flex shrink-0 justify-center items-center size-8 text-sm font-medium rounded-lg text-white bg-cyan-700 hover:bg-cyan-600 disabled:opacity-50 disabled:pointer-events-none focus:outline-hidden focus:bg-cyan-600 w-full px-3" />
             </div>
         </div >
 
@@ -306,7 +588,7 @@ export default function LiveMeetings() {
 <>
 
     <li className="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
-        <img className="inline-block size-9 rounded-full" src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80" alt="Avatar" />
+        <img className="inline-block size-9 rounded-full object-cover" src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80" alt="Avatar" />
 
         <div>
             {/* Card */}
@@ -376,7 +658,7 @@ export default function LiveMeetings() {
 
     {/* Chat Bubble */}
     <li className="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
-        <img className="inline-block size-9 rounded-full" src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80" alt="Avatar" />
+        <img className="inline-block size-9 rounded-full object-cover" src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80" alt="Avatar" />
 
         <div>
             {/* Card */}
@@ -415,7 +697,7 @@ export default function LiveMeetings() {
         </div>
     </li>
     <li className="max-w-lg flex gap-x-2 sm:gap-x-4 me-11">
-        <img className="inline-block size-9 rounded-full" src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80" alt="Avatar" />
+        <img className="inline-block size-9 rounded-full object-cover" src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80" alt="Avatar" />
 
         <div>
             {/* Card */}
