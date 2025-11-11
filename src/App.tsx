@@ -1,20 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-
-
-import Login from './pages/Login';
-import NavBar from './components/NavBar';
-import UnauthenticatedLayout from './layouts/UnauthenticatedLayout';
-import AuthenticatedLayout from './layouts/AuthenticatedLayout';
-import {  useSelector } from 'react-redux';
-import type { AppState } from './redux/app/store';
-import Dashboard from './pages/Dashboard';
-import NewMeeting from './pages/NewMeeting';
-
-import Test from './pages/Test';
-import ProfileView from './pages/ProfileView';
-import Footer from './components/Footer';
-import LiveMeetings from './pages/LiveMeetings';
+import LandingSlides, { type Slide } from './pages/LandingSlides';
+import Navbar from './pages/Navbar';
 
 
 
@@ -23,7 +10,7 @@ async function loadPreline() {
 }
 function App() {
   const location = useLocation();
-  const auth = useSelector((state: AppState) => state.auth);
+   const [activeSlide, setActiveSlide] = useState<string>("");
   useEffect(() => {
     const initPreline = async () => {
       await loadPreline();
@@ -39,42 +26,16 @@ function App() {
     initPreline();
   }, [location.pathname]);
   return (
-      <div className='h-'>
-       <NavBar />
+    <div className='h-'>
+      <Navbar currentSlide={activeSlide}/>
       <Routes>
-      
-        <Route element={<UnauthenticatedLayout isLoggedIn={auth.isLoggedIn}/>}>
-          <Route path="/login" element={<Login />} />
-          <Route path="*" element={<>Not found page</>} />
-        </Route>
-        <Route element={<AuthenticatedLayout isLoggedIn={auth.isLoggedIn} />}>
-          <Route path="/" element={<Dashboard/>} />
-          <Route path="/profile" element={<ProfileView/>} />
-          <Route path="/new-meeting" element={<NewMeeting/>} />
-          <Route path="/meeting/:meetingId" element={<LiveMeetings />} />
-          <Route path="/test" element={<Test/>} />
-        </Route>
+        <Route path="/" element={   <LandingSlides onChange={(slide) => {setActiveSlide(slide.label)}} />} />
       </Routes>
-      
-      </div>
+
+    </div>
 
   );
 }
 export default App;
-
-
-
-{/* <Route path="/register" element={<Register />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/meetings" element={<MeetingsList />} />
-            <Route path="/meetings/create" element={<CreateMeeting />} />
-            <Route path="/meetings/:id" element={<MeetingDetails />} />
-            <Route path="/meetings/:id/room" element={<MeetingRoom />} />
-            <Route path="/tasks" element={<TaskBoard />} />
-            <Route path="/tasks/create" element={<CreateTask />} />
-            <Route path="/tasks/:id" element={<TaskDetails />} />
-            <Route path="/notifications" element={<Notifications />} />
-            */}
 
 
