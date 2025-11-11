@@ -1,17 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import SlideTemplate from "./SlideTemplate";
-import Table from "./Table";
-import Chart from "./Chart";
-import { current } from "@reduxjs/toolkit";
 
+import Chart from "./Chart";
+import TargetVsAchievement from "./TargetVsAchievement";
 
 export type Slide = {
   id: number;
   component: React.ReactNode;
   label: string;
+  headerTitle : string ;
+  
 };
 type LandingSlidesProps = {
-  onChange: (data: { label: string }) => void;
+  onChange: (data: Slide) => void;
 };
 
 
@@ -19,87 +20,99 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
   const slides = [
     {
       id: 1,
-      component: <Table />,
-      label: "Table",
+      component: <TargetVsAchievement />,
+      label: "1 slide",
+      headerTitle: "Target vs Achievement"
     },
     {
       id: 2,
       component: <Chart />,
-      label: "chart",
+      label: "2 slide",
+      headerTitle: "Stock vs Ageing"
     },
     {
       id: 3,
       component: <SlideTemplate title="Second 3" bgColor="bg-gray-200" />,
       label: "3 slide",
 
+      headerTitle: '1'
     },
     {
       id: 4,
       component: <SlideTemplate title="Second 4" bgColor="bg-gray-200" />,
       label: "4 slide",
+      headerTitle: '1'
     },
     {
       id: 5,
       component: <SlideTemplate title="Second 5" bgColor="bg-gray-200" />,
       label: "5 slide",
+      headerTitle: '1'
     },
     {
       id: 6,
       component: <SlideTemplate title="Second 6" bgColor="bg-gray-200" />,
       label: "6 slide",
+      headerTitle: '1'
     },
     {
       id: 7,
       component: <SlideTemplate title="Second 7" bgColor="bg-gray-200" />,
       label: "7 slide",
+      headerTitle: '1'
     },
     {
       id: 8,
       component: <SlideTemplate title="Second 8" bgColor="bg-gray-200" />,
       label: "8 slide",
+      headerTitle: '1'
     },
     {
       id: 9,
       component: <SlideTemplate title="Second 9" bgColor="bg-gray-200" />,
       label: "9 slide",
+      headerTitle: '1'
     },
     {
       id: 10,
       component: <SlideTemplate title="Second 10" bgColor="bg-gray-200" />,
       label: "10 slide",
+      headerTitle: '1'
     },
     {
       id: 11,
       component: <SlideTemplate title="Second 11" bgColor="bg-gray-200" />,
       label: "11 slide",
+      headerTitle: '1'
     },
     {
       id: 12,
       component: <SlideTemplate title="Second 12" bgColor="bg-gray-200" />,
       label: "12 slide",
+      headerTitle: '1'
     },
     {
       id: 13,
       component: <SlideTemplate title="Second 13" bgColor="bg-gray-200" />,
       label: "13 slide",
+      headerTitle: '1'
     },
   ];
 
   const [selectedId, setselectedId] = useState<number>(1);
   const [selectedSlide, setSelectedSlide] = useState<Slide>(slides[0]);
   useEffect(() => {
-    
-    setSelectedSlide(slides[selectedId-1])
-  
+
+    setSelectedSlide(slides[selectedId - 1])
+
   }, [selectedId])
   useEffect(() => {
-    
+    console.log('selectedSlide' ,selectedSlide)
     onChange(selectedSlide)
-  
+
   }, [selectedSlide])
 
   const refs = useRef<any>([]);
-
 
 
 
@@ -117,16 +130,16 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
     }
     if (!isNaN(index) && refs.current[index] && e.altKey) {
       if (e.key === 'ArrowUp') {
-        
-      
-        refs.current[selectedSlide.id -1].click();
+
+
+        refs.current[selectedSlide.id - 1].click();
       }
       else if (e.key === 'ArrowDown') {
-        
-     
-        refs.current[selectedSlide.id +1].click();
+
+
+        refs.current[selectedSlide.id + 1].click();
       }
-      else{
+      else {
         refs.current[index].click();
         setselectedId(index)
       }
@@ -173,7 +186,8 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                       key={slide.id}
                       onClick={() => {
                         setselectedId(slide.id)
-                        setSelectedSlide(slide)}}
+                        setSelectedSlide(slide)
+                      }}
                       className="hs-carousel-pagination-item shrink-0 border border-gray-200 rounded-md overflow-hidden cursor-pointer size-20 md:size-32 hs-carousel-active:border-blue-400 dark:border-neutral-700
                     "
                     >
@@ -206,7 +220,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
               ))}
 
             </div>
-            <button onClick={()=>setselectedId(selectedId-1)} ref={(el: any) => (refs.current[1000] = el)} type="button" className="hs-carousel-prev hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-11.5 h-full text-gray-800 hover:bg-gray-800/10 focus:outline-hidden focus:bg-gray-800/10 rounded-s-lg dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
+            <button onClick={() => setselectedId(selectedId - 1)} ref={(el: any) => (refs.current[1000] = el)} type="button" className="hs-carousel-prev hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-11.5 h-full text-gray-800 hover:bg-gray-800/10 focus:outline-hidden focus:bg-gray-800/10 rounded-s-lg dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
               <span className="text-2xl" aria-hidden="true">
                 <svg className="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="m15 18-6-6 6-6"></path>
@@ -214,7 +228,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
               </span>
               <span className="sr-only">Previous</span>
             </button>
-            <button  onClick={()=> setselectedId(selectedId+1)} ref={(el: any) => (refs.current[999] = el)} type="button" className="hs-carousel-next hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-11.5 h-full text-gray-800 hover:bg-gray-800/10 focus:outline-hidden focus:bg-gray-800/10 rounded-e-lg dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
+            <button onClick={() => setselectedId(selectedId + 1)} ref={(el: any) => (refs.current[999] = el)} type="button" className="hs-carousel-next hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none absolute inset-y-0 end-0 inline-flex justify-center items-center w-11.5 h-full text-gray-800 hover:bg-gray-800/10 focus:outline-hidden focus:bg-gray-800/10 rounded-e-lg dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
               <span className="sr-only">Next</span>
               <span className="text-2xl" aria-hidden="true">
                 <svg className="shrink-0 size-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

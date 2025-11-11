@@ -6,9 +6,11 @@ import './table.css'
 
 import NoDatafound from './vectorIllustrations/NoDataFound'
 import NotSelected from './vectorIllustrations/NotSelected'
+import type { RootState } from '../redux/app/rootReducer'
+import { useSelector } from 'react-redux'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function Table() {
+export default function TargetVsAchievement() {
     const [isLoading, setLoading] = useState(false)
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
@@ -85,18 +87,19 @@ export default function Table() {
 
     ])
 
+    const { selectedStore, selectedDate } = useSelector((state: RootState) => state.store);
 
     const lastEdit = useRef<{ code: string; value: any } | null>(null);
 
     const handleCellValueChanged = async (event: CellValueChangedEvent) => {
         const { data, colDef, newValue, oldValue } = event;
-        console.log(data)
+    
         // Only handle REMARK edits
         if (colDef.field !== "REMARK" || newValue === oldValue) return;
 
         const code = data.SEC_CODE?.trim(); // Use SEC_CODE as unique key
 
-        // 🚫 Prevent duplicate API hits for same SEC_CODE and value
+        //  Prevent duplicate API hits for same SEC_CODE and value
         if (
             lastEdit.current &&
             lastEdit.current.code === code &&
@@ -105,7 +108,7 @@ export default function Table() {
             return;
         }
         lastEdit.current = { code, value: newValue };
-        console.log("DATA", data)
+       
         try {
             const res = await fetch(`http://localhost:5000/api/budget`, {
                 method: "POST",
@@ -117,7 +120,6 @@ export default function Table() {
 
             if (!res.ok) throw new Error("Failed to update");
 
-            console.log(`✅ Remark updated for ${code}:`, newValue);
         } catch (err) {
             console.error("❌ Update failed:", err);
 
@@ -126,8 +128,18 @@ export default function Table() {
     };
 
     useEffect(() => {
-        setLoading(true)
-        fetch('http://localhost:5000')
+        if (!selectedDate || !selectedStore) return;
+
+        setLoading(true);
+
+        const dateObj = selectedDate instanceof Date ? selectedDate : new Date(selectedDate);
+
+        // Convert to YYYYMM
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth() + 1; // JS months are 0-indexed
+        const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
+
+        fetch(`http://localhost:5000?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -145,7 +157,7 @@ export default function Table() {
                 setLoading(false)
             })
             .catch(() => setLoading(false))
-    }, [])
+    }, [selectedDate, selectedStore]);
 
 
     // 🔍 Get filtered rows
@@ -181,7 +193,6 @@ export default function Table() {
                 const agRoot = gridRoots[0]
                 let customFooter = agRoot.querySelector('.custom-summary-bar') as HTMLDivElement
 
-                // Create if missing
                 if (!customFooter) {
                     customFooter = document.createElement('div')
                     customFooter.className = 'custom-summary-bar text-sm font-semibold'
@@ -189,15 +200,14 @@ export default function Table() {
                 }
 
                 const { total } = calculateTotals(filtered.length ? filtered : rowData)
-                console.log(">>>>>>>>", calculateTotals(filtered.length ? filtered : rowData))
+            
                 const data = filtered.length ? filtered : rowData
-                const current = total // you can switch to avg if needed
-
+                const current = total
                 const colCount = colDef.length
                 const gridTemplate = `repeat(${colCount + 1}, 1fr)`
 
                 let rowHTML = ''
-                console.log('colDef', colDef)
+             
                 colDef.forEach(col => {
                     const val = current[col.field!] ?? ''
                     if (typeof val === 'number') {
@@ -248,10 +258,10 @@ export default function Table() {
 
     const NoRowsOverlay = () => (
         <div className="h-88 w-88 ">
-            {/* {(!selectedStore || !selectedDate) ? ( */}
-            {(!true || !true) ? (
+            {(!selectedStore || !selectedDate) ? (
+
                 <>
-                    <NotSelected  />
+                    <NotSelected />
                     <div className="text-xl text-gray-700 mt-2">
                         Please select one store and date
                     </div>
@@ -260,8 +270,9 @@ export default function Table() {
                 <>
                     <NoDatafound />
                     <div className="text-xl text-gray-700 mt-2">
-                        No data in table
+                        No data available <span className='font-semibold'>{selectedStore?.LOCATION_NAME}</span>  on <span className='font-semibold'>{selectedDate ? new Date(selectedDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : ''}</span> 
                     </div>
+
                 </>
             )}
         </div>

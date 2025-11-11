@@ -1,40 +1,157 @@
+import { useEffect, useRef, useState } from "react";
 import SmallDatePicker from "../componenets/SmallDatePicker";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedDate, setSelectedStore } from "../redux/features/pptState/storeSlice";
+import type { RootState } from "../redux/app/rootReducer";
+import type { Slide } from "./LandingSlides";
+import { BeakerIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+interface Locations {
+  LOCATION_ID: number,
+  LOCATION_NAME: string
+}
+export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
+  const [locations, setLocations] = useState<Locations[]>()
+  const [filteredLocations, setFilteredLocations] = useState<Locations[]>();
+  const [searchTerm, setSearchTerm] = useState("");
+  console.log(currentSlide)
+  useEffect(() => {
+    const fetchStores = async () => {
+      try {
+        fetch('http://localhost:5000/api/locations')
+          .then(result => result.json())
+          .then(data => {
+            setLocations(data)
+          })
+      }
+      catch (err) {
+        console.log('error', err)
+      }
+    }
+
+    fetchStores()
+
+  }, [])
 
 
-export default function Navbar({ currentSlide }: { currentSlide: any }) {
+
+  const { selectedStore, selectedDate } = useSelector((state: RootState) => state.store);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleDateChange = (date: Date | null) => {
+    dispatch(setSelectedDate(date));
+  };
+  const dispatch = useDispatch();
+  const handleSelect = (location: Locations) => {
+
+    dispatch(setSelectedStore(location));
+
+    setIsOpen(false);
+  };
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+
+  useEffect(() => {
+    if (!searchTerm) {
+      setFilteredLocations(locations);
+    } else {
+      setFilteredLocations(
+        locations?.filter(
+          (loc) =>
+            loc.LOCATION_NAME.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            loc.LOCATION_ID.toString().includes(searchTerm)
+        )
+      );
+    }
+  }, [searchTerm, locations]);
   return (
     <header className="flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 border-b-1 border-neutral-300">
       <nav className="w-full mx-auto px-54 sm:flex sm:items-center sm:justify-between">
 
-        <a className="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white" href="#" aria-label="Brand">{currentSlide}</a>        <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
-          <div className="hs-dropdown [--auto-close:inside] relative inline-flex">
-            <button id="hs-dropdown-default" type="button" className="hs-dropdown-toggle py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-              Actions
-              <svg className="hs-dropdown-open:rotate-180 size-3" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
+        <div className="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle}</div>
+        <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
+
+          <div ref={dropdownRef} className="relative inline-flex">
+            <button
+              type="button"
+              onClick={() => {
+                setIsOpen(!isOpen)
+
+
+              }}
+              className="py-2 rs-picker-input-group rs-input-group justify-evenly px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+            >
+              <span className="text-blue-600">  {selectedStore ? selectedStore.LOCATION_NAME : "Select store"} </span>
+              <svg className={`size-3 transition-transform ${isOpen ? "rotate-180" : ""}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m6 9 6 6 6-6" />   </svg>
             </button>
 
-            <div className="z-50 hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-60 bg-white h-[40%]  shadow-md rounded-lg mt-2 dark:bg-neutral-800 dark:border dark:border-neutral-700 dark:divide-neutral-700 after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full" role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-default">
-              <div className="p-1 space-y-0.5">
-                <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">
-                  Newsletter
-                </a>
-                <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">
-                  Purchases
-                </a>
-                <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">
-                  Downloads
-                </a>
-                <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700" href="#">
-                  Team Account
-                </a>
+            {isOpen && (
+        <div
+          className="max-h-100 overflow-y-auto [&::-webkit-scrollbar]:w-1
+                  [&::-webkit-scrollbar-track]:bg-gray-100
+                  [&::-webkit-scrollbar-thumb]:bg-gray-300
+                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+                  absolute top-full left-0 z-50 mt-2 min-w-60 bg-white shadow-md rounded-lg
+                  dark:bg-neutral-800 dark:border dark:border-neutral-700"
+          role="menu"
+        >
+          <div className="p-1 space-y-0.5">
+            <div className="p-2 relative">
+              <input
+                type="text"
+                name="location search"
+                autoFocus
+                placeholder="Location code or name"
+                className="w-full p-2 m-4 outline-none border rounded-md pr-10 rs-search-box-input rs-input"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <div className="absolute top-5 right-5">
+                <MagnifyingGlassIcon height={15} width={15} />
               </div>
             </div>
+
+            { filteredLocations &&filteredLocations.length > 0 ? (
+              filteredLocations.map((location) => (
+                <div
+                  key={location.LOCATION_ID}
+                  onClick={() => {
+                    handleSelect(location);
+                    setIsOpen(false);
+                  }}
+                  className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                >
+                  <span className="font-bold font-sans">
+                    {location.LOCATION_ID}
+                  </span>{" "}
+                  {location.LOCATION_NAME}
+                </div>
+              ))
+            ) : (
+              <div className="p-3 text-gray-400">No locations found</div>
+            )}
           </div>
-          
-          <SmallDatePicker onDateSelect={()=>{}} />
+        </div>
+      )}
+          </div>
+
+          <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} />
 
 
-          {/* <a className="font-medium text-blue-500 focus:outline-hidden" href="#" aria-current="page">Landing</a>
+          {/* <a className="font-medium text-blue-500 focus:outline-hidden"  aria-current="page">Landing</a>
 
           <a className="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500" href="#">Account</a>
           <a className="font-medium text-gray-600 hover:text-gray-400 focus:outline-hidden focus:text-gray-400 dark:text-neutral-400 dark:hover:text-neutral-500 dark:focus:text-neutral-500" href="#">Work</a>
@@ -44,3 +161,4 @@ export default function Navbar({ currentSlide }: { currentSlide: any }) {
     </header>
   )
 }
+

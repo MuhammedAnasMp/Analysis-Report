@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import LandingSlides, { type Slide } from './pages/LandingSlides';
+import LandingSlides  from './pages/LandingSlides';
 import Navbar from './pages/Navbar';
 
 
@@ -10,7 +10,7 @@ async function loadPreline() {
 }
 function App() {
   const location = useLocation();
-   const [activeSlide, setActiveSlide] = useState<string>("");
+   const [activeSlide, setActiveSlide] = useState<any>();
   useEffect(() => {
     const initPreline = async () => {
       await loadPreline();
@@ -29,7 +29,7 @@ function App() {
     <div className='h-'>
       <Navbar currentSlide={activeSlide}/>
       <Routes>
-        <Route path="/" element={   <LandingSlides onChange={(slide) => {setActiveSlide(slide.label)}} />} />
+        <Route path="/" element={   <LandingSlides onChange={(slide) => {setActiveSlide(slide)}} />} />
       </Routes>
 
     </div>

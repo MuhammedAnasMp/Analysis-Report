@@ -27,7 +27,11 @@ def connection():
         raise
 
 @app.route("/")
-def hello_world():
+def salestable():
+
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
     conn = connection()
     cur = conn.cursor()
     
@@ -41,7 +45,7 @@ def hello_world():
             ORDER BY SEC_CODE
             """
 
-    cur.execute(sql_query, {'loc': 802, 'yyyymm': 202510})
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
     columns = [col[0] for col in cur.description]
 
     cur.execute(sql_query)
@@ -71,7 +75,6 @@ def hello_world():
     return jsonify(results)
 @app.route('/api/budget', methods=['POST',"GET"])
 def update_remark():
-    print(">>>>>>>>>")
     data = request.get_json()
     print(data)
     remark = data.get('remark') if 'remark' in data else data.get('REMARK')
@@ -129,6 +132,59 @@ def update_remark():
             "success": False,
             "message": str(e)
         }), 500
+
+
+@app.route('/api/locations', methods=["GET"])
+def getlocations():
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+       SELECT DISTINCT LOCATION_ID,LOCATION_NAME FROM KPI_SITE WHERE LEVEL_2='4-KUWAIT' order by location_id asc
+    """
+
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+  
+    return jsonify(results)
+
+@app.route('/api/year-date-periods', methods=["GET"])
+def yeardateperiods():
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+      select distinct YYYYMM from KWT_PPT_STOCK_VS_SALES order by yyyymm 
+    """
+
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+  
+    return jsonify(results)
+
+
 
 
 
