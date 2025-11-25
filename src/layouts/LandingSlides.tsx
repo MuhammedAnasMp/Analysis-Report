@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import SlideTemplate from "./SlideTemplate";
 
-import Chart from "./Chart";
-import TargetVsAchievement from "./TargetVsAchievement";
+
+import TargetVsAchievement from "../slides/TargetVsAchievement";
+import StockvsAgeing from "../slides/StockvsAgeing";
+import Chart from "../slides/Chart";
+import SectionPerformanceChart from "../slides/Chart2";
 
 export type Slide = {
   id: number;
@@ -21,25 +24,25 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
     {
       id: 1,
       component: <TargetVsAchievement />,
-      label: "1 slide",
+      label: "Target",
       headerTitle: "Target vs Achievement"
     },
     {
       id: 2,
-      component: <Chart />,
-      label: "2 slide",
+      component: <StockvsAgeing />,
+      label: "Stock",
       headerTitle: "Stock vs Ageing"
     },
     {
       id: 3,
-      component: <SlideTemplate title="Second 3" bgColor="bg-gray-200" />,
-      label: "3 slide",
-
+      component: <SectionPerformanceChart/>,
+      label: "Target Chart",
+      
       headerTitle: '1'
     },
     {
       id: 4,
-      component: <SlideTemplate title="Second 4" bgColor="bg-gray-200" />,
+      component: <Chart/>,
       label: "4 slide",
       headerTitle: '1'
     },
@@ -107,7 +110,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
   }, [selectedId])
   useEffect(() => {
-    console.log('selectedSlide' ,selectedSlide)
+   
     onChange(selectedSlide)
 
   }, [selectedSlide])
@@ -214,7 +217,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
           <div className="md:order-2 relative grow overflow-hidden h-[calc(100vh-150px)] bg-white rounded-lg ">
             <div className="hs-carousel-body absolute top-0 bottom-0 start-0 flex flex-nowrap transition-transform duration-700 opacity-0">
               {slides.map(slide => (
-                <div key={slide.id} className="hs-carousel-slide" >
+                <div key={slide.id} className="hs-carousel-slide w-7xl" >
                   {slide.component}
                 </div>
               ))}

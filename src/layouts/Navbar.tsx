@@ -13,7 +13,6 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   const [locations, setLocations] = useState<Locations[]>()
   const [filteredLocations, setFilteredLocations] = useState<Locations[]>();
   const [searchTerm, setSearchTerm] = useState("");
-  console.log(currentSlide)
   useEffect(() => {
     const fetchStores = async () => {
       try {
@@ -83,7 +82,7 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
         <div className="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle}</div>
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
 
-          <div ref={dropdownRef} className="relative inline-flex">
+          <div ref={dropdownRef} className="relative inline-flex w-48">
             <button
               type="button"
               onClick={() => {
@@ -93,59 +92,59 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
               }}
               className="py-2 rs-picker-input-group rs-input-group justify-evenly px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
             >
-              <span className="text-blue-600">  {selectedStore ? selectedStore.LOCATION_NAME : "Select store"} </span>
+              <span className="text-blue-600 truncate">  {selectedStore ? selectedStore.LOCATION_NAME : "Select store"} </span>
               <svg className={`size-3 transition-transform ${isOpen ? "rotate-180" : ""}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m6 9 6 6 6-6" />   </svg>
             </button>
 
             {isOpen && (
-        <div
-          className="max-h-100 overflow-y-auto [&::-webkit-scrollbar]:w-1
+              <div
+                className="max-h-100 overflow-y-auto [&::-webkit-scrollbar]:w-1
                   [&::-webkit-scrollbar-track]:bg-gray-100
                   [&::-webkit-scrollbar-thumb]:bg-gray-300
                   dark:[&::-webkit-scrollbar-track]:bg-neutral-700
                   dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
                   absolute top-full left-0 z-50 mt-2 min-w-60 bg-white shadow-md rounded-lg
                   dark:bg-neutral-800 dark:border dark:border-neutral-700"
-          role="menu"
-        >
-          <div className="p-1 space-y-0.5">
-            <div className="p-2 relative">
-              <input
-                type="text"
-                name="location search"
-                autoFocus
-                placeholder="Location code or name"
-                className="w-full p-2 m-4 outline-none border rounded-md pr-10 rs-search-box-input rs-input"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <div className="absolute top-5 right-5">
-                <MagnifyingGlassIcon height={15} width={15} />
-              </div>
-            </div>
+                role="menu"
+              >
+                <div className="p-1 space-y-0.5">
+                  <div className="p-2 relative">
+                    <input
+                      type="text"
+                      name="location search"
+                      autoFocus
+                      placeholder="Location code or name"
+                      className="w-full p-2 m-4 outline-none border rounded-md pr-10 rs-search-box-input rs-input"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <div className="absolute top-5 right-5">
+                      <MagnifyingGlassIcon height={15} width={15} />
+                    </div>
+                  </div>
 
-            { filteredLocations &&filteredLocations.length > 0 ? (
-              filteredLocations.map((location) => (
-                <div
-                  key={location.LOCATION_ID}
-                  onClick={() => {
-                    handleSelect(location);
-                    setIsOpen(false);
-                  }}
-                  className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
-                >
-                  <span className="font-bold font-sans">
-                    {location.LOCATION_ID}
-                  </span>{" "}
-                  {location.LOCATION_NAME}
+                  {filteredLocations && filteredLocations.length > 0 ? (
+                    filteredLocations.map((location) => (
+                      <div
+                        key={location.LOCATION_ID}
+                        onClick={() => {
+                          handleSelect(location);
+                          setIsOpen(false);
+                        }}
+                        className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 dark:focus:bg-neutral-700"
+                      >
+                        <span className="font-bold font-sans">
+                          {location.LOCATION_ID}
+                        </span>{" "}
+                        {location.LOCATION_NAME}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-3 text-gray-400">No locations found</div>
+                  )}
                 </div>
-              ))
-            ) : (
-              <div className="p-3 text-gray-400">No locations found</div>
+              </div>
             )}
-          </div>
-        </div>
-      )}
           </div>
 
           <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} />

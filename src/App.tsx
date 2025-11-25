@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import LandingSlides  from './pages/LandingSlides';
-import Navbar from './pages/Navbar';
+import LandingSlides  from './layouts/LandingSlides';
+import Navbar from './layouts/Navbar';
 
 
 

@@ -2,12 +2,13 @@ import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
 import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
-import './table.css'
+import '../layouts/table.css'
 
-import NoDatafound from './vectorIllustrations/NoDataFound'
-import NotSelected from './vectorIllustrations/NotSelected'
+import NoDatafound from '../componenets/vectorIllustrations/NoDataFound'
+import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
+import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
 ModuleRegistry.registerModules([AllCommunityModule])
 
 export default function TargetVsAchievement() {
@@ -15,6 +16,7 @@ export default function TargetVsAchievement() {
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
+
 
     const [colDef] = useState<ColDef<any>[]>([
         { field: "SEC_CODE", headerName: "Code", cellClass: "text-center", flex: 1 },
@@ -26,7 +28,7 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
+        },         
         {
             field: "BUD_AVG",
             headerName: "Average Budget",
@@ -93,7 +95,7 @@ export default function TargetVsAchievement() {
 
     const handleCellValueChanged = async (event: CellValueChangedEvent) => {
         const { data, colDef, newValue, oldValue } = event;
-    
+
         // Only handle REMARK edits
         if (colDef.field !== "REMARK" || newValue === oldValue) return;
 
@@ -108,9 +110,9 @@ export default function TargetVsAchievement() {
             return;
         }
         lastEdit.current = { code, value: newValue };
-       
+
         try {
-            const res = await fetch(`http://localhost:5000/api/budget`, {
+            const res = await fetch(`http://localhost:5000/api/target-vs-achievement`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -139,7 +141,7 @@ export default function TargetVsAchievement() {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://localhost:5000?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://localhost:5000/api/target-vs-achievement?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -188,55 +190,55 @@ export default function TargetVsAchievement() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const gridRoots = document.getElementsByClassName('ag-root')
-            if (gridRoots.length > 0) {
-                const agRoot = gridRoots[0]
-                let customFooter = agRoot.querySelector('.custom-summary-bar') as HTMLDivElement
+            const wrapper = rootRef.current;
+            if (!wrapper) return;
 
-                if (!customFooter) {
-                    customFooter = document.createElement('div')
-                    customFooter.className = 'custom-summary-bar text-sm font-semibold'
-                    agRoot.appendChild(customFooter)
-                }
+            const agRoot = wrapper.querySelector(".ag-root");
+            if (!agRoot) return;
 
-                const { total } = calculateTotals(filtered.length ? filtered : rowData)
-            
-                const data = filtered.length ? filtered : rowData
-                const current = total
-                const colCount = colDef.length
-                const gridTemplate = `repeat(${colCount + 1}, 1fr)`
+            const customFooter = document.createElement('div')
+            agRoot.appendChild(customFooter)
 
-                let rowHTML = ''
-             
-                colDef.forEach(col => {
-                    const val = current[col.field!] ?? ''
-                    if (typeof val === 'number') {
-                        let formattedVal = val
 
-                        // if field is DIF_PERC, divide by total row count first
-                        if (col.field === 'DIF_PERC' && data) {
-                            formattedVal = val / data.length
-                        }
 
-                        const formatted = (formattedVal).toFixed(2)
-                        const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+            const { total } = calculateTotals(filtered.length ? filtered : rowData)
+            console.log(total)
+            const data = filtered.length ? filtered : rowData
+            const current = total
+            const colCount = colDef.length
+            const gridTemplate = `repeat(${colCount + 1}, 1fr)`
 
-                        rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'DIF_PERC' ? '%' : ''}</div>`
-                    } else {
-                        rowHTML += `<div></div>`
+            let rowHTML = ''
+
+            colDef.forEach(col => {
+                const val = current[col.field!] ?? ''
+                if (typeof val === 'number') {
+                    let formattedVal = val
+
+                    // if field is DIF_PERC, divide by total row count first
+                    if (col.field === 'DIF_PERC' && data) {
+                        formattedVal = val / data.length
                     }
-                })
+
+                    const formatted = (formattedVal).toFixed(2)
+                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+
+                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'DIF_PERC' ? '%' : ''}</div>`
+                } else {
+                    rowHTML += `<div></div>`
+                }
+            })
 
 
 
 
-                customFooter.innerHTML = `
+            customFooter.innerHTML = `
                     <div class="w-full bg-gray-100 border-t border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
                 `
-            }
+
 
             // Pagination update
             const gridPanels = document.getElementsByClassName('ag-paging-panel')
@@ -270,33 +272,39 @@ export default function TargetVsAchievement() {
                 <>
                     <NoDatafound />
                     <div className="text-xl text-gray-700 mt-2">
-                        No data available <span className='font-semibold'>{selectedStore?.LOCATION_NAME}</span>  on <span className='font-semibold'>{selectedDate ? new Date(selectedDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : ''}</span> 
+                        No data available <span className='font-semibold'>{selectedStore?.LOCATION_NAME}</span>  on <span className='font-semibold'>{selectedDate ? new Date(selectedDate).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : ''}</span>
                     </div>
 
                 </>
             )}
         </div>
     );
+    const rootRef = useRef<HTMLDivElement | null>(null);
     return (
-        <div className="ag-theme-quartz h-[calc(100vh-150px)] w-full relative">
+        <div className="summary-grid-wrapper" ref={rootRef}>
 
-            <AgGridReact
-                ref={gridRef}
-                rowData={rowData}
-                columnDefs={colDef}
-                pagination={true}
-                defaultColDef={{
-                    sortable: true,
-                    filter: true,
-                    resizable: true,
-                    floatingFilter: true,
-                }}
-                onCellValueChanged={handleCellValueChanged}
-                stopEditingWhenCellsLoseFocus={true} // commit edit when you click away
-                loading={isLoading}
-                noRowsOverlayComponent={NoRowsOverlay}
-                onFilterChanged={getFilteredData}
-            />
+            <div className="ag-theme-quartz h-[calc(100vh-150px)] w-full relative">
+
+                <AgGridReact
+                    ref={gridRef}
+                    rowData={rowData}
+                    columnDefs={colDef}
+                    pagination={true}
+                    defaultColDef={{
+                        sortable: true,
+                        filter: true,
+                        resizable: true,
+                        floatingFilter: true,
+                    }}
+                    onCellValueChanged={handleCellValueChanged}
+                    stopEditingWhenCellsLoseFocus={true} // commit edit when you click away
+                    loading={isLoading}
+                    noRowsOverlayComponent={NoRowsOverlay}
+                    onFilterChanged={getFilteredData}
+                    loadingOverlayComponent={CustomLoadingOverlay}
+
+                />
+            </div>
         </div>
     )
 }

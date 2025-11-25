@@ -26,9 +26,134 @@ def connection():
         print("❌ Unexpected error in connection:", e)
         raise
 
-@app.route("/")
+@app.route("/api/target-vs-achievement",methods=['GET' ,'POST'])
 def salestable():
+    if request.method == 'GET':
 
+        yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+        location = request.args.get("location")  # e.g., "ST01"
+
+        conn = connection()
+        cur = conn.cursor()
+        
+        sql_query = """
+             SELECT 
+                SEC_CODE,
+                SEC_NAME,
+                TOTAL_BUDGET,
+                BUD_AVG,
+                TILL_SALES,
+                TILL_SALES/31 AS AVG_SALE,
+                REMARK,
+                LOC_CODE,
+                YYYYMM,
+                NVL(TOTAL_BUDGET,0) - NVL(TILL_SALES,0) AS DIFFERENCE,
+                CASE 
+                    WHEN NVL(TILL_SALES,0) = 0 THEN 0
+                    ELSE ROUND((NVL(TOTAL_BUDGET,0) - NVL(TILL_SALES,0)) / NVL(TILL_SALES,0) * 100, 2)
+                END AS DIF_PERC
+            FROM 
+                KWT_PPT_SALES_BUDGET A
+            WHERE 
+                LOC_CODE = :loc
+                AND YYYYMM = :yyyymm
+            ORDER BY 
+                SEC_CODE
+            """
+
+        print({'loc': location, 'yyyymm': yyyymm})
+        cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+        columns = [col[0] for col in cur.description]
+
+        cur.execute(sql_query)
+
+    
+        columns = [col[0] for col in cur.description]
+
+        results = []
+        for row in cur.fetchall():
+            row_dict = dict(zip(columns, row))
+            
+            # Remove unwanted keys
+            for bad_key in ['', "''", None, 'BUDGET']:
+                if bad_key in row_dict:
+                    row_dict.pop(bad_key)
+            
+            # Trim spaces only in SEC_CODE
+            if 'SEC_CODE' in row_dict and isinstance(row_dict['SEC_CODE'], str):
+                row_dict['SEC_CODE'] = row_dict['SEC_CODE'].strip()
+            
+            results.append(row_dict)
+
+        cur.close()
+        conn.close()
+
+    
+        return jsonify(results)
+    
+    else:
+        data = request.get_json()
+        remark = data.get('remark') if 'remark' in data else data.get('REMARK')
+        loc_code = data.get('LOC_CODE')  
+        yyyymm = data.get('YYYYMM') 
+        yyyymm = data.get('YYYYMM') 
+        sec_code = data.get('SEC_CODE') 
+
+
+        try:
+        
+            conn = connection()
+            cur = conn.cursor()
+
+            sql_update = """
+                UPDATE KWT_PPT_SALES_BUDGET
+                SET REMARK = :remark
+                WHERE LOC_CODE = :loc_code
+                AND YYYYMM = :yyyymm
+                AND trim(SEC_CODE) = trim(:sec_code)
+            """
+
+            cur.execute(sql_update, {
+                'remark': remark,
+                'loc_code': loc_code,
+                'yyyymm': yyyymm,
+                'sec_code': sec_code
+            })
+
+            conn.commit()
+            updated_rows = cur.rowcount
+
+            cur.close()
+            conn.close()
+
+            if updated_rows == 0:
+                return jsonify({
+                    "success": False,
+                    "message": f"No record found for SEC_CODE={sec_code}, LOC_CODE={loc_code}, YYYYMM={yyyymm}"
+                }), 404
+
+            return jsonify({
+                "success": True,
+                "message": f"Remark updated for section {sec_code}",
+                "data": {
+                    "SEC_CODE": sec_code,
+                    "LOC_CODE": loc_code,
+                    "YYYYMM": yyyymm,
+                    "REMARK": remark
+                }
+            }), 200
+
+        except Exception as e:
+            return jsonify({
+                "success": False,
+                "message": str(e)
+            }), 500
+
+        
+
+import time
+@app.route('/api/stockvsageing', methods=['GET'])
+def stockvsageing():
     yyyymm = request.args.get("yyyymm")        # e.g., "202510"
     location = request.args.get("location")  # e.g., "ST01"
 
@@ -36,13 +161,13 @@ def salestable():
     cur = conn.cursor()
     
     sql_query = """
-            SELECT SEC_CODE,SEC_NAME,TOTAL_BUDGET,BUD_AVG,TILL_SALES, TILL_SALES/31 AVG_SALE,REMARK ,LOC_CODE,YYYYMM,
-            NVL(TOTAL_BUDGET,0) - NVL(TILL_SALES,0) DIFFERENCE,
-            ROUND((NVL(TOTAL_BUDGET,0) - NVL(TILL_SALES,0))/NVL(TILL_SALES,0)*100,2) DIF_PERC
-            FROM KWT_PPT_SALES_BUDGET A
-            WHERE LOC_CODE = :loc
-            AND YYYYMM = :yyyymm
-            ORDER BY SEC_CODE
+            SELECT SEC_CODE,SEC_NAME,SKU_COUNT,STOCK_QTY, VALUE, AGE_180, AGE_365, AGE_ABOVE730, MONTH_SALES, MONTH_SALES-MONTH_COST PROFIT,
+            ROUND((MONTH_SALES-MONTH_COST)/MONTH_SALES *100,2) GP_PERC,
+            ROUND(VALUE/AVG_COST_DAY,2) STOCK_dAYS
+            FROM KWT_PPT_STOCK_VS_SALES
+            WHERE LOC=:loc
+            AND YYYYMM=:yyyymm 
+            ORDER BY 1
             """
 
     cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
@@ -56,16 +181,6 @@ def salestable():
     results = []
     for row in cur.fetchall():
         row_dict = dict(zip(columns, row))
-        
-        # Remove unwanted keys
-        for bad_key in ['', "''", None, 'BUDGET']:
-            if bad_key in row_dict:
-                row_dict.pop(bad_key)
-        
-        # Trim spaces only in SEC_CODE
-        if 'SEC_CODE' in row_dict and isinstance(row_dict['SEC_CODE'], str):
-            row_dict['SEC_CODE'] = row_dict['SEC_CODE'].strip()
-        
         results.append(row_dict)
 
     cur.close()
@@ -73,65 +188,7 @@ def salestable():
 
   
     return jsonify(results)
-@app.route('/api/budget', methods=['POST',"GET"])
-def update_remark():
-    data = request.get_json()
-    print(data)
-    remark = data.get('remark') if 'remark' in data else data.get('REMARK')
-    loc_code = data.get('LOC_CODE')  
-    yyyymm = data.get('YYYYMM') 
-    yyyymm = data.get('YYYYMM') 
-    sec_code = data.get('SEC_CODE') 
 
-
-    try:
-       
-        conn = connection()
-        cur = conn.cursor()
-
-        sql_update = """
-            UPDATE KWT_PPT_SALES_BUDGET
-            SET REMARK = :remark
-            WHERE LOC_CODE = :loc_code
-              AND YYYYMM = :yyyymm
-              AND trim(SEC_CODE) = trim(:sec_code)
-        """
-
-        cur.execute(sql_update, {
-            'remark': remark,
-            'loc_code': loc_code,
-            'yyyymm': yyyymm,
-            'sec_code': sec_code
-        })
-
-        conn.commit()
-        updated_rows = cur.rowcount
-
-        cur.close()
-        conn.close()
-
-        if updated_rows == 0:
-            return jsonify({
-                "success": False,
-                "message": f"No record found for SEC_CODE={sec_code}, LOC_CODE={loc_code}, YYYYMM={yyyymm}"
-            }), 404
-
-        return jsonify({
-            "success": True,
-            "message": f"Remark updated for section {sec_code}",
-            "data": {
-                "SEC_CODE": sec_code,
-                "LOC_CODE": loc_code,
-                "YYYYMM": yyyymm,
-                "REMARK": remark
-            }
-        }), 200
-
-    except Exception as e:
-        return jsonify({
-            "success": False,
-            "message": str(e)
-        }), 500
 
 
 @app.route('/api/locations', methods=["GET"])
