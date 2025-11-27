@@ -6,6 +6,9 @@ import TargetVsAchievement from "../slides/TargetVsAchievement";
 import StockvsAgeing from "../slides/StockvsAgeing";
 import Chart from "../slides/Chart";
 import SectionPerformanceChart from "../slides/Chart2";
+import MonthWiseCustomerComparison from "../slides/MonthWiseCustomerComparison";
+import MonthWiseSalesComparison from "../slides/MonthWiseSalesComparison";
+import MonthWiseBasketValueComparison from "../slides/MonthWiseBasketValueComparison";
 
 export type Slide = {
   id: number;
@@ -42,21 +45,21 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
     },
     {
       id: 4,
-      component: <Chart/>,
-      label: "4 slide",
-      headerTitle: '1'
+      component: <MonthWiseSalesComparison/>,
+      label: "Month-wise Sales 2022-2025",
+      headerTitle: 'Month-wise Sales Comparison'
     },
     {
       id: 5,
-      component: <SlideTemplate title="Second 5" bgColor="bg-gray-200" />,
-      label: "5 slide",
-      headerTitle: '1'
+      component: <MonthWiseCustomerComparison/>,
+      label: "Month-wise Customer 2022-2025",
+      headerTitle: 'Month-wise Customer Comparison'
     },
     {
       id: 6,
-      component: <SlideTemplate title="Second 6" bgColor="bg-gray-200" />,
-      label: "6 slide",
-      headerTitle: '1'
+      component: <MonthWiseBasketValueComparison/>,
+      label: "Month-wise Basket value 2022-2025",
+      headerTitle: 'Month-wise Basket value Comparison'
     },
     {
       id: 7,

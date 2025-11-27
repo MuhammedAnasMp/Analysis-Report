@@ -191,6 +191,142 @@ def stockvsageing():
 
 
 
+
+@app.route('/api/month-wise-sales-comparison', methods=['GET'])
+def monthwisesalescomparison():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+    
+    sql_query = """
+            SELECT distinct to_char(doc_Date,'MM-MONTH')MM,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN SALE_vALUE END),0)SALES25,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2024 THEN SALE_vALUE END),0)SALES24,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2023 THEN SALE_vALUE END),0)SALES23,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2022 THEN SALE_vALUE END),0)SALES22
+            FROM KWT_LIVE_sALE_SUMMARY_dETL
+            WHERE LOC_CODE=:loc
+            AND TO_CHAR(DOC_dATE,'YYYYMM')<=:yyyymm
+            AND DOC_dATE>='01-JAN-21'
+            GROUP BY to_char(doc_Date,'MM-MONTH')
+            ORDER BY 1
+            """
+
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+ 
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+  
+    return jsonify(results)
+
+
+
+@app.route('/api/month-wise-customer-comparison', methods=['GET'])
+def monthwisecustomercomparison():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+    
+    sql_query = """
+           SELECT distinct to_char(doc_Date,'MM-MONTH')MM,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN CUSTOMER_COUNT END),0)CUSTOMER25,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2024 THEN CUSTOMER_COUNT END),0)CUSTOMER24,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2023 THEN CUSTOMER_COUNT END),0)CUSTOMER23,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2022 THEN CUSTOMER_COUNT END),0)CUSTOMER22
+            FROM KWT_LIVE_sALE_SUMMARY_dETL
+            WHERE LOC_CODE=:loc
+            AND TO_CHAR(DOC_dATE,'YYYYMM')<=:yyyymm
+            AND DOC_dATE>='01-JAN-21'
+            GROUP BY to_char(doc_Date,'MM-MONTH')
+            ORDER BY 1
+            """
+
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+ 
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+  
+    return jsonify(results)
+
+
+
+
+@app.route('/api/month-wise-basket-value-comparison', methods=['GET'])
+def monthwisebasketvaluecomparison():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+    
+    sql_query = """
+           SELECT MM, ROUND(SALES25/CUSTOMER25,3) BK_2025 ,ROUND(SALES24/CUSTOMER24,3) BK_2024,  ROUND(SALES23/CUSTOMER23,3)BK_2023,  ROUND(SALES22/CUSTOMER22,3)BK_2022 FROM (
+            SELECT distinct to_char(doc_Date,'MM-MONTH')MM,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN CUSTOMER_COUNT END),0)CUSTOMER25,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2024 THEN CUSTOMER_COUNT END),0)CUSTOMER24,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2023 THEN CUSTOMER_COUNT END),0)CUSTOMER23,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2022 THEN CUSTOMER_COUNT END),0)CUSTOMER22,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN SALE_vALUE END),0)SALES25,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2024 THEN SALE_vALUE END),0)SALES24,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2023 THEN SALE_vALUE END),0)SALES23,
+            ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2022 THEN SALE_vALUE END),0)SALES22
+            FROM KWT_LIVE_sALE_SUMMARY_dETL
+            WHERE LOC_CODE=:loc
+            AND TO_CHAR(DOC_dATE,'YYYYMM')<=:yyyymm
+            AND DOC_dATE>='01-JAN-21'
+            GROUP BY to_char(doc_Date,'MM-MONTH'))
+            ORDER BY 1
+            """
+
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+ 
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+  
+    return jsonify(results)
+
+
+
 @app.route('/api/locations', methods=["GET"])
 def getlocations():
     conn = connection()

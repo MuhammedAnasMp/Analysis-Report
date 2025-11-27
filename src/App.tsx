@@ -4,7 +4,6 @@ import LandingSlides  from './layouts/LandingSlides';
 import Navbar from './layouts/Navbar';
 
 
-
 async function loadPreline() {
   return import('preline/dist/index.js');
 }
@@ -26,15 +25,20 @@ function App() {
     initPreline();
   }, [location.pathname]);
   return (
-    <div className='h-'>
-      <Navbar currentSlide={activeSlide}/>
-      <Routes>
-        <Route path="/" element={   <LandingSlides onChange={(slide) => {setActiveSlide(slide)}} />} />
-      </Routes>
+  <div className="">
+    <Navbar currentSlide={activeSlide} />
 
-    </div>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <LandingSlides onChange={(slide) => setActiveSlide(slide)} />
+        }
+      />
+    </Routes>
+  </div>
+);
 
-  );
 }
 export default App;
 

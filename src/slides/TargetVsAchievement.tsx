@@ -196,8 +196,14 @@ export default function TargetVsAchievement() {
             const agRoot = wrapper.querySelector(".ag-root");
             if (!agRoot) return;
 
-            const customFooter = document.createElement('div')
-            agRoot.appendChild(customFooter)
+            // REMOVE old footer before adding new one
+            const existingFooter = agRoot.querySelector(".custom-footer");
+            if (existingFooter) existingFooter.remove();
+
+            const customFooter = document.createElement('div');
+            customFooter.className = "custom-footer";   // important!
+            agRoot.appendChild(customFooter);
+
 
 
 
@@ -302,6 +308,7 @@ export default function TargetVsAchievement() {
                     noRowsOverlayComponent={NoRowsOverlay}
                     onFilterChanged={getFilteredData}
                     loadingOverlayComponent={CustomLoadingOverlay}
+                    
 
                 />
             </div>

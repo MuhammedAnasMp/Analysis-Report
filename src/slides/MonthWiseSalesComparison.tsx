@@ -9,98 +9,103 @@ import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
+import { param } from 'jquery'
+import ReactApexChart from 'react-apexcharts'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function TargetVsAchievement() {
+export default function MonthWiseSalesComparison() {
     const [isLoading, setLoading] = useState(false)
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
 
     const [colDef] = useState<ColDef<any>[]>([
-        { field: "SEC_CODE", headerName: "Code", cellClass: "text-center", flex: 1 },
-        { field: "SEC_NAME", headerName: "Section", cellClass: "text-left", flex: 1 },
-        {
-            field: "SKU_COUNT",
-            headerName: "SKU Count",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "STOCK_QTY",
-            headerName: "Stock Quantity",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "VALUE",
-            headerName: "Value",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "AGE_180",
-            headerName: "6 Month Ageing",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "AGE_365",
-            headerName: "1 Year Ageing",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "AGE_ABOVE730",
-            headerName: "2 Year + Ageing",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "MONTH_SALES",
-            headerName: "Monthly Sales",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "PROFIT",
-            headerName: "Profit",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
+        { field: "MM", headerName: "Month", cellClass: "text-center", flex: 1 },
+        { field: "SALES22", headerName: "Sales - 2022", cellClass: "text-right", flex: 1 },
+        { field: "SALES23", headerName: "Sales - 2023", cellClass: "text-right", flex: 1 },
+        { field: "SALES24", headerName: "Sales - 2024", cellClass: "text-right", flex: 1 },
+        { field: "SALES25", headerName: "Sales - 2025", cellClass: "text-right", flex: 1 },
+        // {
+        //     field: "SKU_COUNT",
+        //     headerName: "SKU Count",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "STOCK_QTY",
+        //     headerName: "Stock Quantity",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "VALUE",
+        //     headerName: "Value",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "AGE_180",
+        //     headerName: "6 Month Ageing",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "AGE_365",
+        //     headerName: "1 Year Ageing",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "AGE_ABOVE730",
+        //     headerName: "2 Year + Ageing",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "MONTH_SALES",
+        //     headerName: "Monthly Sales",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "PROFIT",
+        //     headerName: "Profit",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
 
-        {
-            field: "GP_PERC",
-            headerName: "GP %",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
-        {
-            field: "STOCK_DAYS",
-            headerName: "Stock Days",
-            cellClass: "text-right",
-            flex: 1,
-            cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },
+        // {
+        //     field: "GP_PERC",
+        //     headerName: "GP %",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
+        // {
+        //     field: "STOCK_DAYS",
+        //     headerName: "Stock Days",
+        //     cellClass: "text-right",
+        //     flex: 1,
+        //     cellStyle: params =>
+        //         params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+        // },
         // {
         //     field: "DIF_PERC",
         //     headerName: "% Hike/Decline",
@@ -131,44 +136,6 @@ export default function TargetVsAchievement() {
 
     const { selectedStore, selectedDate } = useSelector((state: RootState) => state.store);
 
-    const lastEdit = useRef<{ code: string; value: any } | null>(null);
-
-    // const handleCellValueChanged = async (event: CellValueChangedEvent) => {
-    //     const { data, colDef, newValue, oldValue } = event;
-
-    //     // Only handle REMARK edits
-    //     if (colDef.field !== "REMARK" || newValue === oldValue) return;
-
-    //     const code = data.SEC_CODE?.trim(); // Use SEC_CODE as unique key
-
-    //     //  Prevent duplicate API hits for same SEC_CODE and value
-    //     if (
-    //         lastEdit.current &&
-    //         lastEdit.current.code === code &&
-    //         lastEdit.current.value === newValue
-    //     ) {
-    //         return;
-    //     }
-    //     lastEdit.current = { code, value: newValue };
-
-    //     try {
-    //         const res = await fetch(`http://localhost:5000/api/budget`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //             },
-    //             body: JSON.stringify({ REMARK: newValue, ...data }),
-    //         });
-
-    //         if (!res.ok) throw new Error("Failed to update");
-
-    //     } catch (err) {
-    //         console.error("❌ Update failed:", err);
-
-    //         // event.node.setDataValue("REMARK", oldValue);
-    //     }
-    // };
-
     useEffect(() => {
         if (!selectedDate || !selectedStore) return;
 
@@ -181,7 +148,7 @@ export default function TargetVsAchievement() {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://localhost:5000/api/stockvsageing?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://localhost:5000/api/month-wise-sales-comparison?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -214,7 +181,7 @@ export default function TargetVsAchievement() {
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         console.log("data", data)
-        const numericCols = ["SKU_COUNT", "STOCK_QTY", "VALUE", "AGE_180", "AGE_365", "AGE_ABOVE730", "MONTH_SALES", "PROFIT", "GP_PERC", "STOCK_DAYS"]
+        const numericCols = ["SALES22", "SALES23", "SALES24", "SALES25",]
 
         console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -232,7 +199,7 @@ export default function TargetVsAchievement() {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const wrapper = rootRef.current;
+            const wrapper = rootRefSale.current;
             if (!wrapper) return;
 
             const agRoot = wrapper.querySelector(".ag-root");
@@ -247,7 +214,7 @@ export default function TargetVsAchievement() {
 
 
             const { total } = calculateTotals(filtered.length ? filtered : rowData)
-            console.log(total)
+
             const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
@@ -265,7 +232,7 @@ export default function TargetVsAchievement() {
                         formattedVal = val / data.length
                     }
 
-                    const formatted = (formattedVal).toFixed(2)
+                    const formatted = formattedVal
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
@@ -273,9 +240,6 @@ export default function TargetVsAchievement() {
                     rowHTML += `<div></div>`
                 }
             })
-
-
-
 
             customFooter.innerHTML = `
                     <div class="w-full bg-gray-100 border-t border-gray-300 "
@@ -325,16 +289,95 @@ export default function TargetVsAchievement() {
             )}
         </div>
     );
-    const rootRef = useRef<HTMLDivElement | null>(null);
+    const rootRefSale = useRef<HTMLDivElement | null>(null);
+
+
+    
+    
+const [options, setOptions] = useState({});
+const [series, setSeries] = useState<any>([]);
+
+useEffect(() => {
+
+    // Use filtered if available, else fallback to rowData
+    const source = filtered?.length ? filtered : rowData;
+
+    // Build categories
+    const categories = source.map(item => item.MM?.trim());
+
+    // Build series
+    const newSeries = [
+        {
+            name: "Sales 2022",
+            data: source.map(item => item.SALES22 ?? 0)
+        },
+        {
+            name: "Sales 2023",
+            data: source.map(item => item.SALES23 ?? 0)
+        },
+        {
+            name: "Sales 2024",
+            data: source.map(item => item.SALES24 ?? 0)
+        },
+        {
+            name: "Sales 2025",
+            data: source.map(item => item.SALES25 ?? 0)
+        }
+    ];
+
+    // ApexChart options
+    const newOptions: any = {
+        chart: {
+            type: "bar",
+            height: 380,
+            toolbar: { show: true }
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 6,
+                columnWidth: "45%"
+            }
+        },
+        colors: ["#2563EB", "#10B981", "#F59E0B" , "#FF391A"],
+        dataLabels: {
+            enabled: false
+        },
+        xaxis: {
+            categories,
+            labels: {
+                style: { fontSize: "13px" }
+            }
+        },
+        yaxis: {
+            labels: {
+                formatter: (v: number) => v.toLocaleString()
+            }
+        },
+        legend: {
+            position: "top"
+        },
+        tooltip: {
+            y: {
+                formatter: (v: number) => v.toLocaleString()
+            }
+        }
+    };
+
+    setSeries(newSeries);
+    setOptions(newOptions);
+
+}, [rowData, filtered]);   // 🔥 return whenever data changes
+
     return (
-        <div className="summary-grid-wrapper" ref={rootRef}>
-            <div className="ag-theme-quartz h-[calc(100vh-150px)] w-full relative">
+        <div className="summary-grid-wrapper " ref={rootRefSale}>
+        
+            <div className="ag-theme-quartz h-[calc(50vh-10px)] w-full relative">
 
                 <AgGridReact
                     ref={gridRef}
                     rowData={rowData}
                     columnDefs={colDef}
-                    pagination={true}
+                    // pagination={true}
                     defaultColDef={{
                         sortable: true,
                         filter: true,
@@ -347,6 +390,14 @@ export default function TargetVsAchievement() {
                     noRowsOverlayComponent={NoRowsOverlay}
                     onFilterChanged={getFilteredData}
                     loadingOverlayComponent={CustomLoadingOverlay}
+                />
+            </div>
+            <div className="w-full pt-4">
+                <ReactApexChart
+                    options={options}
+                    series={series}
+                    type="bar"
+                    height={380}
                 />
             </div>
         </div>
