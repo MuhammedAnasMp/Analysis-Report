@@ -102,7 +102,7 @@ export default function MonthWiseBasketValueComparison() {
 
         const hideView = hasAnyFilterValue && filteredNodes.length === 0;
 
-        console.log("hideView:", hideView);
+        //console.log("hideView:", hideView);
         setHideView(hideView)
 
         return filteredNodes;
@@ -110,10 +110,10 @@ export default function MonthWiseBasketValueComparison() {
 
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
-        console.log("data", data)
+        //console.log("data", data)
         const numericCols = ["BK_2022", "BK_2023", "BK_2024", "BK_2025",]
 
-        console.log('numericCols', numericCols)
+        //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
         const avg: Record<string, number> = {}
 

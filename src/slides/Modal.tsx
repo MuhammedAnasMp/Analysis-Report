@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../redux/app/rootReducer";
 import useToast from "../hooks/Toast";
+import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import NoDatafound from "../componenets/vectorIllustrations/NoDataFound";
 import NotSelected from "../componenets/vectorIllustrations/NotSelected";
@@ -17,6 +18,7 @@ interface Option {
 
 interface FormData {
   id?: number;
+  created_at?: any;
   user_id?: string | null;
   user_name?: string | null;
   sales_area_id?: number | null;
@@ -25,20 +27,7 @@ interface FormData {
   yyyymm?: string | null;
 }
 
-const formatToYYYYMM = (date: any): string => {
-  if (!date) return "";
 
-  const validDate = new Date(date);   // <-- convert to real Date
-  if (isNaN(validDate.getTime())) {
-    console.error("Invalid date:", date);
-    return "";
-  }
-
-  const year = validDate.getFullYear();
-  const month = (validDate.getMonth() + 1).toString().padStart(2, "0");
-
-  return `${year}${month}`;
-};
 const FullScreenModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [options, setOptions] = useState<Option[]>([]);
@@ -48,11 +37,9 @@ const FullScreenModal: React.FC = () => {
   const [apiTriggerArea, setApiTriggerArea] = useState<boolean>(false);
   const [areName, setAreaName] = useState<string>('');
   const { showToast } = useToast()
-  const dispatch = useDispatch()
-  const handleDateChange = (date: Date | null) => {
 
-    dispatch(setSelectedDate(date));
-  };
+  const [formattedDate, setFormattedDate] = useState<any>('')
+
   useEffect(() => {
     try {
       fetch(`http://172.16.4.167:5000/sales_area`)
@@ -67,9 +54,30 @@ const FullScreenModal: React.FC = () => {
 
   }, [selectedDate, apiTriggerArea])
 
+  const [confirm, setConfirm] = useState<number |null>(null);
   useEffect(() => {
+    const formatToYYYYMM = (date: any): string => {
+      if (!date) return "";
+
+      const validDate = new Date(date);   // <-- convert to real Date
+      if (isNaN(validDate.getTime())) {
+        console.error("Invalid date:", date);
+        return "";
+      }
+
+      const year = validDate.getFullYear();
+      const month = (validDate.getMonth() + 1).toString().padStart(2, "0");
+
+      return `${year}${month}`;
+    };
+    const date = formatToYYYYMM(selectedDate)
+    setFormattedDate(date)
+  }, [selectedDate])
+
+  useEffect(() => {
+    if (!formattedDate) return
     try {
-      fetch(`http://172.16.4.167:5000/improvement_plans/${formatToYYYYMM(selectedDate)}`)
+      fetch(`http://172.16.4.167:5000/improvement_plans/${formattedDate}`)
         .then(result => result.json())
         .then((data: FormData[]) => {
           setCreatedPlans(data.reverse());
@@ -82,7 +90,7 @@ const FullScreenModal: React.FC = () => {
     }
 
 
-  }, [selectedDate, apiTrigger])
+  }, [selectedDate, apiTrigger, formattedDate])
 
 
 
@@ -96,7 +104,7 @@ const FullScreenModal: React.FC = () => {
     sales_area_id: null,
     suggestion: "",
     loc_code: selectedStore?.LOCATION_ID,
-    yyyymm: formatToYYYYMM(selectedDate)
+    yyyymm: formattedDate
   });
 
   const [createNewSaleArea, setNewSaleArea] = useState<boolean>(true)
@@ -104,16 +112,46 @@ const FullScreenModal: React.FC = () => {
   const [apiCalling, setApiCaling] = useState(false)
 
   const handleCreateSuggestion = () => {
-    if (!formData.sales_area_id) {
-      showToast({
-        type: "markup2",
-        message: "Please select a area to add action plan",
-        status: "normal",
-        avatar: <ExclamationCircleIcon className="size-6 text-blue-500" />,
-        duration: 3000,
-      })
-      return
+    if (createNewSaleArea) {
+      if (!formData.sales_area_id) {
+        showToast({
+          type: "markup2",
+          message: "Please select a area to add action plan",
+          status: "normal",
+          avatar: <ExclamationCircleIcon className="size-6 text-blue-500" />,
+          duration: 3000,
+        })
+        return
+      }
     }
+    else {
+      if (areName === "") {
+        showToast({
+          type: "markup2",
+          message: "Please enter area name to add action plan",
+          status: "normal",
+          avatar: <ExclamationCircleIcon className="size-6 text-blue-500" />,
+          duration: 3000,
+        });
+        return;
+      } else {
+        const id = Number(areName);
+
+        // If it converts to number → show error
+        if (!isNaN(id)) {
+          showToast({
+            type: "markup2",
+            message: "Area name cannot be a number. Please enter a valid name.",
+            status: "normal",
+            avatar: <ExclamationCircleIcon className="size-6 text-red-500" />,
+            duration: 3000,
+          });
+          return;
+        }
+
+      }
+    }
+
     if (!formData.suggestion) {
       showToast({
         type: "markup2",
@@ -137,10 +175,10 @@ const FullScreenModal: React.FC = () => {
           body: JSON.stringify({
             user_id: formData.user_id,
             user_name: formData.user_name,
-            sales_area_id: formData.sales_area_id,
+            sales_area_id: !createNewSaleArea ? areName : formData.sales_area_id,
             suggestion: formData.suggestion,
             loc_code: formData.loc_code,
-            yyyymm: formData.yyyymm
+            yyyymm: formattedDate
           })
         });
 
@@ -161,8 +199,10 @@ const FullScreenModal: React.FC = () => {
             sales_area_id: formData.sales_area_id,
             suggestion: "",
             loc_code: selectedStore?.LOCATION_ID,
-            yyyymm: formatToYYYYMM(selectedDate)
+            yyyymm: formattedDate
           })
+          setNewSaleArea(true)
+          setAreaName('')
         } else {
           console.error("Server error:", data);
           showToast({
@@ -299,11 +339,22 @@ const FullScreenModal: React.FC = () => {
 
   }
 
+  const normalizeToYYYYMM = (input: Date | string | null | undefined) => {
+    if (!input) return null;
+    const d = input instanceof Date ? input : new Date(input);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    return `${year}${month}`;
+  };
+
   return (
     <div>
       {/* Button to open modal */}
       <button
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          setIsOpen(true);
+          setApiTrigger((pre) => !pre)
+        }}
         className="px-4 py-2 bg-blue-600 !text-white  !rounded hover:bg-blue-700 transition"
       >
         Action Plan
@@ -328,9 +379,12 @@ const FullScreenModal: React.FC = () => {
                 id="modal-title"
                 className="text-lg font-bold text-gray-800 dark:text-white"
               >Action Plan </h3>
-
+              <div>
+                username :{userDetails?.username}
+                id :{userDetails?.id}
+              </div>
               <div className="absolute right-12">
-                <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} key={3} />
+                <SmallDatePicker value={selectedDate} onDateChange={() => { }} key={3} />
               </div>
               <button
                 type="button"
@@ -341,7 +395,6 @@ const FullScreenModal: React.FC = () => {
                 <XMarkIcon height={20} width={20} />
               </button>
             </div>
-
 
 
 
@@ -370,82 +423,116 @@ const FullScreenModal: React.FC = () => {
                           {
                             createNewSaleArea ?
                               <>
-                                <select
+                                <div className=" flex gap-2">
 
-                                  name="sales_area"
-                                  onChange={(e) => {
-                                    setFormData((prev: any) => ({
-                                      ...prev,
-                                      sales_area_id: Number(e.target.value)   // update sales area
-                                    }));
-                                  }}
-                                  value={formData.sales_area_id || ""}
-                                  className="py-1.5 sm:py-2 px-3 block w-64 border focus:outline-none border-gray-200 shadow-2xs sm:text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 undefined"
-                                >
-                                  <option value=""> -- Select Area -- </option>
+                                  <select
 
-                                  {options?.map((sales_area: Option) => (
-                                    <option
-                                      value={sales_area.area_id}
-                                      key={sales_area.area_id}
+                                    name="sales_area"
+                                    onChange={(e) => {
+                                      setFormData((prev: any) => ({
+                                        ...prev,
+                                        sales_area_id: Number(e.target.value)   // update sales area
+                                      }));
+                                    }}
+                                    value={formData.sales_area_id || ""}
+                                    className="py-1.5 sm:py-2 px-3 block w-64 border focus:outline-none border-gray-200 shadow-2xs sm:text-sm rounded-lg focus:border-blue-500 focus:ring-blue-500 checked:border-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600 undefined"
+                                  >
+                                    <option value=""> -- Select Area -- </option>
 
+                                    {options?.map((sales_area: Option) => (
+                                      <option
+                                        value={sales_area.area_id}
+                                        key={sales_area.area_id}
+
+                                      >
+                                        {sales_area.area_name}
+                                      </option>
+                                    ))}
+
+                                  </select>
+                                  <div className="" >
+                                    <div onClick={() => setNewSaleArea((pre) => !pre)} className="borded  border-2 p-2 rounded-md  inline-flex shrink-0 justify-center items-center text-sm font-medium  text-white bg-blue-600 hover:bg-blue-500 focus:outline-hidden focus:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none">Other Area</div>
+
+                                  </div >
+                                </div>
+
+                                {
+                                  (userDetails?.id === "ANAS" || userDetails?.id === "SADAKU") &&
+                                  <div className="">
+                                    <div
+                                      onClick={() => setNewSaleArea((pre) => !pre)}
+                                      className="borded mr-3 border-2 p-2 rounded-md inline-flex shrink-0 justify-center items-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 focus:outline-hidden focus:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                                     >
-                                      {sales_area.area_name}
-                                    </option>
-                                  ))}
-                                </select>
+                                      <PlusIcon height={20} width={20} />Add Area
+                                    </div>
+                                  </div>
+                                }
 
-                                <div className="" >
-
-                                  <div onClick={() => setNewSaleArea((pre) => !pre)} className="borded mr-3 border-2 p-2 rounded-md  inline-flex shrink-0 justify-center items-center text-sm font-medium  text-white bg-blue-600 hover:bg-blue-500 focus:outline-hidden focus:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none"><PlusIcon height={20} width={20} />Add Area</div>
-                                </div >
 
                               </>
 
                               :
 
+
+
                               <div className="flex gap-2 justify-between w-full">
 
                                 <div>
-                                  <input
-                                    type="text"
-                                    name='first_name'
-                                    value={areName}
-                                    onChange={(event) => {
-                                      setAreaName(event.target.value)
-                                    }}
-                                    placeholder={`Enter any area name  `}
-                                    autoFocus
-                                    className="flex-grow text-sm bg-transparent outline-none  w
-                                                border  hover:bg-white dark:hover:bg-transparent  border-gray-200
-                                                hover:border-gray-200 dark:hover:border-neutral-700 
-                                                focus:border-blue-300 dark:focus:border-neutral-600 
-                                                 dark:border-neutral-700 
-                                                rounded-lg p-2 text-gray-700 dark:text-white 
-                                                placeholder:text-gray-400  transition-colors duration-200 w-64"
+                                  <div className="flex gap-2">
+                                    <input
+                                      type="text"
+                                      name='first_name'
+                                      value={areName}
+                                      onChange={(event) => {
+                                        setAreaName(event.target.value)
+                                      }}
+                                      placeholder={`Enter any area name  `}
+                                      autoFocus
+                                      className="flex-grow text-sm bg-transparent outline-none  w
+                                    border  hover:bg-white dark:hover:bg-transparent  border-gray-200
+                                    hover:border-gray-200 dark:hover:border-neutral-700 
+                                    focus:border-blue-300 dark:focus:border-neutral-600 
+                                    dark:border-neutral-700 
+                                    rounded-lg p-2 text-gray-700 dark:text-white 
+                                    placeholder:text-gray-400  transition-colors duration-200 w-64"
 
-                                  />
-                                </div>
+                                    />
+                                    <div onClick={() => {
+                                      setNewSaleArea((pre) => !pre)
+                                      setAreaName("")
+                                      setFormData((prev: FormData) => ({
+                                        ...prev, sales_area_id: null
 
-                                <div className='flex gap-1 '>
-                                  <div onClick={() => {
-                                    setNewSaleArea((pre) => !pre)
-                                    setAreaName("")
-                                    setFormData((prev: FormData) => ({
-                                      ...prev, sales_area_id: null
-
-                                    }))
-                                  }} className="flex  justify-center items-center px-2 hover:bg-red-400 hover:text-white text-red-400 border rounded-lg border-transparentborder-red-600 transition-colors duration-200 ">
-                                    <XMarkIcon height={20} width={20} />
-                                  </div>
-                                  <div onClick={() => {
-
-                                    handleCreateNewArea()
-                                  }} className=" flex justify-center items-center px-2 hover:bg-green-400 hover:text-white text-green-400 border rounded-lg border-transparentborder-green-600 transition-colors duration-200 ">
-                                    <CheckIcon height={20} width={20} />
+                                      }))
+                                    }} className="flex  justify-center items-center m-0.5 px-2 hover:bg-red-400 hover:text-white text-red-400 border rounded-lg border-transparentborder-red-600 transition-colors duration-200 ">
+                                      <XMarkIcon height={20} width={20} />
+                                    </div>
                                   </div>
                                 </div>
 
+
+                                {
+                                  (userDetails?.id === "ANAS" || userDetails?.id === "SADAKU") &&
+
+                                  <div className='flex gap-1 '>
+                                    <div onClick={() => {
+                                      setNewSaleArea((pre) => !pre)
+                                      setAreaName("")
+                                      setFormData((prev: FormData) => ({
+                                        ...prev, sales_area_id: null
+
+                                      }))
+                                    }} className="flex  justify-center items-center px-2 hover:bg-red-400 hover:text-white text-red-400 border rounded-lg border-transparentborder-red-600 transition-colors duration-200 ">
+                                      <XMarkIcon height={20} width={20} />
+                                    </div>
+                                    <div onClick={() => {
+
+                                      handleCreateNewArea()
+                                    }} className=" flex justify-center items-center px-2 hover:bg-green-400 hover:text-white text-green-400 border rounded-lg border-transparentborder-green-600 transition-colors duration-200 ">
+                                      <CheckIcon height={20} width={20} />
+                                    </div>
+                                  </div>
+                                }
 
                               </div>
                           }
@@ -521,7 +608,20 @@ const FullScreenModal: React.FC = () => {
                                                 <ChartBarSquareIcon height={15} width={15} />
                                               </button>
                                               <span className="text-sm text-gray-600">
-                                                {options?.find(option => option.area_id === createdPlan.sales_area_id)?.area_name || 'N/A'}
+                                                {
+                                                  (() => {
+                                                    const id = Number(createdPlan.sales_area_id);
+
+                                                    // If conversion to number works
+                                                    if (!isNaN(id)) {
+                                                      return options?.find(option => option.area_id === id)?.area_name || 'N/A';
+                                                    }
+
+                                                    // Otherwise treat it as a string
+                                                    return createdPlan.sales_area_id || 'N/A';
+                                                  })()
+                                                }
+
                                               </span>
                                               {/* End Mic Button */}
 
@@ -540,24 +640,68 @@ const FullScreenModal: React.FC = () => {
                                             <div className="flex items-center gap-x-1">
                                               {/* Mic Button */}
                                               {/* <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-                                          <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                            <line x1="12" x2="12" y1="19" y2="22"></line>
-                                          </svg>
-                                        </button> */}
+                                                <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                                                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                                  <line x1="12" x2="12" y1="19" y2="22"></line>
+                                                  sdfdf
+                                                </svg>
+                                              </button> */}
                                               {/* End Mic Button */}
 
                                               {/* Send Button */}
-                                              <button
-                                                onClick={() => createdPlan.id !== undefined && handleDeletePlan(createdPlan.id)}
-                                                type="button"
-                                                className="inline-flex shrink-0 justify-center items-center size-8  !text-red  bg-white !rounded  border-e-amber-700  hover:bg-red-100 border-red-600  hover hover:text-white focus:z-10 focus:outline-hidden "
-                                              >
+                                              {
+                                                <>
+                                                  {createdPlan.user_id === userDetails?.id &&    (
+                                                    <>
+                                                      {confirm === createdPlan.id ?  (
+                                                        /* --- Confirmation Buttons --- */
+                                                        <div className="flex gap-2 justify-center items-center">
+
+                                                         <p>Confirm Delete </p> 
+                                                          <button
+                                                            onClick={() =>
+                                                              createdPlan.id && handleDeletePlan(createdPlan.id)
+                                                            }
+                                                            type="button"
+                                                            className="inline-flex shrink-0 justify-center items-center size-8  !text-green  bg-white !rounded  border-e-green-400  hover:bg-green-100 border-green-600  hover hover:text-white focus:z-10 focus:outline-hidden"
+                                                          >
+                                                            <CheckIcon className="h-5 w-5" />
+                                                          </button>
+
+                                                          {/* Cancel (✕) */}
+                                                          <button
+                                                            onClick={() => setConfirm(null)}
+                                                            type="button"
+                                                            className="inline-flex shrink-0 justify-center items-center size-8  !text-red  bg-white !rounded  border-e-amber-700  hover:bg-red-100 border-red-600  hover hover:text-white focus:z-10 focus:outline-hidden"
+                                                          >
+                                                            <XMarkIcon className="h-5 w-5" />
+                                                          </button>
+                                                        </div>
+                                                      ) : (
+                                                        /* --- Delete Button (Trash Icon) --- */
+                                                        <button
+                                                          onClick={() => setConfirm(createdPlan.id || null)}
+                                                          type="button"
+                                                          className="inline-flex shrink-0 justify-center items-center size-8  !text-red  bg-white !rounded  border-e-amber-700  hover:bg-red-100 border-red-600  hover hover:text-white focus:z-10 focus:outline-hidden"
+                                                        >
+                                                          <TrashIcon height={16} width={16} />
+                                                        </button>
+                                                      )}
+                                                    </>
+                                                  )}
+                                                </>
+                                              }
+                                              <div>
                                                 <div>
-                                                  <TrashIcon height={15} width={15} className="hover:text-red-900" />
+                                                  {format(
+                                                    new Date(new Date(createdPlan.created_at).getTime() - 60 * 60 * 1000), // subtract 1 hour
+                                                    "dd MMM yyyy, hh:mm a"
+                                                  )}
                                                 </div>
-                                              </button>
+
+                                              </div>
+
                                               {/* End Send Button */}
                                             </div>
                                             {/* End Button Group */}
@@ -580,21 +724,7 @@ const FullScreenModal: React.FC = () => {
                 </div>
               </div>
             }
-            {/* <div className="flex justify-end items-center gap-x-2 py-4 px-6 border-t border-gray-200 dark:border-neutral-700">
-              <button
-                type="button"
-                className="py-2 px-4 text-sm font-medium rounded-lg border bg-white border-gray-200 text-gray-800 hover:bg-gray-50 dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700"
-                onClick={() => setIsOpen(false)}
-              >
-                Close
-              </button>
-              <button
-                type="button"
-                className="px-4 py-2 bg-blue-600 !text-white  !rounded hover:bg-blue-700 transition"
-              >
-                Save
-              </button>
-            </div> */}
+
           </div>
 
         </div>

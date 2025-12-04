@@ -522,10 +522,29 @@ def yeardateperiods():
     cur.close()
     conn.close()
 
+    results = [
+        {
+            "YYYYMM": "202510"
+        },
+        {
+            "YYYYMM": "202509"
+        },
+        {
+            "YYYYMM": "202508"
+        },
+        {
+            "YYYYMM": "202507"
+        },
+        {
+            "YYYYMM": "202506"
+        },
+        {
+            "YYYYMM": "202505"
+        },
+    ]
+
     return jsonify(results)
 
-
-# model endpoints
 
 
 @app.route('/improvement_plans/<yyyymm>', methods=['GET'])
@@ -707,6 +726,9 @@ def create_improvement_plan():
         VALUES (:1, :2, :3, :4 , :5, :6)
     """, (user_id, user_name, sales_area_id, suggestion, yyyymm, loc_code))
     conn.commit()
+
+    cursor.close()
+    conn.close()
     return jsonify({"message": "Improvement plan created successfully"}), 201
 
 
@@ -764,11 +786,62 @@ def decode():
         user_id, user_password, user_name, role = row
 
         print(user_id, user_password, user_name, role)
-     
+
     except Exception as e:
         return jsonify({"error": "Invalid token"})
 
     return jsonify({"username": user_name, "id": user_id})
+
+
+def simple_encrypt(plain_text, key=23):
+
+    xor_text = ''.join(chr(ord(c) ^ key) for c in plain_text)
+
+    encoded = base64.b64encode(xor_text.encode("utf-8")).decode("utf-8")
+    return encoded
+
+
+def reverse_two_digits(val):
+    return int(val[::-1])
+
+
+@app.route("/api/generatetoken", methods=['GET'])
+def encrypt():
+    code_with_time = request.args.get("code")
+
+    if not code_with_time or len(code_with_time) < 4:
+        return jsonify({"error": "Invalid input length"}), 400
+
+    # Extract
+    minutes_rev = code_with_time[0:2]
+    hours_rev = code_with_time[2:4]
+    user_code = code_with_time[4:] if len(code_with_time) > 4 else ""
+
+    try:
+        minutes = reverse_two_digits(minutes_rev)
+        hours = reverse_two_digits(hours_rev)
+    except:
+        return jsonify({"error": "Invalid numeric format"}), 400
+
+    # Current server time
+    now = datetime.now()
+    current_hour = now.hour
+    current_minute = now.minute
+
+    # Check time
+    time_valid = (minutes == current_minute and hours == current_hour)
+
+    if not time_valid:
+        return jsonify({
+            "error": "Invalid code try again",
+            "decoded_time": f"{hours:02}:{minutes:02}",
+            "server_time": f"{current_hour:02}:{current_minute:02}"
+        }), 400
+
+    # If time correct → return ONLY the code
+    return jsonify({
+        "code": simple_encrypt(user_code)
+    })
 
 
 if __name__ == "__main__":

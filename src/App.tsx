@@ -7,14 +7,14 @@ import NotFoundPage from './layouts/NotFoundPage';
 import useToast from './hooks/Toast';
 import { useDispatch } from 'react-redux';
 import { XCircleIcon } from '@heroicons/react/24/solid';
-import { setUserDetails } from './redux/features/pptState/storeSlice';
+import { resetStoreState, setUserDetails } from './redux/features/pptState/storeSlice';
+import { logout } from './redux/features/auth/authSlice';
 
 
 async function loadPreline() {
   return import('preline/dist/index.js');
 }
 function App() {
-  
   const location = useLocation();
 
   const [activeSlide, setActiveSlide] = useState<any>();
@@ -30,6 +30,8 @@ function App() {
       }
     };
 
+
+
     initPreline();
   }, [location.pathname]);
 
@@ -40,7 +42,8 @@ function App() {
     const dispatch = useDispatch()
     const [showNavBar,setShowNavBar] = useState<boolean>(true)
     useEffect(() => {
-  
+      // dispatch(resetStoreState())
+    
       const fetchStores = async () => {
         try {
           fetch(`http://172.16.4.167:5000/api/decode-token?token=${location.pathname.slice(1)}`)
@@ -63,7 +66,7 @@ function App() {
             })
           }
           catch (err) {
-            console.log('error', err)
+            //console.log('error', err)
             setShowNavBar(false)
         }
       }

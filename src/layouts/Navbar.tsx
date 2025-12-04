@@ -82,7 +82,12 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
       <nav className="w-full mx-auto px-50 sm:flex sm:items-center sm:justify-between">
         <div className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore && selectedStore.LOCATION_NAME}</div>
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
-         
+          {/* DARK MODE  */}
+          {/* <label htmlFor="darkSwtich" className="relative inline-block w-11 h-6 cursor-pointer">
+            <input data-hs-theme-switch="" type="checkbox" id="darkSwtich" className="peer sr-only"/>
+              <span className="absolute inset-0 bg-gray-200 rounded-full transition-colors duration-200 ease-in-out peer-checked:bg-blue-600 dark:bg-neutral-700 dark:peer-checked:bg-blue-500 peer-disabled:opacity-50 peer-disabled:pointer-events-none"></span>
+              <span className="absolute top-1/2 start-0.5 -translate-y-1/2 size-5 bg-white rounded-full shadow-sm !transition-transform duration-200 ease-in-out peer-checked:translate-x-full dark:bg-neutral-400 dark:peer-checked:bg-white"></span>
+          </label> */}
           <div ref={dropdownRef} className="relative inline-flex w-48">
             <button
               type="button"
@@ -158,8 +163,8 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
             selectedDate && selectedStore &&
             <FullScreenModal />
           }
-           <div className="flex justify-center items-center text-xl">
-            <UserCircleIcon className="text-gray-400" height={40} widths={40} /> {userDetails?.username} 
+          <div className="flex justify-center items-center text-xl">
+            <UserCircleIcon className="text-gray-400" height={40} widths={40} /> {userDetails?.username}
           </div>
 
           {/* <a className="font-medium text-blue-500 focus:outline-hidden"  aria-current="page">Landing</a>

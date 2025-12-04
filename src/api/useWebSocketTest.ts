@@ -18,14 +18,14 @@ const useWebSocketTest = (roomName: string) => {
                 setMessages((prev) => [...data.messages, ...prev]); // prepend
             } else if (data.type === "chat.message") {
 
-                console.log(data)
+                //console.log(data)
                 setMessages((prev) => [...prev, data]); // append
             }
 
         };
 
         ws.current.onclose = () => {
-            console.log('WebSocket closed');
+            //console.log('WebSocket closed');
         };
 
         return () => {
@@ -42,7 +42,7 @@ const useWebSocketTest = (roomName: string) => {
     // New function to send any command (object) over WS
     const sendCommand = (commandObj: object) => {
         if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-            console.log(commandObj)
+            //console.log(commandObj)
             ws.current.send(JSON.stringify(commandObj));
         }
     };

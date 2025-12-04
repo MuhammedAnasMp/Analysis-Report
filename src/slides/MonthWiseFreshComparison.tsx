@@ -186,7 +186,7 @@ export default function MonthWiseFreshComparison() {
 
         const hideView = hasAnyFilterValue && filteredNodes.length === 0;
 
-        console.log("hideView:", hideView);
+        //console.log("hideView:", hideView);
         setHideView(hideView)
 
         return filteredNodes;
@@ -194,10 +194,10 @@ export default function MonthWiseFreshComparison() {
 
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
-        console.log("data", data)
+        //console.log("data", data)
         const numericCols = ["BAKERY", "BAKERY_PREV", "BUTCHERY", "BUTCHERY_PREV", "FISHERY", "FISHERY_PREV", "FRUITS_VEG", "FRUITS_VEG_PREV", "HOTFOOD", "HOTFOOD_PREV"]
 
-        console.log('numericCols', numericCols)
+        //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
         const avg: Record<string, number> = {}
 

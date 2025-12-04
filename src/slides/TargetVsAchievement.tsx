@@ -228,7 +228,7 @@ export default function TargetVsAchievement() {
 
 
             const { total } = calculateTotals(filtered.length ? filtered : rowData)
-            console.log(total)
+       
             const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length

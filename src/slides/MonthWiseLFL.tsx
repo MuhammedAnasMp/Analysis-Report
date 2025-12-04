@@ -152,17 +152,17 @@ export default function MonthWiseLFL() {
 
         const hideView = hasAnyFilterValue && filteredNodes.length === 0;
 
-        console.log("hideView:", hideView);
+        //console.log("hideView:", hideView);
         setHideView(hideView)
 
         return filteredNodes;
     };
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
-        console.log("data", data)
+        //console.log("data", data)
         const numericCols = ["MTD_VALUE", "LM_VALUE", "LY_VALUE" ,"TM_VS_LM_PCT","TM_VS_LY_PCT"]
 
-        console.log('numericCols', numericCols)
+        //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
         const avg: Record<string, number> = {}
 
@@ -229,8 +229,8 @@ export default function MonthWiseLFL() {
                 } else {
 
 
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", val)
-                    console.log(val)
+                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", val)
+                    //console.log(val)
                     rowHTML += `<div></div>`
                 }
             })
@@ -313,7 +313,7 @@ export default function MonthWiseLFL() {
         const source = newData && !anySctive ? rowData : filtered
 
         const categories = source.map(item => item.SEC_NAME?.trim());
-        console.log("source", source)
+        //console.log("source", source)
         // Build series
         const newSeries = [
             {

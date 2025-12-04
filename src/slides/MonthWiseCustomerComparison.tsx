@@ -205,17 +205,17 @@ export default function MonthWiseCustomerComparison() {
 
         const hideView = hasAnyFilterValue && filteredNodes.length === 0;
 
-        console.log("hideView:", hideView);
+        //console.log("hideView:", hideView);
         setHideView(hideView)
 
         return filteredNodes;
     };
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
-        console.log("data", data)
+        //console.log("data", data)
         const numericCols = ["CUSTOMER22", "CUSTOMER23", "CUSTOMER24", "CUSTOMER25",]
 
-        console.log('numericCols', numericCols)
+        //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
         const avg: Record<string, number> = {}
 

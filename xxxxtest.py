@@ -20,6 +20,9 @@ def simple_encrypt(plain_text, key=23):
 
 
 # Example usage
-name = "SADAKU"
+name = "ANAS"
+encrypted_name = simple_encrypt(name)
+print("Encrypted Name:", encrypted_name)
+name = "anas"
 encrypted_name = simple_encrypt(name)
 print("Encrypted Name:", encrypted_name)

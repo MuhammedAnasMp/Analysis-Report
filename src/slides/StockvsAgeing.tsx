@@ -249,10 +249,10 @@ export default function TargetVsAchievement() {
 
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
-        console.log("data", data)
+        //console.log("data", data)
         const numericCols = ["SKU_COUNT", "STOCK_QTY", "VALUE", "AGE_180", "AGE_365", "AGE_ABOVE730", "MONTH_SALES", "PROFIT", "GP_PERC", "STOCK_DAYS"]
 
-        console.log('numericCols', numericCols)
+        //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
         const avg: Record<string, number> = {}
 
@@ -283,7 +283,7 @@ export default function TargetVsAchievement() {
 
 
             const { total } = calculateTotals(filtered.length ? filtered : rowData)
-            console.log(total)
+            //console.log(total)
             const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
@@ -378,7 +378,7 @@ export default function TargetVsAchievement() {
     const rootRef = useRef<HTMLDivElement | null>(null);
     return (
         <div className="summary-grid-wrapper" ref={rootRef}>
-            <div className="ag-theme-quartz h-[calc(100vh-100px)] w-full relative">
+            <div className="ag-theme-quartz h-[calc(100vh-105px)] w-full relative">
 
                 <AgGridReact
                     ref={gridRef}
