@@ -95,24 +95,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "10 slide",
       headerTitle: '1'
     },
-    {
-      id: 10,
-      component: <SlideTemplate title="Second 11" bgColor="bg-gray-200" />,
-      label: "11 slide",
-      headerTitle: '1'
-    },
-    {
-      id: 11,
-      component: <SlideTemplate title="Second 12" bgColor="bg-gray-200" />,
-      label: "12 slide",
-      headerTitle: '1'
-    },
-    {
-      id: 12,
-      component: <SlideTemplate title="Second 13" bgColor="bg-gray-200" />,
-      label: "13 slide",
-      headerTitle: '1'
-    },
+   
   ];
 
   const [selectedId, setselectedId] = useState<number>(1);

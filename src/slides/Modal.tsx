@@ -329,9 +329,9 @@ const FullScreenModal: React.FC = () => {
                 className="text-lg font-bold text-gray-800 dark:text-white"
               >Action Plan </h3>
 
-                <div className="absolute right-12">
-              <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} key={3} />
-                </div>
+              <div className="absolute right-12">
+                <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} key={3} />
+              </div>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
@@ -478,106 +478,103 @@ const FullScreenModal: React.FC = () => {
                           </div>
                         </div>
                       </div>
-                      {/* SECTION 1 */}
-                      <div className=" rounded  ">
-                        <div className="text-md border-b border-gray-200 mb-3 pb-2 font-semibold ">
-                          Action Plan for Selected Month
-                        </div>
-                        <div className=" h-full space-y-3 gap-2 items-center max-h-[630px] overflow-y-auto [&::-webkit-scrollbar]:w-1 p-1 pr-2  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
-                          {
-                            createdPlans.length === 0 ?
 
-                              <div className="flex justify-center gap-2 items-center h-full w-full text-gray-400 text-md">
-                                <ExclamationTriangleIcon height={15} width={15} className="text-red-300" />No action plans in selected month.
-                              </div>
-                              : <>
-                                <AnimatePresence>
-                                  {
-                                    createdPlans.map((createdPlan, index) => (
-                                      <motion.div
-                                        key={createdPlan.id || index}
-                                        initial={{ opacity: 0, y: 20 }}        // animation when item appears
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -20 }}          // animation when item removed
-                                        transition={{ duration: 0.35 }}
-                                        className="relative mb-4"
-                                      >
-                                        {/* Textarea */}
-                                        <div key={index} className="relative">
-                                          <div id="hs-textarea-ex-1"
-                                            style={{ whiteSpace: "pre-line" }}
-                                            className="border h-auto p-3 sm:p-4 pb-12 sm:pb-12 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" data-hs-textarea-auto-height="">{createdPlan.suggestion}</div>
+                    </div>
+                    <div className=" rounded p-3 ">
+                      <div className="text-md border-b border-gray-200 mb-3 pb-2 font-semibold ">
+                        Action Plan for Selected Month
+                      </div>
+                      <div className="  space-y-3 gap-2 items-center max-h-[400px] overflow-y-auto [&::-webkit-scrollbar]:w-1 p-1 pr-2  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
 
-                                          {/* Toolbar */}
-                                          <div className="absolute bottom-px inset-x-px p-2 rounded-b-md bg-white dark:bg-neutral-900">
-                                            <div className="flex flex-wrap justify-between items-center gap-2">
-                                              {/* Button Group */}
-                                              <div className="flex items-center">
-                                                {/* Mic Button */}
-                                                <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-                                                  <ChartBarSquareIcon height={15} width={15} />
-                                                </button>
-                                                <span className="text-sm text-gray-600">
-                                                  {options?.find(option => option.area_id === createdPlan.sales_area_id)?.area_name || 'N/A'}
-                                                </span>
-                                                {/* End Mic Button */}
+                        {
+                          createdPlans.length === 0 ?
 
-                                                {/* Attach Button */}
-                                                <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-                                                  <UserCircleIcon height={15} width={15} />
-                                                </button>
-                                                <span className="text-sm text-gray-600">
-                                                  {createdPlan.user_name || 'N/A'}
-                                                </span>
-                                                {/* End Attach Button */}
-                                              </div>
-                                              {/* End Button Group */}
+                            <div className="flex justify-center gap-2 items-center h-full w-full text-gray-400 text-md">
+                              <ExclamationTriangleIcon height={15} width={15} className="text-red-300" />No action plans in selected month.
+                            </div>
+                            : <>
+                              <AnimatePresence>
+                                {
+                                  createdPlans.map((createdPlan, index) => (
+                                    <motion.div
+                                      key={createdPlan.id || index}
+                                      initial={{ opacity: 0, y: 20 }}        // animation when item appears
+                                      animate={{ opacity: 1, y: 0 }}
+                                      exit={{ opacity: 0, y: -20 }}          // animation when item removed
+                                      transition={{ duration: 0.35 }}
+                                      className="relative mb-4"
+                                    >
+                                      {/* Textarea */}
+                                      <div key={index} className="relative">
+                                        <div id="hs-textarea-ex-1"
+                                          style={{ whiteSpace: "pre-line" }}
+                                          className="border h-auto p-3 sm:p-4 pb-12 sm:pb-12 block w-full border-gray-200 rounded-lg sm:text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600" data-hs-textarea-auto-height="">{createdPlan.suggestion}</div>
 
-                                              {/* Button Group */}
-                                              <div className="flex items-center gap-x-1">
-                                                {/* Mic Button */}
-                                                {/* <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+                                        {/* Toolbar */}
+                                        <div className="absolute bottom-px inset-x-px p-2 rounded-b-md bg-white dark:bg-neutral-900">
+                                          <div className="flex flex-wrap justify-between items-center gap-2">
+                                            {/* Button Group */}
+                                            <div className="flex items-center">
+                                              {/* Mic Button */}
+                                              <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+                                                <ChartBarSquareIcon height={15} width={15} />
+                                              </button>
+                                              <span className="text-sm text-gray-600">
+                                                {options?.find(option => option.area_id === createdPlan.sales_area_id)?.area_name || 'N/A'}
+                                              </span>
+                                              {/* End Mic Button */}
+
+                                              {/* Attach Button */}
+                                              <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
+                                                <UserCircleIcon height={15} width={15} />
+                                              </button>
+                                              <span className="text-sm text-gray-600">
+                                                {createdPlan.user_name || 'N/A'}
+                                              </span>
+                                              {/* End Attach Button */}
+                                            </div>
+                                            {/* End Button Group */}
+
+                                            {/* Button Group */}
+                                            <div className="flex items-center gap-x-1">
+                                              {/* Mic Button */}
+                                              {/* <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
                                           <svg className="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
                                             <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
                                             <line x1="12" x2="12" y1="19" y2="22"></line>
                                           </svg>
                                         </button> */}
-                                                {/* End Mic Button */}
+                                              {/* End Mic Button */}
 
-                                                {/* Send Button */}
-                                                <button
-                                                  onClick={() => createdPlan.id !== undefined && handleDeletePlan(createdPlan.id)}
-                                                  type="button"
-                                                  className="inline-flex shrink-0 justify-center items-center size-8  !text-red  bg-white !rounded  border-e-amber-700  hover:bg-red-100 border-red-600  hover hover:text-white focus:z-10 focus:outline-hidden "
-                                                >
-                                                  <div>
-                                                    <TrashIcon height={15} width={15} className="hover:text-red-900" />
-                                                  </div>
-                                                </button>
-                                                {/* End Send Button */}
-                                              </div>
-                                              {/* End Button Group */}
+                                              {/* Send Button */}
+                                              <button
+                                                onClick={() => createdPlan.id !== undefined && handleDeletePlan(createdPlan.id)}
+                                                type="button"
+                                                className="inline-flex shrink-0 justify-center items-center size-8  !text-red  bg-white !rounded  border-e-amber-700  hover:bg-red-100 border-red-600  hover hover:text-white focus:z-10 focus:outline-hidden "
+                                              >
+                                                <div>
+                                                  <TrashIcon height={15} width={15} className="hover:text-red-900" />
+                                                </div>
+                                              </button>
+                                              {/* End Send Button */}
                                             </div>
+                                            {/* End Button Group */}
                                           </div>
-                                          {/* End Toolbar */}
                                         </div>
-                                        {/* End Textarea */}
-                                      </motion.div>
-                                    ))
-                                  }
-                                </AnimatePresence>
-                              </>
+                                        {/* End Toolbar */}
+                                      </div>
+                                      {/* End Textarea */}
+                                    </motion.div>
+                                  ))
+                                }
+                              </AnimatePresence>
+                            </>
 
-                          }
-                        </div>
+                        }
                       </div>
-                      {/* SECTION 2 */}
-
-
                     </div>
-
 
                   </>
                 </div>

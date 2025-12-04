@@ -203,8 +203,8 @@ export default function MonthWiseLFL() {
 
             colDef.forEach(col => {
                 const val = current[col.field!] ?? ''
+                let formattedVal = val
                 if (typeof val === 'number') {
-                    let formattedVal = val
 
                     if (col.field === 'TM_VS_LY_PCT'  && data) {
 
@@ -223,7 +223,7 @@ export default function MonthWiseLFL() {
                     }
 
                     const formatted = formattedVal.toLocaleString()
-                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+                    const colorClass = formattedVal < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'TM_VS_LM_PCT' || col.field === 'TM_VS_LY_PCT' ? '%' : ''}</div>`
                 } else {

@@ -114,9 +114,9 @@ export default function MonthWiseFreshComparison() {
                 },
                 cellClass: (params) => {
                     let classes = ["text-right"]; // Always apply right alignment
-                    if (params.value != null && params.data.BAKERY_PREV != null) {
-                        if (params.value > params.data.BAKERY_PREV) classes.push("text-green");
-                        else if (params.value < params.data.BAKERY_PREV) classes.push("text-red");
+                    if (params.value != null && params.data.HOTFOOD_PREV != null) {
+                        if (params.value > params.data.HOTFOOD_PREV) classes.push("text-green");
+                        else if (params.value < params.data.HOTFOOD_PREV) classes.push("text-red");
                     }
                     return classes.join(" "); // Combine classes into a single string
                 },
