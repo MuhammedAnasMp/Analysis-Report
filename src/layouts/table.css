@@ -22,5 +22,31 @@
 }
 
 
+/* Rotate ApexCharts data labels vertically and make them red */
+.apexcharts-datalabel {
+    transform: rotate(-90deg);
+    transform-origin: center;
+    transform-box: fill-box;
+
+    fill: #E2E6F5 !important;   /* Changes SVG text color */
+    color: #E2E6F5 !important;  /* Backup for any non-SVG rendering */
+}
 
 
+/* Change background color and text color of header cells */
+.ag-header-cell {
+    background-color: #0e0606; /* green background */
+    color: white;
+    font-weight: bold; /* optional */
+}
+
+.text-red {
+    background-color: #ffe6e6;
+    color: red;
+}
+
+
+.text-green {
+    background-color: #e6ffe6;
+    color: green;
+}

@@ -20,10 +20,30 @@ export default function MonthWiseCustomerComparison() {
 
     const [colDef] = useState<ColDef<any>[]>([
         { field: "MM", headerName: "Month", cellClass: "text-center", flex: 1 },
-        { field: "CUSTOMER22", headerName: "Customer - 2022", cellClass: "text-right", flex: 1 },
-        { field: "CUSTOMER23", headerName: "Customer - 2023", cellClass: "text-right", flex: 1 },
-        { field: "CUSTOMER24", headerName: "Customer - 2024", cellClass: "text-right", flex: 1 },
-        { field: "CUSTOMER25", headerName: "Customer - 2025", cellClass: "text-right", flex: 1 },
+        {
+            field: "CUSTOMER22", headerName: "Customer - 2022", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+        },
+        {
+            field: "CUSTOMER23", headerName: "Customer - 2023", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+        },
+        {
+            field: "CUSTOMER24", headerName: "Customer - 2024", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+        },
+        {
+            field: "CUSTOMER25", headerName: "Customer - 2025", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+        },
         // {
         //     field: "SKU_COUNT",
         //     headerName: "SKU Count",
@@ -147,7 +167,7 @@ export default function MonthWiseCustomerComparison() {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://localhost:5000/api/month-wise-customer-comparison?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://172.16.4.167:5000/api/month-wise-customer-comparison?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -163,24 +183,37 @@ export default function MonthWiseCustomerComparison() {
 
                 setRowData(transformed)
                 setLoading(false)
+                setFiltered([])
+                setNewData(true)
             })
             .catch(() => setLoading(false))
     }, [selectedDate, selectedStore]);
 
-
-    // 🔍 Get filtered rows
     const getFilteredData = () => {
-        if (!gridRef.current) return
-        const filteredNodes: any[] = []
-        gridRef.current.api.forEachNodeAfterFilter((node: any) => filteredNodes.push(node.data))
-        setFiltered(filteredNodes)
-        return filteredNodes
-    }
+        if (!gridRef.current) return;
+        const api = gridRef.current.api;
 
+        const filteredNodes: any[] = [];
+        api.forEachNodeAfterFilter((node: any) => filteredNodes.push(node.data));
+        setFiltered(filteredNodes);
+
+        const filterModel = api.getFilterModel();
+
+        const hasAnyFilterValue = Object.values(filterModel).some((filter: any) => {
+            return filter?.filter != null && filter.filter !== "";
+        });
+
+        const hideView = hasAnyFilterValue && filteredNodes.length === 0;
+
+        console.log("hideView:", hideView);
+        setHideView(hideView)
+
+        return filteredNodes;
+    };
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         console.log("data", data)
-        const numericCols = ["CUSTOMER22", "CUSTOMER23", "CUSTOMER24", "CUSTOMER25", ]
+        const numericCols = ["CUSTOMER22", "CUSTOMER23", "CUSTOMER24", "CUSTOMER25",]
 
         console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -213,7 +246,7 @@ export default function MonthWiseCustomerComparison() {
 
 
             const { total } = calculateTotals(filtered.length ? filtered : rowCustomerData)
-  
+
             const data = filtered.length ? filtered : rowCustomerData
             const current = total
             const colCount = colDef.length
@@ -231,7 +264,7 @@ export default function MonthWiseCustomerComparison() {
                         formattedVal = val / data.length
                     }
 
-                    const formatted = formattedVal
+                    const formatted = formattedVal.toLocaleString()
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
@@ -290,85 +323,100 @@ export default function MonthWiseCustomerComparison() {
     );
     const rootRef = useRef<HTMLDivElement | null>(null);
 
-
+    const [newData, setNewData] = useState(false)
 
 
     const [options, setOptions] = useState({});
-const [series, setSeries] = useState<any>([]);
+    const [series, setSeries] = useState<any>([]);
+    const [hideView, setHideView] = useState<boolean>(false);
+    useEffect(() => {
 
-useEffect(() => {
+        const isAnyFilterActive = () => {
+            const api = gridRef.current?.api;
+            if (!api) return false;
 
-    // Use filtered if available, else fallback to rowData
-    const source = filtered?.length ? filtered : rowCustomerData;
+            // 1. Column filters
+            const filterModel = api.getFilterModel();
+            const hasColumnFilters = Object.keys(filterModel).length > 0;
 
-    // Build categories
-    const categories = source.map(item => item.MM?.trim());
+            // 2. Quick filter (global search)
+            const quickFilter = api.getQuickFilter();
+            const hasQuickFilter = !!quickFilter;
 
-    // Build series
-    const newSeries = [
-        {
-            name: "Customer 2022",
-            data: source.map(item => item.CUSTOMER22 ?? 0)
-        },
-        {
-            name: "Customer 2023",
-            data: source.map(item => item.CUSTOMER23 ?? 0)
-        },
-        {
-            name: "Customer 2024",
-            data: source.map(item => item.CUSTOMER24 ?? 0)
-        },
-        {
-            name: "Customer 2025",
-            data: source.map(item => item.CUSTOMER25 ?? 0)
-        }
-    ];
+            return hasColumnFilters || hasQuickFilter;
+        };
 
-    // ApexChart options
-    const newOptions: any = {
-        chart: {
-            type: "bar",
-            height: 380,
-            toolbar: { show: true }
-        },
-        plotOptions: {
-            bar: {
-                borderRadius: 6,
-                columnWidth: "45%"
+        const anySctive = isAnyFilterActive()
+
+        const source = newData && !anySctive ? rowCustomerData : filtered
+        const categories = source.map(item => item.MM?.trim());
+
+        // Build series
+        const newSeries = [
+            {
+                name: "Customer 2022",
+                data: source.map(item => item.CUSTOMER22 ?? 0)
+            },
+            {
+                name: "Customer 2023",
+                data: source.map(item => item.CUSTOMER23 ?? 0)
+            },
+            {
+                name: "Customer 2024",
+                data: source.map(item => item.CUSTOMER24 ?? 0)
+            },
+            {
+                name: "Customer 2025",
+                data: source.map(item => item.CUSTOMER25 ?? 0)
             }
-        },
-        colors: ["#2563EB", "#10B981", "#F59E0B" , "#FF391A"],
-        dataLabels: {
-            enabled: false
-        },
-        xaxis: {
-            categories,
-            labels: {
-                style: { fontSize: "13px" }
-            }
-        },
-        yaxis: {
-            labels: {
-                formatter: (v: number) => v.toLocaleString()
-            }
-        },
-        legend: {
-            position: "top"
-        },
-        tooltip: {
-            y: {
-                formatter: (v: number) => v.toLocaleString()
-            }
-        }
-    };
+        ];
 
-    setSeries(newSeries);
-    setOptions(newOptions);
+        // ApexChart options
+        const newOptions: any = {
+            chart: {
+                type: "bar",
+                height: 380,
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 6,
+                    columnWidth: "45%"
+                }
+            },
+            colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A"],
+            dataLabels: {
+                enabled: true
+            },
+            xaxis: {
+                categories,
+                labels: {
+                    style: { fontSize: "13px" }
+                }
+            },
+            yaxis: {
+                labels: {
+                    formatter: (v: number) => v.toLocaleString()
+                }
+            },
+            legend: {
+                position: "top"
+            },
+            tooltip: {
+                y: {
+                    formatter: (v: number) => v.toLocaleString()
+                }
+            }
+        };
 
-}, [rowCustomerData, filtered]);   // 🔥 return whenever data changes
+        setSeries(newSeries);
+        setOptions(newOptions);
+        setNewData(false)
+
+    }, [rowCustomerData, filtered, selectedStore, selectedDate]);   // 🔥 return whenever data changes
     return (
         <div className="summary-grid-wrapper" ref={rootRef}>
-            <div className="ag-theme-quartz h-[calc(50vh-10px)] w-full relative">
+            <div className={`ag-theme-quartz ${!hideView && rowCustomerData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
 
                 <AgGridReact
                     ref={gridRef}
@@ -379,7 +427,7 @@ useEffect(() => {
                         sortable: true,
                         filter: true,
                         resizable: true,
-                        floatingFilter: true,
+
                     }}
                     // onCellValueChanged={handleCellValueChanged}
                     stopEditingWhenCellsLoseFocus={true} // commit edit when you click away
@@ -389,14 +437,18 @@ useEffect(() => {
                     loadingOverlayComponent={CustomLoadingOverlay}
                 />
             </div>
-            <div className="w-full pt-4">
-                            <ReactApexChart
-                                options={options}
-                                series={series}
-                                type="bar"
-                                height={380}
-                            />
-                        </div>
+            {
+                !hideView && rowCustomerData.length > 0 &&
+                <div className="w-full pt-4">
+
+                    <ReactApexChart
+                        options={options}
+                        series={series}
+                        type="bar"
+                        height={380}
+                    />
+                </div>
+            }
         </div>
     )
 }

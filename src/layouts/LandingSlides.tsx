@@ -9,13 +9,20 @@ import SectionPerformanceChart from "../slides/Chart2";
 import MonthWiseCustomerComparison from "../slides/MonthWiseCustomerComparison";
 import MonthWiseSalesComparison from "../slides/MonthWiseSalesComparison";
 import MonthWiseBasketValueComparison from "../slides/MonthWiseBasketValueComparison";
+import MonthWiseLFL from "../slides/MonthWiseLFL";
+import MonthWiseFreshComparison from "../slides/MonthWiseFreshComparison";
+import Modal from "../slides/Modal";
+import FullScreenModal from "../slides/Modal";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUserDetails } from "../redux/features/pptState/storeSlice";
 
 export type Slide = {
   id: number;
   component: React.ReactNode;
   label: string;
-  headerTitle : string ;
-  
+  headerTitle: string;
+
 };
 type LandingSlidesProps = {
   onChange: (data: Slide) => void;
@@ -23,6 +30,8 @@ type LandingSlidesProps = {
 
 
 export default function LandingSlides({ onChange }: LandingSlidesProps) {
+
+ 
   const slides = [
     {
       id: 1,
@@ -36,69 +45,70 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "Stock",
       headerTitle: "Stock vs Ageing"
     },
+    // {
+    //   id: 3,
+    //   component: <SectionPerformanceChart/>,
+    //   label: "Target Chart",
+
+    //   headerTitle: '1'
+    // },
     {
+
       id: 3,
-      component: <SectionPerformanceChart/>,
-      label: "Target Chart",
-      
-      headerTitle: '1'
-    },
-    {
-      id: 4,
-      component: <MonthWiseSalesComparison/>,
-      label: "Month-wise Sales 2022-2025",
+      component: <MonthWiseSalesComparison />,
+      label: "Month-wise Sales",
       headerTitle: 'Month-wise Sales Comparison'
     },
     {
-      id: 5,
-      component: <MonthWiseCustomerComparison/>,
-      label: "Month-wise Customer 2022-2025",
+      id: 4,
+      component: <MonthWiseCustomerComparison />,
+      label: "Month-wise Customer",
       headerTitle: 'Month-wise Customer Comparison'
     },
     {
-      id: 6,
-      component: <MonthWiseBasketValueComparison/>,
-      label: "Month-wise Basket value 2022-2025",
+      id: 5,
+      component: <MonthWiseBasketValueComparison />,
+      label: "Month-wise Basket value",
       headerTitle: 'Month-wise Basket value Comparison'
     },
     {
+      id: 6,
+      component: <MonthWiseLFL />,
+      label: "Monthly LFL",
+      headerTitle: 'LFL Report'
+    },
+    {
       id: 7,
-      component: <SlideTemplate title="Second 7" bgColor="bg-gray-200" />,
-      label: "7 slide",
-      headerTitle: '1'
+      component: <MonthWiseFreshComparison />,
+      label: "Month-wise Fresh Sales",
+      headerTitle: 'Month-wise Sales Comparison'
     },
     {
       id: 8,
-      component: <SlideTemplate title="Second 8" bgColor="bg-gray-200" />,
-      label: "8 slide",
-      headerTitle: '1'
-    },
-    {
-      id: 9,
-      component: <SlideTemplate title="Second 9" bgColor="bg-gray-200" />,
+      component: <SlideTemplate title="Second 10" bgColor="bg-gray-200" />,
       label: "9 slide",
       headerTitle: '1'
     },
     {
-      id: 10,
+      id: 9,
       component: <SlideTemplate title="Second 10" bgColor="bg-gray-200" />,
       label: "10 slide",
       headerTitle: '1'
     },
     {
-      id: 11,
+      id: 10,
       component: <SlideTemplate title="Second 11" bgColor="bg-gray-200" />,
       label: "11 slide",
       headerTitle: '1'
     },
     {
-      id: 12,
+      id: 11,
       component: <SlideTemplate title="Second 12" bgColor="bg-gray-200" />,
       label: "12 slide",
       headerTitle: '1'
     },
     {
-      id: 13,
+      id: 12,
       component: <SlideTemplate title="Second 13" bgColor="bg-gray-200" />,
       label: "13 slide",
       headerTitle: '1'
@@ -113,7 +123,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
   }, [selectedId])
   useEffect(() => {
-   
+
     onChange(selectedSlide)
 
   }, [selectedSlide])
@@ -162,14 +172,13 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
 
   return (
-    <div className="p-10">
-
+    <div className="p-3">
 
       <div data-hs-carousel='{ "loadingClasses": "opacity-0"}' className="relative ">
         <div className="hs-carousel flex flex-col md:flex-row gap-2 ">
           {/* side slider items */}
           <div className="md:order-1 px-4 flex-none">
-            <div className="hs-carousel-pagination h-[calc(100vh-150px)] flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto pr-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+            <div className="hs-carousel-pagination h-[calc(100vh-100px)] flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto pr-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
             ">
               {slides
                 .map((slide, index) => {
@@ -217,7 +226,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
           </div>
 
           {/* main cards */}
-          <div className="md:order-2 relative grow overflow-hidden h-[calc(100vh-150px)] bg-white rounded-lg ">
+          <div className="md:order-2 relative grow overflow-hidden h-[calc(100vh-100px)] bg-white rounded-lg ">
             <div className="hs-carousel-body absolute top-0 bottom-0 start-0 flex flex-nowrap transition-transform duration-700 opacity-0">
               {slides.map(slide => (
                 <div key={slide.id} className="hs-carousel-slide w-7xl" >

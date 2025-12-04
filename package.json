@@ -45,6 +45,7 @@
     "axios": "^1.12.2",
     "date-fns": "^4.1.0",
     "dropzone": "^6.0.0-beta.2",
+    "framer-motion": "^12.23.25",
     "lodash": "^4.17.21",
     "preline": "^3.2.3",
     "react": "^19.1.1",

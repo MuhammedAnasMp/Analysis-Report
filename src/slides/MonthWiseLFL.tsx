@@ -1,6 +1,6 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
+import type { ColDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
 import '../layouts/table.css'
 
@@ -9,45 +9,94 @@ import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
-import { param } from 'jquery'
+
+interface Dates {
+    current: string[];
+    prev_month: string[];
+    prev_year: string[];
+}
 import ReactApexChart from 'react-apexcharts'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseBasketValueComparison() {
+export default function MonthWiseLFL() {
     const [isLoading, setLoading] = useState(false)
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
+    const [newData, setNewData] = useState(false)
 
-    const [colDef] = useState<ColDef<any>[]>([
-        { field: "MM", headerName: "Month", cellClass: "text-center", flex: 1 },
-        {
-            field: "BK_2022", headerName: "Basket Value - 2022", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString();
-            }
-        },
-        {
-            field: "BK_2023", headerName: "Basket Value - 2023", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString();
-            }
-        },
-        {
-            field: "BK_2024", headerName: "Basket Value - 2024", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString();
-            }
-        },
-        {
-            field: "BK_2025", headerName: "Basket Value - 2025", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString();
-            }
-        },
-      
 
-    ])
+    const [dates, setDates] = useState<Dates>()
+
+    const [colDef, setColDef] = useState<ColDef<any>[]>([]);
+
+    const formatDateRange = (start: string, end: string) => {
+        const format = (d: string) => {
+            const date = new Date(d);
+            const day = String(date.getDate()).padStart(2, "0");
+            const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
+            return `${day}-${month}`;
+        };
+
+        const year = new Date(start).getFullYear(); // use start date's year
+
+        return `${format(start)} - ${format(end)} (${year})`;
+    };
+
+
+    useEffect(() => {
+        if (!dates) return;
+
+        setColDef([
+            {
+                field: "SEC_CODE", headerName: "Code", cellClass: "text-center", flex: 1, valueFormatter: (params) => {
+                    if (params.value == null) return "";
+                    return params.value.toLocaleString();
+                }
+            },
+            { field: "SEC_NAME", headerName: "Section", cellClass: "text-center", flex: 1, },
+            {
+                field: "MTD_VALUE", headerName: `TM (${formatDateRange(dates.current[0], dates.current[1])})`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    if (params.value == null) return "";
+                    return params.value.toLocaleString();
+                }
+            },
+            {
+                field: "LM_VALUE", headerName: `LM (${formatDateRange(dates.prev_month[0], dates.prev_month[1])})`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    if (params.value == null) return "";
+                    return params.value.toLocaleString();
+                }
+            },
+            {
+                field: "LY_VALUE", headerName: `LY (${formatDateRange(dates.prev_year[0], dates.prev_year[1])})`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    if (params.value == null) return "";
+                    return params.value.toLocaleString();
+                }
+            },
+            {
+                field: "TM_VS_LM_PCT", headerName: `TM VS LM (%)`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    if (params.value == null) return "";
+                    return params.value.toLocaleString() + " %";
+                },
+                cellStyle: (params) =>
+                    params.value < 0
+                        ? { backgroundColor: '#ffe6e6', color: 'red' }
+                        : null,
+            },
+            {
+                field: "TM_VS_LY_PCT", headerName: `TM VS LY (%)`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    if (params.value == null) return "";
+                    return params.value.toLocaleString() + " %";
+                },
+                cellStyle: (params) =>
+                    params.value < 0
+                        ? { backgroundColor: '#ffe6e6', color: 'red' }
+                        : null,
+            },
+           
+
+        ]);
+    }, [dates]);
 
     const { selectedStore, selectedDate } = useSelector((state: RootState) => state.store);
 
@@ -63,11 +112,11 @@ export default function MonthWiseBasketValueComparison() {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://172.16.4.167:5000/api/month-wise-basket-value-comparison?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://172.16.4.167:5000/api/monthly-lfl?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
-                const transformed = data.map((row: any) => ({
+                const transformed = data.data.map((row: any) => ({
                     ...row,
                     // TOTAL_BUDGET: Math.round(row.TOTAL_BUDGET),
                     // BUD_AVG: Math.round(row.BUD_AVG),
@@ -79,8 +128,9 @@ export default function MonthWiseBasketValueComparison() {
 
                 setRowData(transformed)
                 setLoading(false)
-                setNewData(true)
                 setFiltered([])
+                setNewData(true)
+                setDates(data.dates)
             })
             .catch(() => setLoading(false))
     }, [selectedDate, selectedStore]);
@@ -107,11 +157,10 @@ export default function MonthWiseBasketValueComparison() {
 
         return filteredNodes;
     };
-
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         console.log("data", data)
-        const numericCols = ["BK_2022", "BK_2023", "BK_2024", "BK_2025",]
+        const numericCols = ["MTD_VALUE", "LM_VALUE", "LY_VALUE" ,"TM_VS_LM_PCT","TM_VS_LY_PCT"]
 
         console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -156,49 +205,32 @@ export default function MonthWiseBasketValueComparison() {
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
                     let formattedVal = val
-22
-23
-24
-25
 
-                    if (col.field === 'BK_2022' && data?.length) {
-                        const total_sales22 = data.reduce((sum, item) => sum + (item.SALES22 || 0), 0);
-                        const total_customer22 = data.reduce((sum, item) => sum + (item.CUSTOMER22 || 0), 0);
+                    if (col.field === 'TM_VS_LY_PCT'  && data) {
 
-                        const DIF_PERC = total_customer22 ? (total_sales22/ total_customer22)  : 0;
-
-                        formattedVal = DIF_PERC;
+                        const MTD_VALUE = data.reduce((sum, item) => sum + (item.MTD_VALUE || 0), 0);
+                        const LM_VALUE = data.reduce((sum, item) => sum + (item.LM_VALUE || 0), 0);
+                        const PERC_CHANGE = (MTD_VALUE - LM_VALUE)/MTD_VALUE
+                        formattedVal = PERC_CHANGE  ? PERC_CHANGE *100 : 0;
+                        
                     }
-                    if (col.field === 'BK_2023' && data?.length) {
-                        const total_sales23 = data.reduce((sum, item) => sum + (item.SALES23 || 0), 0);
-                        const total_customer23 = data.reduce((sum, item) => sum + (item.CUSTOMER23 || 0), 0);
+                    if ( col.field === 'TM_VS_LM_PCT'   && data) {
+                        const MTD_VALUE = data.reduce((sum, item) => sum + (item.MTD_VALUE || 0), 0);
+                        const LY_VALUE = data.reduce((sum, item) => sum + (item.LY_VALUE || 0), 0);
+                        const PERC_CHANGE = (MTD_VALUE - LY_VALUE)/MTD_VALUE
+                        formattedVal = PERC_CHANGE  ? PERC_CHANGE *100 : 0;
 
-                        const DIF_PERC = total_customer23 ? (total_sales23/ total_customer23)  : 0;
-
-                        formattedVal = DIF_PERC;
-                    }
-                    if (col.field === 'BK_2024' && data?.length) {
-                        const total_sales24 = data.reduce((sum, item) => sum + (item.SALES24 || 0), 0);
-                        const total_customer24 = data.reduce((sum, item) => sum + (item.CUSTOMER24 || 0), 0);
-
-                        const DIF_PERC = total_customer24 ? (total_sales24/ total_customer24)  : 0;
-
-                        formattedVal = DIF_PERC;
-                    }
-                    if (col.field === 'BK_2025' && data?.length) {
-                        const total_sales25 = data.reduce((sum, item) => sum + (item.SALES25 || 0), 0);
-                        const total_customer25 = data.reduce((sum, item) => sum + (item.CUSTOMER25 || 0), 0);
-
-                        const DIF_PERC = total_customer25 ? (total_sales25/ total_customer25)  : 0;
-
-                        formattedVal = DIF_PERC;
                     }
 
                     const formatted = formattedVal.toLocaleString()
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
 
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
+                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'TM_VS_LM_PCT' || col.field === 'TM_VS_LY_PCT' ? '%' : ''}</div>`
                 } else {
+
+
+                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", val)
+                    console.log(val)
                     rowHTML += `<div></div>`
                 }
             })
@@ -253,14 +285,14 @@ export default function MonthWiseBasketValueComparison() {
     );
     const rootRefSale = useRef<HTMLDivElement | null>(null);
 
-    const [newData, setNewData] = useState(false)
+
 
 
     const [options, setOptions] = useState({});
     const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
-    useEffect(() => {
 
+    useEffect(() => {
         const isAnyFilterActive = () => {
             const api = gridRef.current?.api;
             if (!api) return false;
@@ -279,27 +311,26 @@ export default function MonthWiseBasketValueComparison() {
         const anySctive = isAnyFilterActive()
 
         const source = newData && !anySctive ? rowData : filtered
-        const categories = source.map(item => item.MM?.trim());
 
+        const categories = source.map(item => item.SEC_NAME?.trim());
+        console.log("source", source)
         // Build series
         const newSeries = [
             {
-                name: "Basket Value2022",
-                data: source.map(item => item.BK_2022 ?? 0)
+                name: "This Month",
+                data: source.map(item => item.MTD_VALUE ?? 0)
             },
             {
-                name: "Basket Value2023",
-                data: source.map(item => item.BK_2023 ?? 0)
+                name: "Last Month",
+                data: source.map(item => item.LM_VALUE ?? 0)
             },
             {
-                name: "Basket Value2024",
-                data: source.map(item => item.BK_2024 ?? 0)
-            },
-            {
-                name: "Basket Value2025",
-                data: source.map(item => item.BK_2025 ?? 0)
+                name: "Last Year",
+                data: source.map(item => item.LY_VALUE ?? 0)
             }
         ];
+
+
 
         // ApexChart options
         const newOptions: any = {
@@ -314,7 +345,7 @@ export default function MonthWiseBasketValueComparison() {
                     columnWidth: "45%"
                 }
             },
-            colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A"],
+            colors: ["#2563EB", "#10B981", "#F59E0B"],
             dataLabels: {
                 enabled: true
             },
@@ -341,15 +372,15 @@ export default function MonthWiseBasketValueComparison() {
 
         setSeries(newSeries);
         setOptions(newOptions);
+        setNewData(false)
 
-    }, [rowData, filtered]);   // 🔥 return whenever data changes
+    }, [rowData, filtered, hideView]);
 
     return (
         <div className="summary-grid-wrapper " ref={rootRefSale}>
-
-            <div className={`ag-theme-quartz ${!hideView && rowData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
-
+            <div className={`ag-theme-quartz ${!hideView && rowData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-150px)]"} w-full relative`}>
                 <AgGridReact
+
                     ref={gridRef}
                     rowData={rowData}
                     columnDefs={colDef}
@@ -358,16 +389,18 @@ export default function MonthWiseBasketValueComparison() {
                         sortable: true,
                         filter: true,
                         resizable: true,
-
+                     
                     }}
                     // onCellValueChanged={handleCellValueChanged}
                     stopEditingWhenCellsLoseFocus={true} // commit edit when you click away
                     loading={isLoading}
                     noRowsOverlayComponent={NoRowsOverlay}
                     onFilterChanged={getFilteredData}
+
                     loadingOverlayComponent={CustomLoadingOverlay}
                 />
             </div>
+
             {
                 !hideView && rowData.length > 0 &&
                 <div className="w-full pt-4">

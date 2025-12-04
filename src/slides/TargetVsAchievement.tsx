@@ -28,7 +28,11 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
-        },         
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
+        },
         {
             field: "BUD_AVG",
             headerName: "Average Budget",
@@ -36,6 +40,10 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
         },
         {
             field: "TILL_SALES",
@@ -44,6 +52,10 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
         },
         {
             field: "AVG_SALE",
@@ -52,6 +64,10 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
         },
         {
             field: "DIFFERENCE",
@@ -60,6 +76,10 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
         },
         {
             field: "DIF_PERC",
@@ -112,7 +132,7 @@ export default function TargetVsAchievement() {
         lastEdit.current = { code, value: newValue };
 
         try {
-            const res = await fetch(`http://localhost:5000/api/target-vs-achievement`, {
+            const res = await fetch(`http://172.16.4.167:5000/api/target-vs-achievement`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -141,7 +161,7 @@ export default function TargetVsAchievement() {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://localhost:5000/api/target-vs-achievement?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://172.16.4.167:5000/api/target-vs-achievement?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -222,11 +242,24 @@ export default function TargetVsAchievement() {
                     let formattedVal = val
 
                     // if field is DIF_PERC, divide by total row count first
-                    if (col.field === 'DIF_PERC' && data) {
-                        formattedVal = val / data.length
+                    if (col.field === 'DIFFERENCE' && data) {
+                        formattedVal = val
+                    }
+                    if (col.field === 'DIF_PERC' && data?.length) {
+                        const profit = data.reduce((sum, item) => sum + (item.DIFFERENCE || 0), 0);
+                        const total_sales = data.reduce((sum, item) => sum + (item.TILL_SALES || 0), 0);
+
+                        const DIF_PERC = total_sales ? (profit / total_sales) * 100 : 0;
+
+                        formattedVal = DIF_PERC;
                     }
 
-                    const formatted = (formattedVal).toFixed(2)
+
+                    const formatted = Number(formattedVal).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
+
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'DIF_PERC' ? '%' : ''}</div>`
@@ -289,7 +322,7 @@ export default function TargetVsAchievement() {
     return (
         <div className="summary-grid-wrapper" ref={rootRef}>
 
-            <div className="ag-theme-quartz h-[calc(100vh-150px)] w-full relative">
+            <div className="ag-theme-quartz h-[calc(100vh-100px)] w-full relative">
 
                 <AgGridReact
                     ref={gridRef}
@@ -300,7 +333,7 @@ export default function TargetVsAchievement() {
                         sortable: true,
                         filter: true,
                         resizable: true,
-                        floatingFilter: true,
+
                     }}
                     onCellValueChanged={handleCellValueChanged}
                     stopEditingWhenCellsLoseFocus={true} // commit edit when you click away
@@ -308,7 +341,7 @@ export default function TargetVsAchievement() {
                     noRowsOverlayComponent={NoRowsOverlay}
                     onFilterChanged={getFilteredData}
                     loadingOverlayComponent={CustomLoadingOverlay}
-                    
+
 
                 />
             </div>

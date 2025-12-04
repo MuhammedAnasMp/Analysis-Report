@@ -1,16 +1,20 @@
+import base64
+import time
 from flask import Flask, jsonify
 import oracledb
 from flask_cors import CORS
 from flask import Flask, request, jsonify
+from datetime import datetime, timedelta
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 def connection():
     username = "KHYPER"
     password = "KHYPER"
     dsn = "192.168.2.171:1521/ZEDEYE"
-    client_path = r"C:\instantclient_19_5"  
+    client_path = r"C:\instantclient_19_5"
 
     try:
         print("Initializing Oracle client...")
@@ -26,7 +30,8 @@ def connection():
         print("❌ Unexpected error in connection:", e)
         raise
 
-@app.route("/api/target-vs-achievement",methods=['GET' ,'POST'])
+
+@app.route("/api/target-vs-achievement", methods=['GET', 'POST'])
 def salestable():
     if request.method == 'GET':
 
@@ -35,7 +40,7 @@ def salestable():
 
         conn = connection()
         cur = conn.cursor()
-        
+
         sql_query = """
              SELECT 
                 SEC_CODE,
@@ -67,41 +72,38 @@ def salestable():
 
         cur.execute(sql_query)
 
-    
         columns = [col[0] for col in cur.description]
 
         results = []
         for row in cur.fetchall():
             row_dict = dict(zip(columns, row))
-            
+
             # Remove unwanted keys
             for bad_key in ['', "''", None, 'BUDGET']:
                 if bad_key in row_dict:
                     row_dict.pop(bad_key)
-            
+
             # Trim spaces only in SEC_CODE
             if 'SEC_CODE' in row_dict and isinstance(row_dict['SEC_CODE'], str):
                 row_dict['SEC_CODE'] = row_dict['SEC_CODE'].strip()
-            
+
             results.append(row_dict)
 
         cur.close()
         conn.close()
 
-    
         return jsonify(results)
-    
+
     else:
         data = request.get_json()
         remark = data.get('remark') if 'remark' in data else data.get('REMARK')
-        loc_code = data.get('LOC_CODE')  
-        yyyymm = data.get('YYYYMM') 
-        yyyymm = data.get('YYYYMM') 
-        sec_code = data.get('SEC_CODE') 
-
+        loc_code = data.get('LOC_CODE')
+        yyyymm = data.get('YYYYMM')
+        yyyymm = data.get('YYYYMM')
+        sec_code = data.get('SEC_CODE')
 
         try:
-        
+
             conn = connection()
             cur = conn.cursor()
 
@@ -149,9 +151,7 @@ def salestable():
                 "message": str(e)
             }), 500
 
-        
 
-import time
 @app.route('/api/stockvsageing', methods=['GET'])
 def stockvsageing():
     yyyymm = request.args.get("yyyymm")        # e.g., "202510"
@@ -159,9 +159,9 @@ def stockvsageing():
 
     conn = connection()
     cur = conn.cursor()
-    
+
     sql_query = """
-            SELECT SEC_CODE,SEC_NAME,SKU_COUNT,STOCK_QTY, VALUE, AGE_180, AGE_365, AGE_ABOVE730, MONTH_SALES, MONTH_SALES-MONTH_COST PROFIT,
+            SELECT SEC_CODE,SEC_NAME,SKU_COUNT,STOCK_QTY, VALUE, AGE_180, AGE_365, AGE_ABOVE730, MONTH_SALES, MONTH_SALES-MONTH_COST PROFIT, MONTH_COST ,AVG_COST_DAY ,
             ROUND((MONTH_SALES-MONTH_COST)/MONTH_SALES *100,2) GP_PERC,
             ROUND(VALUE/AVG_COST_DAY,2) STOCK_dAYS
             FROM KWT_PPT_STOCK_VS_SALES
@@ -175,7 +175,6 @@ def stockvsageing():
 
     cur.execute(sql_query)
 
- 
     columns = [col[0] for col in cur.description]
 
     results = []
@@ -186,10 +185,7 @@ def stockvsageing():
     cur.close()
     conn.close()
 
-  
     return jsonify(results)
-
-
 
 
 @app.route('/api/month-wise-sales-comparison', methods=['GET'])
@@ -199,7 +195,7 @@ def monthwisesalescomparison():
 
     conn = connection()
     cur = conn.cursor()
-    
+
     sql_query = """
             SELECT distinct to_char(doc_Date,'MM-MONTH')MM,
             ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN SALE_vALUE END),0)SALES25,
@@ -219,7 +215,6 @@ def monthwisesalescomparison():
 
     cur.execute(sql_query)
 
- 
     columns = [col[0] for col in cur.description]
 
     results = []
@@ -230,9 +225,160 @@ def monthwisesalescomparison():
     cur.close()
     conn.close()
 
-  
     return jsonify(results)
 
+
+@app.route('/api/month-wise-sales-fresh', methods=['GET'])
+def monthwisefresh():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+           SELECT * FROM KWT_PPT_FRESH_SALES
+            WHERE YYYYMM=:yyyymm
+            AND LOC_CODE=:loc
+            ORDER BY MM
+            """
+
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
+
+@app.route('/api/monthly-lfl', methods=['GET'])
+def monthwiselfl():
+
+    def next_same_weekday(base_date, target_weekday):
+        days_ahead = (target_weekday - base_date.weekday() + 7) % 7
+        return base_date + timedelta(days=days_ahead)
+
+    def shift_month_same_day(date):
+        try:
+            if date.month == 1:
+                return date.replace(year=date.year - 1, month=12, day=min(date.day, 28))
+            else:
+                return date.replace(month=date.month - 1, day=min(date.day, 28))
+        except ValueError as e:
+
+            raise
+
+    def sql_date(d):
+        return d.strftime("'%d-%b-%y'").upper()
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+
+    today = datetime.strptime(yyyymm, "%Y%m")
+    yesterday = (today + timedelta(days=32)).replace(day=1) - \
+        timedelta(days=1)  # last day of month
+
+    current_start = today.replace(day=1)
+    current_end = yesterday if yesterday < datetime.today() else datetime.today() - \
+        timedelta(days=1)
+
+    start_wd = current_start.weekday()
+    end_wd = current_end.weekday()
+
+    # Previous month (weekday aligned)
+    last_month_start = next_same_weekday(
+        shift_month_same_day(current_start), start_wd)
+    last_month_end = next_same_weekday(
+        shift_month_same_day(current_end), end_wd)
+
+    # Previous year (weekday aligned)
+    last_year_start = next_same_weekday(
+        current_start.replace(year=current_start.year - 1), start_wd)
+    last_year_end = next_same_weekday(
+        current_end.replace(year=current_end.year - 1), end_wd)
+
+    sql_query = f"""
+                    SELECT DISTINCT 
+                LOC_CODE,
+                GET_LOC_NAME(LOC_CODE) AS LOCATION,
+                SEC_CODE, 
+                SEC_NAME,
+                -- This Month
+                NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(current_start)} AND {sql_date(current_end)} THEN SOLD_VALUE END),0) AS MTD_VALUE,
+                -- Last Month
+                NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_month_start)} AND {sql_date(last_month_end)} THEN SOLD_VALUE END),0) AS LM_VALUE,
+                -- Last Year
+                NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_year_start)} AND {sql_date(last_year_end)} THEN SOLD_VALUE END),0) AS LY_VALUE,
+                -- This Month vs Last Month (%)
+                CASE 
+                    WHEN NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_month_start)} AND {sql_date(last_month_end)} THEN SOLD_VALUE END),0) = 0 
+                    THEN NULL
+                    ELSE ROUND(
+                        (NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(current_start)} AND {sql_date(current_end)} THEN SOLD_VALUE END),0) - 
+                        NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_month_start)} AND {sql_date(last_month_end)} THEN SOLD_VALUE END),0)
+                        ) / 
+                        NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_month_start)} AND {sql_date(last_month_end)} THEN SOLD_VALUE END),0)
+                        * 100, 2
+                    )
+                END AS TM_VS_LM_PCT,
+                
+                -- This Month vs Last Year (%)
+                CASE 
+                    WHEN NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_year_start)} AND {sql_date(last_year_end)} THEN SOLD_VALUE END),0) = 0 
+                    THEN NULL
+                    ELSE ROUND(
+                        (NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(current_start)} AND {sql_date(current_end)} THEN SOLD_VALUE END),0) - 
+                        NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_year_start)} AND {sql_date(last_year_end)} THEN SOLD_VALUE END),0)
+                        ) / 
+                        NVL(SUM(CASE WHEN DOC_DATE BETWEEN {sql_date(last_year_start)} AND {sql_date(last_year_end)} THEN SOLD_VALUE END),0)
+                        * 100, 2
+                    )
+                END AS TM_VS_LY_PCT
+
+            FROM KWT_DAILY_GP_REPORT R
+            JOIN GRAND_PRD_MASTER_FULL A ON GOLD_CODE = PRODUCT_CODE AND GOLD_SU = SU
+            JOIN GOLD_HIERARCHY_MASTER B ON A.SUB_CATEG_CODE = B.SUB_CATEG_CODE
+            WHERE (DOC_DATE BETWEEN {sql_date(current_start)} AND {sql_date(current_end)}
+                OR DOC_DATE BETWEEN {sql_date(last_month_start)} AND {sql_date(last_month_end)}
+                OR DOC_DATE BETWEEN {sql_date(last_year_start)} AND {sql_date(last_year_end)})
+            AND LOC_CODE = :loc
+            GROUP BY LOC_CODE, SEC_CODE, SEC_NAME
+            ORDER BY LOC_CODE, SEC_CODE
+
+            """
+
+    cur.execute(sql_query, {'loc': str(location)})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify({"dates": {
+        "current": [current_start, current_end],
+        "prev_month": [last_month_start, last_month_end],
+        "prev_year": [last_year_start, last_year_end]
+    }, "data": results})
 
 
 @app.route('/api/month-wise-customer-comparison', methods=['GET'])
@@ -242,7 +388,7 @@ def monthwisecustomercomparison():
 
     conn = connection()
     cur = conn.cursor()
-    
+
     sql_query = """
            SELECT distinct to_char(doc_Date,'MM-MONTH')MM,
             ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN CUSTOMER_COUNT END),0)CUSTOMER25,
@@ -262,7 +408,6 @@ def monthwisecustomercomparison():
 
     cur.execute(sql_query)
 
- 
     columns = [col[0] for col in cur.description]
 
     results = []
@@ -273,10 +418,7 @@ def monthwisecustomercomparison():
     cur.close()
     conn.close()
 
-  
     return jsonify(results)
-
-
 
 
 @app.route('/api/month-wise-basket-value-comparison', methods=['GET'])
@@ -286,9 +428,10 @@ def monthwisebasketvaluecomparison():
 
     conn = connection()
     cur = conn.cursor()
-    
+
     sql_query = """
-           SELECT MM, ROUND(SALES25/CUSTOMER25,3) BK_2025 ,ROUND(SALES24/CUSTOMER24,3) BK_2024,  ROUND(SALES23/CUSTOMER23,3)BK_2023,  ROUND(SALES22/CUSTOMER22,3)BK_2022 FROM (
+           SELECT MM, ROUND(SALES25/CUSTOMER25,3) BK_2025 ,ROUND(SALES24/CUSTOMER24,3) BK_2024,  ROUND(SALES23/CUSTOMER23,3)BK_2023,  ROUND(SALES22/CUSTOMER22,3)BK_2022  , CUSTOMER22 ,CUSTOMER23 ,CUSTOMER24,CUSTOMER25 , SALES22,SALES23,SALES24,SALES25
+           FROM (
             SELECT distinct to_char(doc_Date,'MM-MONTH')MM,
             ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2025 THEN CUSTOMER_COUNT END),0)CUSTOMER25,
             ROUND(SUM(CASE WHEN TO_CHAR(DOC_dATE,'YYYY')=2024 THEN CUSTOMER_COUNT END),0)CUSTOMER24,
@@ -311,7 +454,6 @@ def monthwisebasketvaluecomparison():
 
     cur.execute(sql_query)
 
- 
     columns = [col[0] for col in cur.description]
 
     results = []
@@ -322,23 +464,30 @@ def monthwisebasketvaluecomparison():
     cur.close()
     conn.close()
 
-  
     return jsonify(results)
-
 
 
 @app.route('/api/locations', methods=["GET"])
 def getlocations():
+    user_id = request.args.get('userId')
+    print(user_id)
     conn = connection()
     cur = conn.cursor()
 
     sql_query = """
-       SELECT DISTINCT LOCATION_ID,LOCATION_NAME FROM KPI_SITE WHERE LEVEL_2='4-KUWAIT' order by location_id asc
+       SELECT DISTINCT k.LOCATION_ID, k.LOCATION_NAME
+        FROM KPI_SITE k
+        WHERE k.LEVEL_2 = '4-KUWAIT'
+        AND k.LOCATION_ID IN (
+            SELECT a.US_SITE
+            FROM IVISION_USER_SITE a
+            WHERE a.US_USER IN (:user_id)
+        )
+        ORDER BY k.LOCATION_ID ASC
+
     """
 
-
-    cur.execute(sql_query)
-
+    cur.execute(sql_query, {'user_id': user_id})
     columns = [col[0] for col in cur.description]
 
     results = []
@@ -349,8 +498,8 @@ def getlocations():
     cur.close()
     conn.close()
 
-  
     return jsonify(results)
+
 
 @app.route('/api/year-date-periods', methods=["GET"])
 def yeardateperiods():
@@ -361,7 +510,6 @@ def yeardateperiods():
       select distinct YYYYMM from KWT_PPT_STOCK_VS_SALES order by yyyymm 
     """
 
-
     cur.execute(sql_query)
 
     columns = [col[0] for col in cur.description]
@@ -374,12 +522,254 @@ def yeardateperiods():
     cur.close()
     conn.close()
 
-  
     return jsonify(results)
 
 
+# model endpoints
 
+
+@app.route('/improvement_plans/<yyyymm>', methods=['GET'])
+def get_improvement_plans_by_yyyymm(yyyymm):
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT ID, USER_ID, USER_NAME, SALES_AREA_ID, SUGGESTION, CREATED_AT, YYYYMM
+        FROM SALES_IMPROVEMENT_PLANS
+        WHERE YYYYMM = :1
+        ORDER BY ID
+    """, (yyyymm,))
+
+    rows = cursor.fetchall()
+    plans = []
+    for row in rows:
+        # Convert LOB to string
+        suggestion = row[4].read() if hasattr(row[4], 'read') else str(row[4])
+        plans.append({
+            "id": row[0],
+            "user_id": row[1],
+            "user_name": row[2],
+            "sales_area_id": row[3],
+            "suggestion": suggestion,
+            "created_at": row[5].strftime("%Y-%m-%d %H:%M:%S") if row[5] else None,
+            "yyyymm": row[6]
+        })
+    return jsonify(plans)
+
+
+# Get all areas
+@app.route('/sales_area', methods=['GET'])
+def get_sales_areas():
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT AREA_ID, AREA_NAME, ADDED_BY FROM SALES_AREA ORDER BY AREA_ID")
+    rows = cursor.fetchall()
+    areas = []
+    for row in rows:
+        areas.append(
+            {"area_id": row[0], "area_name": row[1], "added_by": row[2]})
+    return jsonify(areas)
+
+# Create a new area
+
+
+@app.route('/sales_area', methods=['POST'])
+def create_sales_area():
+    data = request.get_json()
+    area_name = data.get('area_name')
+    added_by = data.get('added_by')
+
+    conn = connection()
+    cursor = conn.cursor()
+
+    try:
+        # Variable to hold the new ID
+        new_id = cursor.var(int)
+
+        cursor.execute(
+            """
+            INSERT INTO SALES_AREA (AREA_NAME, ADDED_BY)
+            VALUES (:1, :2)
+            RETURNING AREA_ID INTO :3
+            """,
+            (area_name, added_by, new_id)
+        )
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Sales area created successfully",
+            "id": new_id.getvalue()
+        }), 201
+
+    except oracledb.IntegrityError as e:
+        error_obj, = e.args
+
+        # ORA-00001 -> unique constraint violated
+        if "ORA-00001" in error_obj.message:
+            return jsonify({
+                "error": "Duplicate entry",
+                "message": "This sales area already exists."
+            }), 400
+
+        return jsonify({
+            "error": "Integrity error",
+            "message": error_obj.message
+        }), 400
+
+    except Exception as e:
+        return jsonify({
+            "error": "Server error",
+            "message": str(e)
+        }), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+# Delete an area by ID
+
+
+@app.route('/sales_area/<int:area_id>', methods=['DELETE'])
+def delete_sales_area(area_id):
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM SALES_AREA WHERE AREA_ID = :1", (area_id,))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return jsonify({"message": f"Sales area {area_id} deleted successfully"})
+
+# ------------------------------
+# SALES_IMPROVEMENT_PLANS Endpoints
+# ------------------------------
+
+
+@app.route('/improvement_plans', methods=['GET'])
+def get_improvement_plans():
+    conn = connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT ID, USER_ID, USER_NAME, SALES_AREA_ID, SUGGESTION, CREATED_AT, LOC_CODE, YYYYMM
+        FROM SALES_IMPROVEMENT_PLANS
+        ORDER BY ID
+    """)
+
+    rows = cursor.fetchall()
+    plans = []
+    for row in rows:
+        # If SUGGESTION is a LOB, read it
+        suggestion_text = row[4]
+        if isinstance(suggestion_text, oracledb.LOB):
+            suggestion_text = suggestion_text.read()
+
+        plans.append({
+            "id": row[0],
+            "user_id": row[1],
+            "user_name": row[2],
+            "sales_area_id": row[3],
+            "suggestion": suggestion_text,
+            "created_at": row[5].strftime("%Y-%m-%d %H:%M:%S") if row[5] else None,
+            "loc_code": row[6],
+            "yyyymm": row[7],
+        })
+
+    cursor.close()
+    conn.close()
+
+    return jsonify(plans)
+
+# Create a new improvement plan
+
+
+@app.route('/improvement_plans', methods=['POST'])
+def create_improvement_plan():
+    data = request.get_json()
+    print("Received data:", data)
+    print(type(data.get("user_id")))
+    print(type(data.get("user_name")))
+    print(type(data.get("sales_area_id")))
+    print(type(data.get("suggestion")))
+    print(type(data.get("loc_code")))
+    print(type(data.get("yyyymm")))
+
+    user_id = data.get('user_id')
+    user_name = data.get('user_name')
+    sales_area_id = data.get('sales_area_id')
+    suggestion = data.get('suggestion')
+    loc_code = data.get('loc_code')
+    yyyymm = data.get('yyyymm')
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO SALES_IMPROVEMENT_PLANS (USER_ID, USER_NAME, SALES_AREA_ID, SUGGESTION ,yyyymm ,loc_code)
+        VALUES (:1, :2, :3, :4 , :5, :6)
+    """, (user_id, user_name, sales_area_id, suggestion, yyyymm, loc_code))
+    conn.commit()
+    return jsonify({"message": "Improvement plan created successfully"}), 201
+
+
+# Delete an improvement plan by ID
+@app.route('/improvement_plans/<int:plan_id>', methods=['DELETE'])
+def delete_improvement_plan(plan_id):
+    conn = connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "DELETE FROM SALES_IMPROVEMENT_PLANS WHERE ID = :1", (plan_id,))
+    conn.commit()
+    return jsonify({"message": f"Improvement plan {plan_id} deleted successfully"})
+
+
+def simple_decrypt(enc_text, key=23):
+    # 1. Base64 Decode
+    decoded = base64.b64decode(enc_text).decode("utf-8")
+
+    # 2. XOR back to original characters
+    original = ''.join(chr(ord(c) ^ key) for c in decoded)
+    return original
+
+
+@app.route("/api/decode-token", methods=['GET'])
+def decode():
+    try:
+        conn = connection()
+        cursor = conn.cursor()
+        token = request.args.get("token")
+        print(token)
+
+        dec = simple_decrypt(token)
+
+        try:
+            sql = """
+                SELECT 
+                    USR_ID,
+                    UPPER(USR_PWD), 
+                    USR_NAME, 
+                    USR_PROFILE
+                FROM IVISION_USER 
+                WHERE USR_ID = :1 AND NVL(USR_ACTIVE, 'Y') <> 'N'
+            """
+            cursor.execute(sql, [dec.upper()])
+            row = cursor.fetchone()
+        finally:
+            conn.close()
+
+        if not row:
+            return {
+                "status": "fail",
+                "error": "Username not found or inactive"
+            }
+
+        user_id, user_password, user_name, role = row
+
+        print(user_id, user_password, user_name, role)
+     
+    except Exception as e:
+        return jsonify({"error": "Invalid token"})
+
+    return jsonify({"username": user_name, "id": user_id})
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)

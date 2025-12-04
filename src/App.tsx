@@ -1,15 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
-import LandingSlides  from './layouts/LandingSlides';
+import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import LandingSlides from './layouts/LandingSlides';
 import Navbar from './layouts/Navbar';
+import FullScreenModal from './slides/Modal';
+import NotFoundPage from './layouts/NotFoundPage';
+import useToast from './hooks/Toast';
+import { useDispatch } from 'react-redux';
+import { XCircleIcon } from '@heroicons/react/24/solid';
+import { setUserDetails } from './redux/features/pptState/storeSlice';
 
 
 async function loadPreline() {
   return import('preline/dist/index.js');
 }
 function App() {
+  
   const location = useLocation();
-   const [activeSlide, setActiveSlide] = useState<any>();
+
+  const [activeSlide, setActiveSlide] = useState<any>();
   useEffect(() => {
     const initPreline = async () => {
       await loadPreline();
@@ -24,20 +32,54 @@ function App() {
 
     initPreline();
   }, [location.pathname]);
-  return (
-  <div className="">
-    <Navbar currentSlide={activeSlide} />
 
-    <Routes>
-      <Route
-        path="/"
-        element={
-          <LandingSlides onChange={(slide) => setActiveSlide(slide)} />
+
+    const { showToast } = useToast()
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const [showNavBar,setShowNavBar] = useState<boolean>(true)
+    useEffect(() => {
+  
+      const fetchStores = async () => {
+        try {
+          fetch(`http://172.16.4.167:5000/api/decode-token?token=${location.pathname.slice(1)}`)
+            .then(result => result.json())
+            .then(data => {
+              if (data.error) {
+                showToast({
+                  type: "markup2",
+                  message: `${data.error}`,
+                  status: "failed",
+                  avatar: <XCircleIcon className="size-6 text-blue-500" />,
+                  duration: 6000,
+                })
+                navigate('/why-here');
+                setShowNavBar(false)
+              } 
+              else{
+                dispatch(setUserDetails({ "id": data.id, "username": data.username }))
+              }
+            })
+          }
+          catch (err) {
+            console.log('error', err)
+            setShowNavBar(false)
         }
-      />
-    </Routes>
-  </div>
-);
+      }
+  
+      fetchStores()
+    }, [])
+  return (
+    <div className="">
+        {showNavBar && <Navbar currentSlide={activeSlide} />}
+      <Routes>
+        <Route path="/:token" element={<LandingSlides onChange={(slide) => setActiveSlide(slide)} />} />
+        <Route path="/why-here" element={<NotFoundPage />} />
+        <Route path="/" element={<NotFoundPage />} />
+      </Routes>
+    </div>
+  );
 
 }
 export default App;

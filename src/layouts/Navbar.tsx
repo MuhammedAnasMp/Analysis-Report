@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSelectedDate, setSelectedStore } from "../redux/features/pptState/storeSlice";
 import type { RootState } from "../redux/app/rootReducer";
 import type { Slide } from "./LandingSlides";
-import { BeakerIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import { BeakerIcon, MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import FullScreenModal from "../slides/Modal";
 interface Locations {
   LOCATION_ID: number,
   LOCATION_NAME: string
@@ -13,10 +14,11 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   const [locations, setLocations] = useState<Locations[]>()
   const [filteredLocations, setFilteredLocations] = useState<Locations[]>();
   const [searchTerm, setSearchTerm] = useState("");
+  const { selectedStore, selectedDate, userDetails } = useSelector((state: RootState) => state.store);
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        fetch('http://localhost:5000/api/locations')
+        fetch(`http://172.16.4.167:5000/api/locations?userId=${userDetails?.id}`)
           .then(result => result.json())
           .then(data => {
             setLocations(data)
@@ -29,11 +31,11 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
 
     fetchStores()
 
-  }, [])
+  }, [userDetails])
 
 
 
-  const { selectedStore, selectedDate } = useSelector((state: RootState) => state.store);
+
   const [isOpen, setIsOpen] = useState(false);
 
   const handleDateChange = (date: Date | null) => {
@@ -77,10 +79,10 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   }, [searchTerm, locations]);
   return (
     <header className=" flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 border-b-1 border-neutral-300">
-      <nav className="w-full mx-auto px-54 sm:flex sm:items-center sm:justify-between">
-        <div className="flex-none font-semibold text-xl text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle}</div>
+      <nav className="w-full mx-auto px-50 sm:flex sm:items-center sm:justify-between">
+        <div className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore && selectedStore.LOCATION_NAME}</div>
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
-
+         
           <div ref={dropdownRef} className="relative inline-flex w-48">
             <button
               type="button"
@@ -117,6 +119,7 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
+
                     <div className="absolute top-5 right-5">
                       <MagnifyingGlassIcon height={15} width={15} />
                     </div>
@@ -148,9 +151,16 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
 
           <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} />
 
-            {
+          {/* {
               currentSlide && currentSlide.id ==7 ? "NEW DROP" : ""
-            }
+            } */}
+          {
+            selectedDate && selectedStore &&
+            <FullScreenModal />
+          }
+           <div className="flex justify-center items-center text-xl">
+            <UserCircleIcon className="text-gray-400" height={40} widths={40} /> {userDetails?.username} 
+          </div>
 
           {/* <a className="font-medium text-blue-500 focus:outline-hidden"  aria-current="page">Landing</a>
 

@@ -19,7 +19,7 @@ const [data, setRowData] = useState<any[]>([])
           const month = dateObj.getMonth() + 1; // JS months are 0-indexed
           const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
   
-          fetch(`http://localhost:5000/api/stockvsageing?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+          fetch(`http://172.16.4.167:5000/api/stockvsageing?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
               .then(result => result.json())
               .then(data => {
                   setRowData(data)
@@ -29,6 +29,11 @@ const [data, setRowData] = useState<any[]>([])
       }, [selectedDate, selectedStore]);
 
 
+
+
+      useEffect(()=>{
+
+      },[data])
 
   // -------------------------------
   // Extracting X-axis and series
@@ -57,7 +62,7 @@ const [data, setRowData] = useState<any[]>([])
     chart: {
       type: "bar",
       height: 380,
-      toolbar: { show: true }
+      toolbar: { show: false }
     },
     plotOptions: {
       bar: {
@@ -67,7 +72,7 @@ const [data, setRowData] = useState<any[]>([])
     },
     colors: ["#2563EB", "#10B981", "#F59E0B"],
     dataLabels: {
-      enabled: false
+      enabled: true
     },
     xaxis: {
       categories,
