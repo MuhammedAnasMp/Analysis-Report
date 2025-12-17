@@ -62,16 +62,18 @@ function App() {
               } 
               else{
                 dispatch(setUserDetails({ "id": data.id, "username": data.username }))
+                setShowNavBar(true)
               }
             })
           }
           catch (err) {
             //console.log('error', err)
             setShowNavBar(false)
+
         }
       }
   
-      fetchStores()
+    fetchStores()
     }, [])
   return (
     <div className="">

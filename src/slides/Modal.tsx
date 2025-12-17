@@ -54,7 +54,7 @@ const FullScreenModal: React.FC = () => {
 
   }, [selectedDate, apiTriggerArea])
 
-  const [confirm, setConfirm] = useState<number |null>(null);
+  const [confirm, setConfirm] = useState<number | null>(null);
   useEffect(() => {
     const formatToYYYYMM = (date: any): string => {
       if (!date) return "";
@@ -377,12 +377,8 @@ const FullScreenModal: React.FC = () => {
 
               <h3
                 id="modal-title"
-                className="text-lg font-bold text-gray-800 dark:text-white"
-              >Action Plan </h3>
-              <div>
-                username :{userDetails?.username}
-                id :{userDetails?.id}
-              </div>
+                className="text-lg font-bold text-gray-800 dark:text-white "
+              >Action Plan For improvements </h3>
               <div className="absolute right-12">
                 <SmallDatePicker value={selectedDate} onDateChange={() => { }} key={3} />
               </div>
@@ -458,10 +454,10 @@ const FullScreenModal: React.FC = () => {
 
                                 {
                                   (userDetails?.id === "ANAS" || userDetails?.id === "SADAKU") &&
-                                  <div className="">
+                                  <div className="bg-yellow">
                                     <div
                                       onClick={() => setNewSaleArea((pre) => !pre)}
-                                      className="borded mr-3 border-2 p-2 rounded-md inline-flex shrink-0 justify-center items-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 focus:outline-hidden focus:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none"
+                                      className="borded mx-3 border-2 p-2 rounded-md inline-flex shrink-0 justify-center items-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 focus:outline-hidden focus:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none"
                                     >
                                       <PlusIcon height={20} width={20} />Add Area
                                     </div>
@@ -514,7 +510,7 @@ const FullScreenModal: React.FC = () => {
                                 {
                                   (userDetails?.id === "ANAS" || userDetails?.id === "SADAKU") &&
 
-                                  <div className='flex gap-1 '>
+                                  <div className='flex gap-1 bg-yellow px-2 '>
                                     <div onClick={() => {
                                       setNewSaleArea((pre) => !pre)
                                       setAreaName("")
@@ -557,7 +553,7 @@ const FullScreenModal: React.FC = () => {
                           }'></textarea>
 
 
-                            <div className="absolute bottom-4 end-4 z-10">
+                            <div className="absolute bottom-2 end-2 z-10">
                               <button disabled={apiCalling} onClick={handleCreateSuggestion} type="button" className="py-1.5 px-3 inline-flex shrink-0 justify-center items-center text-sm font-medium !rounded-md !text-white bg-blue-600 hover:bg-blue-500 focus:outline-hidden focus:bg-blue-500 disabled:opacity-50 disabled:pointer-events-none">
                                 Create New
                               </button>
@@ -652,13 +648,13 @@ const FullScreenModal: React.FC = () => {
                                               {/* Send Button */}
                                               {
                                                 <>
-                                                  {createdPlan.user_id === userDetails?.id &&    (
+                                                  {createdPlan.user_id === userDetails?.id && (
                                                     <>
-                                                      {confirm === createdPlan.id ?  (
+                                                      {confirm === createdPlan.id ? (
                                                         /* --- Confirmation Buttons --- */
-                                                        <div className="flex gap-2 justify-center items-center">
+                                                        <div className="flex gap-2 justify-center items-center text-gray-500">
 
-                                                         <p>Confirm Delete </p> 
+                                                          <p>Confirm Delete </p>
                                                           <button
                                                             onClick={() =>
                                                               createdPlan.id && handleDeletePlan(createdPlan.id)
@@ -693,7 +689,7 @@ const FullScreenModal: React.FC = () => {
                                                 </>
                                               }
                                               <div>
-                                                <div>
+                                                <div className="text-gray-600">
                                                   {format(
                                                     new Date(new Date(createdPlan.created_at).getTime() - 60 * 60 * 1000), // subtract 1 hour
                                                     "dd MMM yyyy, hh:mm a"

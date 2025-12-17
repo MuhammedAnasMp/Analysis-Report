@@ -421,6 +421,104 @@ def monthwisecustomercomparison():
     return jsonify(results)
 
 
+@app.route('/api/year-wise-gp-comparison', methods=['GET'])
+def yearwisegpcomparison():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+       select  TO_CHAR(TO_DATE(DATEMONTH,'YYYYMM'),'MM-MON') MM,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2022' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100  END),0) AS sale_value22 ,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2023' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),0) AS sale_value23,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2024' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),0) AS sale_value24,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2025' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),0) AS sale_value25
+from KWT_BRM_GP_SUMMARY 
+where loc_code = :loc
+GROUP BY  TO_CHAR(TO_DATE(DATEMONTH,'YYYYMM'),'MM-MON')
+ORDER BY 1
+
+            """
+
+    cur.execute(sql_query, {'loc': location})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
+
+
+
+@app.route('/api/year-wise-weekend-sales', methods=['GET'])
+def monthwiseweekendsales():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+           SELECT
+    TO_CHAR(DOC_DATE, 'MM-MONTH') AS MM, 
+    SUM(CASE 
+            WHEN TO_CHAR(DOC_DATE, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') IN ('THU','FRI','SAT') 
+            THEN SALE_VALUE 
+            ELSE 0 
+        END) AS WEEKDAYS_SALES,
+    SUM(CASE 
+            WHEN TO_CHAR(DOC_DATE, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') IN ('THU','FRI','SAT') 
+            THEN CUSTOMER_COUNT 
+            ELSE 0 
+        END) AS WEEKDAYS_CUSTOMERS,
+    SUM(CASE 
+            WHEN TO_CHAR(DOC_DATE, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') IN ('SUN','MON','TUE','WED') 
+            THEN SALE_VALUE 
+            ELSE 0 
+        END) AS WEEKENDS_SALES,
+    SUM(CASE 
+            WHEN TO_CHAR(DOC_DATE, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') IN ('SUN','MON','TUE','WED') 
+            THEN CUSTOMER_COUNT 
+            ELSE 0 
+        END) AS WEEKENDS_CUSTOMERS
+FROM KWT_LIVE_SALE_SUMMARY_DETL
+WHERE LOC_CODE = :loc 
+AND TO_CHAR(DOC_dATE,'YYYYMM')<=:yyyymm
+AND DOC_DATE >= TRUNC(SYSDATE, 'YEAR')
+GROUP BY TO_CHAR(DOC_DATE, 'MM-MONTH')
+ORDER BY TO_CHAR(DOC_DATE, 'MM-MONTH') 
+            """
+
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
+
 @app.route('/api/month-wise-basket-value-comparison', methods=['GET'])
 def monthwisebasketvaluecomparison():
     yyyymm = request.args.get("yyyymm")        # e.g., "202510"
@@ -475,9 +573,9 @@ def getlocations():
     cur = conn.cursor()
 
     sql_query = """
-       SELECT DISTINCT k.LOCATION_ID, k.LOCATION_NAME
+       SELECT DISTINCT k.LOCATION_ID,GET_LOC_NAME(LOCATION_ID) LOCATION_NAME 
         FROM KPI_SITE k
-        WHERE k.LEVEL_2 = '4-KUWAIT'
+        WHERE k.LEVEL_2 = '4-KUWAIT' AND K.LOCATION_ID NOT IN (460, 2009 ,5601 ,5602,5603,5604)
         AND k.LOCATION_ID IN (
             SELECT a.US_SITE
             FROM IVISION_USER_SITE a
@@ -522,29 +620,7 @@ def yeardateperiods():
     cur.close()
     conn.close()
 
-    results = [
-        {
-            "YYYYMM": "202510"
-        },
-        {
-            "YYYYMM": "202509"
-        },
-        {
-            "YYYYMM": "202508"
-        },
-        {
-            "YYYYMM": "202507"
-        },
-        {
-            "YYYYMM": "202506"
-        },
-        {
-            "YYYYMM": "202505"
-        },
-    ]
-
     return jsonify(results)
-
 
 
 @app.route('/improvement_plans/<yyyymm>', methods=['GET'])
