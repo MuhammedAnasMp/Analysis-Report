@@ -316,7 +316,7 @@ export default function TargetVsAchievement() {
                         maximumFractionDigits: 2,
                     });
 
-                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
                 } else {
@@ -328,7 +328,7 @@ export default function TargetVsAchievement() {
 
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-gray-100 border-t border-gray-300 "
+                    <div class="w-full bg-black border-t  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>

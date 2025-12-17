@@ -11,9 +11,14 @@ import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
 import { param } from 'jquery'
 import ReactApexChart from 'react-apexcharts'
+import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseBasketValueComparison() {
+export default function MonthWiseBasketValueComparison(props:any) {
+   const { headerTitle} = props;
+    const { openChartModal } = useChartModal();
+
+
     const [isLoading, setLoading] = useState(false)
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
@@ -195,7 +200,7 @@ export default function MonthWiseBasketValueComparison() {
                     }
 
                     const formatted = formattedVal.toLocaleString()
-                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
                 } else {
@@ -204,7 +209,7 @@ export default function MonthWiseBasketValueComparison() {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-gray-100 border-t border-gray-300 "
+                    <div class="w-full bg-black border-t  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -325,6 +330,7 @@ export default function MonthWiseBasketValueComparison() {
                 }
             },
             yaxis: {
+                  tickAmount: 15,
                 labels: {
                     formatter: (v: number) => v.toLocaleString()
                 }
@@ -376,7 +382,7 @@ export default function MonthWiseBasketValueComparison() {
                         options={options}
                         series={series}
                         type="bar"
-                        height={380}
+                         height={380} onClick={()=>openChartModal(options, series , headerTitle)}
                     />
                 </div>
             }

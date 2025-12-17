@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import SlideTemplate from "./SlideTemplate";
+export interface SlideProps {
+  id: number;
+  label: string;
+  headerTitle: string;
+  image?: string;
+}
 
+interface SlideConfig extends SlideProps {
+  component: React.ComponentType<SlideProps>;
+}
 
 import TargetVsAchievement from "../slides/TargetVsAchievement";
 import StockvsAgeing from "../slides/StockvsAgeing";
@@ -11,8 +20,8 @@ import MonthWiseSalesComparison from "../slides/MonthWiseSalesComparison";
 import MonthWiseBasketValueComparison from "../slides/MonthWiseBasketValueComparison";
 import MonthWiseLFL from "../slides/MonthWiseLFL";
 import MonthWiseFreshComparison from "../slides/MonthWiseFreshComparison";
-import Modal from "../slides/Modal";
-import FullScreenModal from "../slides/Modal";
+import Modal from "../componenets/ActionPlanModal";
+import FullScreenModal from "../componenets/ActionPlanModal";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUserDetails } from "../redux/features/pptState/storeSlice";
@@ -21,7 +30,7 @@ import YearWiseWeekEndSales from "../slides/YearWiseWeekEndSales";
 
 export type Slide = {
   id: number;
-  component: React.ReactNode;
+  component: any;
   label: string;
   headerTitle: string;
 
@@ -34,74 +43,64 @@ type LandingSlidesProps = {
 export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
 
-  const slides = [
+  const slides :SlideConfig[]  = [
     {
       id: 1,
-      component: <TargetVsAchievement />,
-      label: "Target",
-      headerTitle: "Target vs Achievement",
-      image: "/images.png"
+      component: TargetVsAchievement,
+      label: "TARGET",
+      headerTitle: "Target v/s Achievement",
     },
     {
       id: 2,
-      component: <StockvsAgeing />,
-      label: "Stock",
-      headerTitle: "Stock vs Ageing",
-      image: "/stock.svg"
+      component: StockvsAgeing,
+      label: "STOCK",
+      headerTitle: "Stock v/s Ageing",
     },
     {
-
       id: 3,
-      component: <MonthWiseSalesComparison />,
-      label: "Month-wise Sales",
-      headerTitle: 'Month-wise Sales Comparison',
-      image: "/sales.jpeg"
+      component: MonthWiseSalesComparison,
+      label: "ANNUAL \n SALES",
+      headerTitle: "Yearly Sales Amount",
     },
     {
       id: 4,
-      component: <MonthWiseCustomerComparison />,
-      label: "Month-wise Customer",
-      headerTitle: 'Month-wise Customer Comparison',
-      image: "/customer.png"
+      component: MonthWiseCustomerComparison,
+      label: "ANNUAL CUSTOMERS",
+      headerTitle: "Yearly Customer Count",
     },
     {
       id: 5,
-      component: <MonthWiseBasketValueComparison />,
-      label: "Month-wise Basket value",
-      headerTitle: 'Month-wise Basket value Comparison',
-      image: "/basket.jpg"
-
+      component: MonthWiseBasketValueComparison,
+      label: "ANNUAL \n BV",
+      headerTitle: "Yearly Basket Value",
     },
     {
       id: 6,
-      component: <MonthWiseLFL />,
-      label: "Monthly LFL",
-      headerTitle: 'LFL Report',
-      image: "/LFL.jpg"
+      component: MonthWiseLFL,
+      label: "LFL",
+      headerTitle: "Month Wise LFL",
     },
     {
       id: 7,
-      component: <MonthWiseFreshComparison />,
-      label: "Month-wise Fresh Sales",
-      headerTitle: 'Month-wise Sales Comparison',
-      image: "/fresh.jpg"
+      component: MonthWiseFreshComparison,
+      label: "FRESH \n SALES",
+      headerTitle: "Yearly Fresh Sales Report",
     },
     {
       id: 8,
-      component: <YearWiseGP/>,
-      label: "9 slide",
-      headerTitle: 'year-wise-gp-comparison',   
-        image: "/gp.png"
+      component: YearWiseGP,
+      label: "ANNUAL \n GP",
+      headerTitle: "This Year Gross Profit",
     },
     {
       id: 9,
-      component: <YearWiseWeekEndSales />,
-      label: "10 slide",
-      headerTitle: 'Year Wise Weekend Sales',
-      image:'/weekdays.png'
+      component: YearWiseWeekEndSales,
+      label: "WEEKEND SALES",
+      headerTitle: "Weekdays & Weekend Sales",
+      image: "/weekdays.png",
     },
-
   ];
+
 
   const [selectedId, setselectedId] = useState<number>(1);
   const [selectedSlide, setSelectedSlide] = useState<Slide>(slides[0]);
@@ -166,7 +165,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
         <div className="hs-carousel flex flex-col md:flex-row gap-2 ">
           {/* side slider items */}
           <div className="md:order-1 px-4 flex-none">
-            <div className="hs-carousel-pagination h-[calc(100vh-100px)] flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto pr-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+            <div className="hs-carousel-pagination h-[calc(100vh-100px)] flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto px-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
             ">
               {slides
                 .map((slide, index) => {
@@ -188,13 +187,23 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                     <div
                       key={slide.id}
                       onClick={() => { setselectedId(slide.id); setSelectedSlide(slide) }}
-                      className="hs-carousel-pagination-item shrink-0 border border-gray-200 rounded-md overflow-hidden cursor-pointer size-20 md:size-32 hs-carousel-active:border-blue-400 dark:border-neutral-700"
+                      className="hs-carousel-pagination-item shrink-0 border hover:scale-105 hover:z-50 border-gray-200 rounded-md overflow-hidden cursor-pointer size-20 md:size-32 hs-carousel-active:border-blue-400 dark:border-neutral-700"
                     >
-                      <div ref={(el: any) => (refs.current[index + 1] = el)} className="relative flex justify-center items-center text-center size-full bg-gray-100 p-2 dark:bg-neutral-900">
-                        {/* <span className="text-xs text-gray-800 dark:text-white">
+                      <div ref={(el: any) => (refs.current[index + 1] = el)} className="relative hover:bg-gray-100  flex justify-center items-center text-center size-full bg-white p-2 dark:bg-neutral-900">
+                        <span className="
+
+                        text-gray-700 dark:text-white
+                        capitalize
+                        text-md
+                        font-extrabold
+                        whitespace-pre-line
+                        tracking-wide
+                        leading-snug 
+                        ">
                           {slide.label}
-                        </span> */}
-                        <img src={`${slide.image}`} className=" object-fill " alt="" />
+                        </span>
+
+                        {/* <img src={`${slide.image}`} className=" object-fill " alt="" /> */}
                         <div className="absolute right-0 bottom-0 text-xs text-gray-500 dark:text-gray-300">
                           <kbd className="px-1 py-0.5  inline-flex justify-center items-center  bg-white border border-gray-200 font-mono text-xs text-gray-800 rounded-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200">
 
@@ -213,11 +222,16 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
           {/* main cards */}
           <div className="md:order-2 relative grow overflow-hidden h-[calc(100vh-100px)] bg-white rounded-lg ">
             <div className="hs-carousel-body absolute top-0 bottom-0 start-0 flex flex-nowrap transition-transform duration-700 opacity-0">
-              {slides.map(slide => (
-                <div key={slide.id} className="hs-carousel-slide w-7xl" >
-                  {slide.component}
-                </div>
-              ))}
+              {slides.map(slide => {
+                const SlideComponent = slide.component;
+
+                return (
+                  <div key={slide.id} className="hs-carousel-slide w-7xl">
+                    <SlideComponent {...slide} />
+                  </div>
+                );
+              })}
+
 
             </div>
             <button onClick={() => setselectedId(selectedId - 1)} ref={(el: any) => (refs.current[1000] = el)} type="button" className="hs-carousel-prev hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-11.5 h-full text-gray-800 hover:bg-gray-800/10 focus:outline-hidden focus:bg-gray-800/10 rounded-s-lg dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">

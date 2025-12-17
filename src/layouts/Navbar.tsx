@@ -5,7 +5,7 @@ import { setSelectedDate, setSelectedStore } from "../redux/features/pptState/st
 import type { RootState } from "../redux/app/rootReducer";
 import type { Slide } from "./LandingSlides";
 import { BeakerIcon, MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/solid'
-import FullScreenModal from "../slides/Modal";
+import FullScreenModal from "../componenets/ActionPlanModal";
 interface Locations {
   LOCATION_ID: number,
   LOCATION_NAME: string
@@ -32,6 +32,21 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
     fetchStores()
 
   }, [userDetails])
+
+function capitalizeEachWord(sentence:string) {
+  // Split the sentence into an array of words
+  const words = sentence.split(" ");
+
+  // Map over each word to capitalize its first letter
+  for (let i = 0; i < words.length; i++) {
+    if (words[i].length > 0) {
+      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
+    }
+  }
+
+  // Join the array of words back into a sentence
+  return words.join(" ");
+}
 
 
 
@@ -80,7 +95,7 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   return (
     <header className=" flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 border-b-1 border-neutral-300">
       <nav className="w-full mx-auto px-50 sm:flex sm:items-center sm:justify-between">
-        <div className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore && selectedStore.LOCATION_NAME}</div>
+        <div className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore &&  capitalizeEachWord( selectedStore.LOCATION_NAME)}</div>
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
           {/* DARK MODE  */}
           {/* <label htmlFor="darkSwtich" className="relative inline-block w-11 h-6 cursor-pointer">

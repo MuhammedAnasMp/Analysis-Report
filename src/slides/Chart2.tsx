@@ -103,7 +103,7 @@ const [data, setRowData] = useState<any[]>([])
         options={options}
         series={series}
         type="bar"
-        height={380}
+         height={380} onClick={()=>openChartModal(options, series , headerTitle)}
       />
     </div>
   );

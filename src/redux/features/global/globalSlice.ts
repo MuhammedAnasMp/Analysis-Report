@@ -2,22 +2,27 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
 export interface GlobalState {
-  isOpened: boolean;
+  isChartOpened: boolean;
+  options: any;
+  series:any;
 }
 
-const initialState: GlobalState = {
-  isOpened: false,
+const initialState: any = {
+  isChartOpened: false,
+  options: {},
+  series: [],
 };
 
 const globalSlice = createSlice({
   name: 'globalstate',
   initialState,
   reducers: {
-    setIsOpened(state, action: PayloadAction<boolean>) {
-      state.isOpened = action.payload;
+    setIsChartOpened(state, action: PayloadAction<boolean>) {
+      state.isChartOpened = action.payload;
     },
+  
   },
 });
 
-export const { setIsOpened } = globalSlice.actions;
+export const { setIsChartOpened} = globalSlice.actions;
 export default globalSlice.reducer;

@@ -6,9 +6,9 @@ import type { RootState } from "../redux/app/rootReducer";
 import useToast from "../hooks/Toast";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import NoDatafound from "../componenets/vectorIllustrations/NoDataFound";
-import NotSelected from "../componenets/vectorIllustrations/NotSelected";
-import SmallDatePicker from "../componenets/SmallDatePicker";
+import NoDatafound from "./vectorIllustrations/NoDataFound";
+import NotSelected from "./vectorIllustrations/NotSelected";
+import SmallDatePicker from "./SmallDatePicker";
 import { setSelectedDate } from "../redux/features/pptState/storeSlice";
 interface Option {
   added_by: number,

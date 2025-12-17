@@ -4,6 +4,11 @@
 @source "../node_modules/preline/dist/*.js";
 @custom-variant dark (&:where(.dark, .dark *));
 
+
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+}
 /*  */
 
 /* Adds pointer cursor to buttons */
@@ -12,9 +17,13 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+  body {
+    @apply font-sans;
+  }
 }
 
 /* Defaults hover styles on all devices */
 @custom-variant hover (&:hover);
+
 
 

@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import LandingSlides from './layouts/LandingSlides';
 import Navbar from './layouts/Navbar';
-import FullScreenModal from './slides/Modal';
+
 import NotFoundPage from './layouts/NotFoundPage';
 import useToast from './hooks/Toast';
 import { useDispatch } from 'react-redux';
 import { XCircleIcon } from '@heroicons/react/24/solid';
 import { resetStoreState, setUserDetails } from './redux/features/pptState/storeSlice';
 import { logout } from './redux/features/auth/authSlice';
+import FullScreenChartView from './componenets/FullScreenChartView';
 
 
 async function loadPreline() {
@@ -78,6 +79,7 @@ function App() {
   return (
     <div className="">
         {showNavBar && <Navbar currentSlide={activeSlide} />}
+         <FullScreenChartView/>
       <Routes>
         <Route path="/:token" element={<LandingSlides onChange={(slide) => setActiveSlide(slide)} />} />
         <Route path="/why-here" element={<NotFoundPage />} />

@@ -16,9 +16,13 @@ interface Dates {
     prev_year: string[];
 }
 import ReactApexChart from 'react-apexcharts'
+import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseLFL() {
+export default function MonthWiseLFL(props:any) {
+   const { headerTitle} = props;
+    const { openChartModal } = useChartModal();
+
     const [isLoading, setLoading] = useState(false)
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
@@ -223,7 +227,7 @@ export default function MonthWiseLFL() {
                     }
 
                     const formatted = formattedVal.toLocaleString()
-                    const colorClass = formattedVal < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+                    const colorClass = formattedVal < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'TM_VS_LM_PCT' || col.field === 'TM_VS_LY_PCT' ? '%' : ''}</div>`
                 } else {
@@ -236,7 +240,7 @@ export default function MonthWiseLFL() {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-gray-100 border-t border-gray-300 "
+                    <div class="w-full bg-black border-t  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -356,6 +360,7 @@ export default function MonthWiseLFL() {
                 }
             },
             yaxis: {
+                  tickAmount: 15,
                 labels: {
                     formatter: (v: number) => v.toLocaleString()
                 }
@@ -409,7 +414,7 @@ export default function MonthWiseLFL() {
                         options={options}
                         series={series}
                         type="bar"
-                        height={380}
+                         height={380} onClick={()=>openChartModal(options, series , headerTitle)}
                     />
                 </div>
             }

@@ -10,9 +10,13 @@ import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
 import ReactApexChart from 'react-apexcharts'
+import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function YearWiseWeekEndSales() {
+export default function YearWiseWeekEndSales(props:any) {
+   const { headerTitle} = props;
+    const { openChartModal } = useChartModal();
+
     const [isLoading, setLoading] = useState(false)
     const [rowCustomerData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
@@ -33,8 +37,8 @@ export default function YearWiseWeekEndSales() {
             }
         },
         {
-            field: "WEEKDAYS_BV" ,  headerName: "Weekdays BV", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return  (params.data.WEEKDAYS_SALES/params.data.WEEKDAYS_CUSTOMERS).toLocaleString();
+            field: "WEEKDAYS_BV", headerName: "Weekdays BV", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return (params.data.WEEKDAYS_SALES / params.data.WEEKDAYS_CUSTOMERS).toLocaleString();
                 return '';
             }
         },
@@ -52,11 +56,11 @@ export default function YearWiseWeekEndSales() {
         },
         {
             field: "WEEKENDS_BV", headerName: "Weekend BV", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return  (params.data.WEEKENDS_SALES/params.data.WEEKENDS_CUSTOMERS).toLocaleString();
+                if (params.value == null) return (params.data.WEEKENDS_SALES / params.data.WEEKENDS_CUSTOMERS).toLocaleString();
                 return params.value.toLocaleString();
             }
         },
-   
+
 
 
     ])
@@ -121,7 +125,7 @@ export default function YearWiseWeekEndSales() {
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         //console.log("data", data)
-        const numericCols = ["WEEKDAYS_SALES", "WEEKDAYS_CUSTOMERS", "WEEKDAYS_BV","WEEKENDS_SALES", "WEEKENDS_CUSTOMERS","WEEKENDS_BV"]
+        const numericCols = ["WEEKDAYS_SALES", "WEEKDAYS_CUSTOMERS", "WEEKDAYS_BV", "WEEKENDS_SALES", "WEEKENDS_CUSTOMERS", "WEEKENDS_BV"]
 
         //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -172,27 +176,27 @@ export default function YearWiseWeekEndSales() {
                         formattedVal = val / data.length
                     }
                     if (col.field === 'WEEKDAYS_BV' && data) {
-                   
-                        
+
+
                         const total_weekdays_sales = data.reduce((sum, item) => sum + (item.WEEKDAYS_SALES || 0), 0);
                         const total_weekdays_customers = data.reduce((sum, item) => sum + (item.WEEKDAYS_CUSTOMERS || 0), 0);
-                    
-                            formattedVal  = total_weekdays_customers?  total_weekdays_sales/total_weekdays_customers : 0;
-                                
-                        }
-                        if (col.field === 'WEEKENDS_BV' && data) {
-                            
-                            
-                            const total_weekends_sales = data.reduce((sum, item) => sum + (item.WEEKENDS_SALES || 0), 0);
-                            const total_weekends_customers = data.reduce((sum, item) => sum + (item.WEEKENDS_CUSTOMERS || 0), 0);
-                            
-                            formattedVal = total_weekends_customers?  total_weekends_sales/total_weekends_customers : 0;
+
+                        formattedVal = total_weekdays_customers ? total_weekdays_sales / total_weekdays_customers : 0;
+
+                    }
+                    if (col.field === 'WEEKENDS_BV' && data) {
+
+
+                        const total_weekends_sales = data.reduce((sum, item) => sum + (item.WEEKENDS_SALES || 0), 0);
+                        const total_weekends_customers = data.reduce((sum, item) => sum + (item.WEEKENDS_CUSTOMERS || 0), 0);
+
+                        formattedVal = total_weekends_customers ? total_weekends_sales / total_weekends_customers : 0;
 
                     }
 
 
                     const formatted = formattedVal.toLocaleString()
-                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
+                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
                 } else {
@@ -201,7 +205,7 @@ export default function YearWiseWeekEndSales() {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-gray-100 border-t border-gray-300 "
+                    <div class="w-full bg-black border-t  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -250,11 +254,13 @@ export default function YearWiseWeekEndSales() {
     );
     const rootRef = useRef<HTMLDivElement | null>(null);
 
+
+    
+    
     const [newData, setNewData] = useState(false)
+    const [options1, setOptions1] = useState({});
+    const [series1, setSeries1] = useState<any>([]);
 
-
-    const [options, setOptions] = useState({});
-    const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
     useEffect(() => {
 
@@ -284,14 +290,92 @@ export default function YearWiseWeekEndSales() {
                 name: "Weekdays Sales",
                 data: source.map(item => item.WEEKDAYS_SALES ?? 0)
             },
-            {
-                name: "Weekdays Customers",
-                data: source.map(item => item.WEEKDAYS_CUSTOMERS ?? 0)
-            },
+           
             {
                 name: "Weekends Sales",
                 data: source.map(item => item.WEEKENDS_SALES ?? 0)
             },
+           
+        ];
+
+        // ApexChart options
+        const newOptions: any = {
+            chart: {
+                type: "bar",
+                height: 380,
+                toolbar: { show: false }
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: 6,
+                    columnWidth: "45%"
+                }
+            },
+            colors: ["#F59E0B", "#a36803"],
+            dataLabels: {
+                enabled: true
+            },
+            xaxis: {
+                categories,
+                labels: {
+                    style: { fontSize: "13px" }
+                }
+            },
+            yaxis: {
+                  tickAmount: 15,
+                labels: {
+                    formatter: (v: number) => v.toLocaleString()
+                }
+            },
+            legend: {
+                position: "top"
+            },
+            tooltip: {
+                y: {
+                    formatter: (v: number) => v.toLocaleString()
+                }
+            }
+        };
+
+        setSeries1(newSeries);
+        setOptions1(newOptions);
+        setNewData(false)
+
+    }, [rowCustomerData, filtered, selectedStore, selectedDate]);
+
+
+    const [options2, setOptions2] = useState({});
+    const [series2, setSeries2] = useState<any>([]);
+
+    useEffect(() => {
+        const isAnyFilterActive = () => {
+            const api = gridRef.current?.api;
+            if (!api) return false;
+
+            // 1. Column filters
+            const filterModel = api.getFilterModel();
+            const hasColumnFilters = Object.keys(filterModel).length > 0;
+
+            // 2. Quick filter (global search)
+            const quickFilter = api.getQuickFilter();
+            const hasQuickFilter = !!quickFilter;
+
+            return hasColumnFilters || hasQuickFilter;
+        };
+
+        const anySctive = isAnyFilterActive()
+
+        const source = newData && !anySctive ? rowCustomerData : filtered
+        const categories = source.map(item => item.MM?.trim());
+
+        // Build series
+        const newSeries = [
+           
+            {
+                name: "Weekdays Customers",
+                data: source.map(item => item.WEEKDAYS_CUSTOMERS ?? 0)
+            },
+          
             {
                 name: "Weekends Customers",
                 data: source.map(item => item.WEEKENDS_CUSTOMERS ?? 0)
@@ -311,7 +395,7 @@ export default function YearWiseWeekEndSales() {
                     columnWidth: "45%"
                 }
             },
-            colors: ["#F59E0B", "#FF391A", "#F59E0B", "#FF391A"],
+            colors: [ "#FF391A", "#b01a02",],
             dataLabels: {
                 enabled: true
             },
@@ -322,6 +406,7 @@ export default function YearWiseWeekEndSales() {
                 }
             },
             yaxis: {
+                  tickAmount: 15,
                 labels: {
                     formatter: (v: number) => v.toLocaleString()
                 }
@@ -336,11 +421,12 @@ export default function YearWiseWeekEndSales() {
             }
         };
 
-        setSeries(newSeries);
-        setOptions(newOptions);
+        setSeries2(newSeries);
+        setOptions2(newOptions);
         setNewData(false)
 
-    }, [rowCustomerData, filtered, selectedStore, selectedDate]);   // 🔥 return whenever data changes
+    }, [rowCustomerData, filtered, selectedStore, selectedDate]);
+
     return (
         <div className="summary-grid-wrapper" ref={rootRef}>
             <div className={`ag-theme-quartz ${!hideView && rowCustomerData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
@@ -366,14 +452,32 @@ export default function YearWiseWeekEndSales() {
             </div>
             {
                 !hideView && rowCustomerData.length > 0 &&
-                <div className="w-full pt-4">
+                <div className='flex w-full'>
+                    <div className="w-full pt-4 ">
+                        <div className='w-full flex flex-col justify-center'>
 
-                    <ReactApexChart
-                        options={options}
-                        series={series}
-                        type="bar"
-                        height={380}
-                    />
+                            <ReactApexChart
+                                key={2}
+                                options={options1}
+                                series={series1}
+                                type="bar"
+                                 height={380} onClick={()=>openChartModal(options1, series1 , headerTitle)}
+
+                            />
+                        </div>
+                    </div>
+                    <div className="w-full pt-4 ">
+                        <div className='w-full flex flex-col justify-center'>
+                            <ReactApexChart
+                                key={2}
+                                options={options2}
+                                series={series2}
+                                type="bar"
+                                 height={380} onClick={()=>openChartModal(options2, series2 , headerTitle)}
+
+                            />
+                        </div>
+                    </div>
                 </div>
             }
         </div>

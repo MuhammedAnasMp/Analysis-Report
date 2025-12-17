@@ -7,13 +7,21 @@ import '../layouts/table.css'
 import NoDatafound from '../componenets/vectorIllustrations/NoDataFound'
 import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
 import { param } from 'jquery'
 import ReactApexChart from 'react-apexcharts'
+import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
+import type { AppDispatch } from '../redux/app/store'
+import { setIsChartOpened } from '../redux/features/global/globalSlice'
+import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseSalesComparison() {
+export default function MonthWiseSalesComparison(props: any) {
+    const { headerTitle } = props;
+    const { openChartModal } = useChartModal();
+
+
     const [isLoading, setLoading] = useState(false)
     const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
@@ -25,28 +33,28 @@ export default function MonthWiseSalesComparison() {
             field: "SALES22", headerName: "Sales - 2022", cellClass: "text-right", flex: 1,
             valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();   
+                return params.value.toLocaleString();
             }
         },
         {
             field: "SALES23", headerName: "Sales - 2023", cellClass: "text-right", flex: 1,
             valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();   
+                return params.value.toLocaleString();
             }
         },
         {
             field: "SALES24", headerName: "Sales - 2024", cellClass: "text-right", flex: 1,
             valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();   
+                return params.value.toLocaleString();
             }
         },
         {
             field: "SALES25", headerName: "Sales - 2025", cellClass: "text-right", flex: 1,
             valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();   
+                return params.value.toLocaleString();
             }
         },
 
@@ -166,14 +174,14 @@ export default function MonthWiseSalesComparison() {
                     const formatted = formattedVal.toLocaleString()
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-gray-800'
 
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
+                    rowHTML += `<div className="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
                 } else {
                     rowHTML += `<div></div>`
                 }
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-gray-100 border-t border-gray-300 "
+                    <div className="w-full bg-gray-100 border-t border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -228,7 +236,10 @@ export default function MonthWiseSalesComparison() {
     const [options, setOptions] = useState({});
     const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
-
+    const dispatch = useDispatch<AppDispatch>();
+    const handleShowClick = () => {
+        dispatch(setIsChartOpened(true))
+    };
     useEffect(() => {
         const isAnyFilterActive = () => {
             const api = gridRef.current?.api;
@@ -330,7 +341,7 @@ export default function MonthWiseSalesComparison() {
                         sortable: true,
                         filter: true,
                         resizable: true,
-                     
+
                     }}
                     // onCellValueChanged={handleCellValueChanged}
                     stopEditingWhenCellsLoseFocus={true} // commit edit when you click away
@@ -344,13 +355,14 @@ export default function MonthWiseSalesComparison() {
 
             {
                 !hideView && rowData.length > 0 &&
-                <div className="w-full pt-4">
-
+                <div className="w-full pt-4 relative">
                     <ReactApexChart
                         options={options}
                         series={series}
                         type="bar"
                         height={380}
+                        onClick={() => openChartModal(options, series, headerTitle)}
+
                     />
                 </div>
             }

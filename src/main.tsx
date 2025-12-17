@@ -22,6 +22,7 @@ import App from './App.tsx';
 import { persistor, store } from './redux/app/store.ts';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+import { ChartModalProvider } from './hooks/ChartModalContext.tsx';
 const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
   // <StrictMode>
@@ -29,8 +30,9 @@ createRoot(document.getElementById('root')!).render(
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <QueryClientProvider client={queryClient}>
-            
+            <ChartModalProvider>
            <App />
+            </ChartModalProvider>
            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </QueryClientProvider>
        </PersistGate>
