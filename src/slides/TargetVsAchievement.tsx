@@ -272,7 +272,7 @@ export default function TargetVsAchievement() {
 
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>

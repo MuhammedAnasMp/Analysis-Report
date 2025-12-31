@@ -35,7 +35,7 @@ export default function SingleChart({ series, options, height }: SingleChartProp
                             key={idx}
                             options={chartOptions}
                             series={[item]}
-                            type="bar"
+                            type={chartOptions.chart.type}
                             height={height}
                         />
                     </div>

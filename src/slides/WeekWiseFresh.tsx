@@ -7,56 +7,43 @@ import '../layouts/table.css'
 import NoDatafound from '../componenets/vectorIllustrations/NoDataFound'
 import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
-import { param } from 'jquery'
 import ReactApexChart from 'react-apexcharts'
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
-import type { AppDispatch } from '../redux/app/store'
-import { setIsChartOpened } from '../redux/features/global/globalSlice'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseSalesComparison(props: any) {
+export default function WeekWiseFresh(props: any) {
     const { headerTitle } = props;
     const { openChartModal } = useChartModal();
 
-
     const [isLoading, setLoading] = useState(false)
-    const [rowData, setRowData] = useState<any[]>([])
+    const [rowCustomerData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
-    const [newData, setNewData] = useState(false)
+
     const [colDef] = useState<ColDef<any>[]>([
-        { field: "MM", headerName: "Month", cellClass: "text-center", flex: 1 },
+        { field: "SECTION_NAME", headerName: "Section", cellClass: "text-center", flex: 1 },
         {
-            field: "SALES22", headerName: "Sales - 2022", cellClass: "text-right", flex: 1,
-            valueFormatter: (params) => {
+            field: "SECTION_CODE", headerName: "Code", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
             }
         },
         {
-            field: "SALES23", headerName: "Sales - 2023", cellClass: "text-right", flex: 1,
-            valueFormatter: (params) => {
+            field: "DT", headerName: "Periods", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
             }
         },
         {
-            field: "SALES24", headerName: "Sales - 2024", cellClass: "text-right", flex: 1,
-            valueFormatter: (params) => {
+            field: "SALE", headerName: "Sales Amount", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
             }
         },
-        {
-            field: "SALES25", headerName: "Sales - 2025", cellClass: "text-right", flex: 1,
-            valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString();
-            }
-        },
+
+
 
     ])
 
@@ -74,7 +61,7 @@ export default function MonthWiseSalesComparison(props: any) {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://172.16.4.167:5000/api/month-wise-sales-comparison?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://172.16.4.167:5000/api/week-wise-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -95,7 +82,6 @@ export default function MonthWiseSalesComparison(props: any) {
             })
             .catch(() => setLoading(false))
     }, [selectedDate, selectedStore]);
-
 
     const getFilteredData = () => {
         if (!gridRef.current) return;
@@ -121,7 +107,7 @@ export default function MonthWiseSalesComparison(props: any) {
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         //console.log("data", data)
-        const numericCols = ["SALES22", "SALES23", "SALES24", "SALES25",]
+        const numericCols = ["SALE"]
 
         //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -139,7 +125,7 @@ export default function MonthWiseSalesComparison(props: any) {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const wrapper = rootRefSale.current;
+            const wrapper = rootRef.current;
             if (!wrapper) return;
 
             const agRoot = wrapper.querySelector(".ag-root");
@@ -153,9 +139,9 @@ export default function MonthWiseSalesComparison(props: any) {
             agRoot.appendChild(customFooter);
 
 
-            const { total } = calculateTotals(filtered.length ? filtered : rowData)
+            const { total } = calculateTotals(filtered.length ? filtered : rowCustomerData)
 
-            const data = filtered.length ? filtered : rowData
+            const data = filtered.length ? filtered : rowCustomerData
             const current = total
             const colCount = colDef.length
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`
@@ -167,6 +153,7 @@ export default function MonthWiseSalesComparison(props: any) {
                 if (typeof val === 'number') {
                     let formattedVal = val
 
+                    // if field is GP_PERC, divide by total row count first
                     if (col.field === 'GP_PERC' && data) {
                         formattedVal = val / data.length
                     }
@@ -180,7 +167,7 @@ export default function MonthWiseSalesComparison(props: any) {
                 }
             })
 
-             customFooter.innerHTML = `
+            customFooter.innerHTML = `
                     <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
@@ -199,12 +186,12 @@ export default function MonthWiseSalesComparison(props: any) {
                     customDiv.className = 'custom-btn mr-auto text-[13px] font-medium flex items-center text-gray-800'
                     paginationPanel.prepend(customDiv)
                 }
-                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowData.length}`
+                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowCustomerData.length}`
             }
         }, 200)
 
         return () => clearTimeout(timer)
-    }, [filtered, rowData, colDef])
+    }, [filtered, rowCustomerData, colDef])
 
 
     const NoRowsOverlay = () => (
@@ -228,19 +215,16 @@ export default function MonthWiseSalesComparison(props: any) {
             )}
         </div>
     );
-    const rootRefSale = useRef<HTMLDivElement | null>(null);
+    const rootRef = useRef<HTMLDivElement | null>(null);
 
-
+    const [newData, setNewData] = useState(false)
 
 
     const [options, setOptions] = useState({});
     const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
-    const dispatch = useDispatch<AppDispatch>();
-    const handleShowClick = () => {
-        dispatch(setIsChartOpened(true))
-    };
     useEffect(() => {
+
         const isAnyFilterActive = () => {
             const api = gridRef.current?.api;
             if (!api) return false;
@@ -258,33 +242,62 @@ export default function MonthWiseSalesComparison(props: any) {
 
         const anySctive = isAnyFilterActive()
 
-        const source = newData && !anySctive ? rowData : filtered
+        const source = newData && !anySctive ? rowCustomerData : filtered
 
-        const categories = source.map(item => item.MM?.trim());
+        const uniqueDates = Array.from(
+            new Set(source.map(item => item.DT))
+        );
 
-        // Build series
-        const newSeries = [
-            {
-                name: "Sales 2022",
-                data: source.map(item => item.SALES22 ?? 0)
-            },
-            {
-                name: "Sales 2023",
-                data: source.map(item => item.SALES23 ?? 0)
-            },
-            {
-                name: "Sales 2024",
-                data: source.map(item => item.SALES24 ?? 0)
-            },
-            {
-                name: "Sales 2025",
-                data: source.map(item => item.SALES25 ?? 0)
+        const sectionData: Record<string, Record<string, number>> = {};
+
+        source.forEach(item => {
+            if (!sectionData[item.SECTION_NAME]) {
+                sectionData[item.SECTION_NAME] = {};
             }
-        ];
+            sectionData[item.SECTION_NAME][item.DT] = item.SALE;
+        });
+        function toCamelCase(input: string): string {
+            return input
+                .toLowerCase()
+                .split('_')
+                .map(word =>
+                    word.charAt(0).toUpperCase() + word.slice(1)
+                )
+                .join(',');
+        }
 
-
-
+        const series = Object.keys(sectionData).map(sectionName => ({
+            name: toCamelCase(sectionName),
+            data: uniqueDates.map(date =>
+                sectionData[sectionName][date] ?? 0
+            ),
+        }));
+        const sortedByName = [...series].sort((a, b) => a.name.localeCompare(b.name));
+        setSeries(sortedByName);
         // ApexChart options
+
+
+
+        const parseDate = (str: string) => {
+            // Convert "DD-MMM-YY" to "YYYY-MM-DD" for Date parsing
+            const [day, monthStr, year] = str.split("-");
+            const monthNames: Record<string, string> = {
+                JAN: "01", FEB: "02", MAR: "03", APR: "04", MAY: "05", JUN: "06",
+                JUL: "07", AUG: "08", SEP: "09", OCT: "10", NOV: "11", DEC: "12"
+            };
+            const fullYear = "20" + year; // Assuming 20YY
+            return new Date(`${fullYear}-${monthNames[monthStr.toUpperCase()]}-${day}`);
+        };
+
+
+        const withDays = uniqueDates.map(item => {
+            const [date1, date2] = item.split(",");
+            const d1 = parseDate(date1);
+            const d2 = parseDate(date2);
+            const diffDays = Math.abs(Math.round((d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24)));
+            return `${item} (${diffDays}D)`;
+        });
+
         const newOptions: any = {
             chart: {
                 type: "bar",
@@ -297,17 +310,18 @@ export default function MonthWiseSalesComparison(props: any) {
                     columnWidth: "45%"
                 }
             },
-            colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A"],
+            colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A", "#40a9ff"],
             dataLabels: {
                 enabled: true
             },
             xaxis: {
-                categories,
+                categories: withDays,
                 labels: {
                     style: { fontSize: "13px" }
-                }
+                },
             },
             yaxis: {
+                tickAmount: 15,
                 labels: {
                     formatter: (v: number) => v.toLocaleString()
                 }
@@ -322,19 +336,22 @@ export default function MonthWiseSalesComparison(props: any) {
             }
         };
 
-        setSeries(newSeries);
+
+
+
+
+
         setOptions(newOptions);
         setNewData(false)
 
-    }, [rowData, filtered, hideView]);   // 🔥 return whenever data changes
-
+    }, [rowCustomerData, filtered, selectedStore, selectedDate]);   // 🔥 return whenever data changes
     return (
-        <div className="summary-grid-wrapper " ref={rootRefSale}>
-            <div className={`ag-theme-quartz ${!hideView && rowData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
-                <AgGridReact
+        <div className="summary-grid-wrapper" ref={rootRef}>
+            <div className={`ag-theme-quartz ${!hideView && rowCustomerData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
 
+                <AgGridReact
                     ref={gridRef}
-                    rowData={rowData}
+                    rowData={rowCustomerData}
                     columnDefs={colDef}
                     // pagination={true}
                     defaultColDef={{
@@ -348,21 +365,18 @@ export default function MonthWiseSalesComparison(props: any) {
                     loading={isLoading}
                     noRowsOverlayComponent={NoRowsOverlay}
                     onFilterChanged={getFilteredData}
-
                     loadingOverlayComponent={CustomLoadingOverlay}
                 />
             </div>
-
             {
-                !hideView && rowData.length > 0 &&
-                <div className="w-full pt- relative">
+                !hideView && rowCustomerData.length > 0 &&
+                <div className="w-full pt-">
+
                     <ReactApexChart
                         options={options}
                         series={series}
                         type="bar"
-                        height={380}
-                        onClick={() => openChartModal(options, series, headerTitle)}
-
+                        height={380} onClick={() => openChartModal(options, series, headerTitle)}
                     />
                 </div>
             }

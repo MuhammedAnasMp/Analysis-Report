@@ -205,7 +205,7 @@ export default function YearWiseWeekEndSales(props:any) {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -453,7 +453,7 @@ export default function YearWiseWeekEndSales(props:any) {
             {
                 !hideView && rowCustomerData.length > 0 &&
                 <div className='flex w-full'>
-                    <div className="w-full pt-4 ">
+                    <div className="w-full pt- ">
                         <div className='w-full flex flex-col justify-center'>
 
                             <ReactApexChart
@@ -466,7 +466,7 @@ export default function YearWiseWeekEndSales(props:any) {
                             />
                         </div>
                     </div>
-                    <div className="w-full pt-4 ">
+                    <div className="w-full pt- ">
                         <div className='w-full flex flex-col justify-center'>
                             <ReactApexChart
                                 key={2}

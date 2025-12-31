@@ -18,7 +18,7 @@ export default function TargetVsAchievement() {
     const gridRef = useRef<AgGridReact | any>(null)
 
     const [colDef] = useState<ColDef<any>[]>([
-        { field: "SEC_CODE", headerName: "Code", cellClass: "text-center", flex: 1 },
+        { field: "SEC_CODE", headerName: "Code", cellClass: "text-center ", flex: 1 },
         { field: "SEC_NAME", headerName: "Section", cellClass: "text-left", flex: 1 },
         {
             field: "SKU_COUNT",
@@ -123,7 +123,7 @@ export default function TargetVsAchievement() {
             cellClass: "text-right",
             flex: 1,
             cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : {backgroundColor: "#e6ffe6" , color: "green"},
         },
         {
             field: "STOCK_DAYS",
@@ -328,7 +328,7 @@ export default function TargetVsAchievement() {
 
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>

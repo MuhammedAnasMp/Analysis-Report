@@ -14,8 +14,8 @@ import ReactApexChart from 'react-apexcharts'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseFreshComparison(props:any) {
-   const { headerTitle} = props;
+export default function MonthWiseFreshComparison(props: any) {
+    const { headerTitle } = props;
     const { openChartModal } = useChartModal();
 
     const [isLoading, setLoading] = useState(false)
@@ -258,7 +258,7 @@ export default function MonthWiseFreshComparison(props:any) {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -362,9 +362,10 @@ export default function MonthWiseFreshComparison(props:any) {
 
         const newOptions: ApexCharts.ApexOptions = {
             chart: { type: "line", height: 450, toolbar: { show: false } },
+            colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A", "#40a9ff"],
             stroke: { width: 2.5 },
             xaxis: { categories },
-            yaxis: {   tickAmount: 15 },
+            yaxis: { tickAmount: 15 },
             legend: { show: false }, // hide built-in legend
             tooltip: { shared: true, intersect: false }
         };
@@ -475,7 +476,10 @@ export default function MonthWiseFreshComparison(props:any) {
                                 options={options}
                                 series={series}
                                 type="line"
+                                onClick={() => openChartModal(options, series, headerTitle)}
+
                                 height={330}
+
                             />
                         </div>
                     </div>

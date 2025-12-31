@@ -29,6 +29,7 @@ import YearWiseGP from "../slides/YearWiseGP";
 import YearWiseWeekEndSales from "../slides/YearWiseWeekEndSales";
 import StockInWereHouseNotInStore from "../slides/StockInWereHouseNotInStore";
 import GMCustomer from "../slides/GMCustomer";
+import WeekWiseFresh from "../slides/WeekWiseFresh";
 
 export type Slide = {
   id: number;
@@ -89,32 +90,39 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "FRESH \n SALES",
       headerTitle: "Yearly Fresh Sales Report",
     },
-    {
+    { 
       id: 8,
+      component: WeekWiseFresh,
+      label: "WEEK WISE FRESH",
+      headerTitle: "Grand Me Customer",
+    },
+    {
+      id: 9,
       component: YearWiseGP,
       label: "ANNUAL \n GP",
       headerTitle: "This Year Gross Profit",
     },
     {
-      id: 9,
+      id: 10,
       component: YearWiseWeekEndSales,
       label: "WEEKEND SALES",
       headerTitle: "Weekdays & Weekend Sales",
       image: "/weekdays.png",
     },
     {
-      id: 10,
+      id: 11,
       component: StockInWereHouseNotInStore,
       label: "STOCK IN WAREHOUSE",
       headerTitle: "Stock In Ware House Not In Store ",
       image: "/weekdays.png",
     },
     { 
-      id: 12,
+      id: 13,
       component: GMCustomer,
       label: "GRAND ME",
       headerTitle: "Grand Me Customer",
     },
+    
   ];
 
 
@@ -175,7 +183,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
 
   return (
-    <div className="p-3">
+    <div className="p-2">
 
       <div data-hs-carousel='{ "loadingClasses": "opacity-0"}' className="relative ">
         <div className="hs-carousel flex flex-col md:flex-row gap-2 ">

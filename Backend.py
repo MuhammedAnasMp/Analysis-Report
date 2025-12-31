@@ -337,10 +337,48 @@ def gmcustomer():
     cur = conn.cursor()
 
     sql_query = """
-           SELECT * fROM KWT_BRM_GME_CUST_DETL WHERE GOLD_LOC=:loc
+           SELECT * fROM KWT_BRM_GME_CUST_DETL WHERE GOLD_LOC=:loc order by MONTH asc
             """
 
     cur.execute(sql_query, {'loc': location})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
+
+@app.route('/api/week-wise-fresh', methods=['GET'])
+def weekwisefresh():
+    location = request.args.get("location")  # e.g., "ST01"
+    yyyymm = request.args.get("yyyymm") 
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+          SELECT DISTINCT 
+        LOCATION_ID,GET_LOC_NAME(LOCATION_ID)LOC_NAME,
+        SECTION_CODE,SECTION_NAME,ROUND(SUM(CMO_VALUE),3)SALE,
+        OP_DATE||','||CL_DATE DT,TO_CHAR(CL_DATE,'YYYYMM')MM
+                FROM KWT_FRESH_DETAILED_REPORT WHERE  TO_CHAR(CL_DATE,'YYYYMM')= :YYYYMM
+                AND LOCATION_ID=:loc
+             --   AND SECTION_CODE='1S0301'
+                GROUP BY 
+                LOCATION_ID,SECTION_CODE,SECTION_NAME,OP_DATE,CL_DATE
+                ORDER BY OP_DATE||','||CL_DATE DESC
+            """
+
+    cur.execute(sql_query, {'loc': location , 'yyyymm':yyyymm})
     columns = [col[0] for col in cur.description]
 
     cur.execute(sql_query)
@@ -717,7 +755,26 @@ def yeardateperiods():
     cur.close()
     conn.close()
 
-    return jsonify(results)
+    return jsonify([
+  {
+    "YYYYMM": "202512"
+  },
+  {
+    "YYYYMM": "202511"
+  },
+  {
+    "YYYYMM": "202510"
+  },
+  {
+    "YYYYMM": "202509"
+  },
+  {
+    "YYYYMM": "202508"
+  },
+  {
+    "YYYYMM": "202507"
+  },
+])
 
 
 @app.route('/improvement_plans/<yyyymm>', methods=['GET'])

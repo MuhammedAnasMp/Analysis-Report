@@ -56,13 +56,13 @@ export default function StockInWereHouseNotInStore(props: any) {
                 },
                 {
 
-                    field: "OOS_PERC", headerName: "OOS (%)", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    field: "OOS_PERC", headerName: "OOS (%)", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
                         if (params.value == null) return (params.data.OOS / params.data.TOTAL_SKU * 100).toLocaleString() + ' %';
                         return params.value.toLocaleString();
                     }
                 },
                 {
-                    field: "AVLBL_PERC", headerName: "Avlbl (%)", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    field: "AVLBL_PERC", headerName: "Avlbl (%)", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
                         if (params.value == null) return (params.data.AVLBL / params.data.TOTAL_SKU * 100).toLocaleString() + ' %';
                         return params.value.toLocaleString();
                     }
@@ -92,13 +92,13 @@ export default function StockInWereHouseNotInStore(props: any) {
                     }
                 },
                 {
-                    field: "AVLBL_SALE_ITEM_PERC", headerName: "Avlbl Sale Item % ", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    field: "AVLBL_SALE_ITEM_PERC", headerName: "Avlbl Sale Item % ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
                         if (params.value == null) return (params.data.AVLBL_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString() + ' %';
                         return params.value.toLocaleString();
                     }
                 },
                 {
-                    field: "OOS_SALE_ITEM_PERC", headerName: "OOS Sale Item % ", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                    field: "OOS_SALE_ITEM_PERC", headerName: "OOS Sale Item % ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
                         if (params.value == null) return (params.data.OOS_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString() + ' %';
                         return params.value.toLocaleString();
                     }
@@ -183,10 +183,6 @@ export default function StockInWereHouseNotInStore(props: any) {
         return { total, avg }
     }
 
-    function isColDef(col: ColDef | ColGroupDef): col is ColDef {
-        return 'field' in col;
-    }
-
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -215,7 +211,7 @@ export default function StockInWereHouseNotInStore(props: any) {
 
             let rowHTML = ''
             colDef.forEach((col:any )=> {
-                console.log(col)
+                // console.log(col)
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
                     let formattedVal = val
@@ -265,7 +261,7 @@ export default function StockInWereHouseNotInStore(props: any) {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -530,7 +526,7 @@ export default function StockInWereHouseNotInStore(props: any) {
             {
                 !hideView && rowData.length > 0 &&
                 <div className='flex w-full'>
-                    <div className="w-full pt-4 ">
+                    <div className="w-full pt- ">
                         <div className='w-full flex flex-col justify-center'>
 
                             <ReactApexChart
@@ -543,7 +539,7 @@ export default function StockInWereHouseNotInStore(props: any) {
                             />
                         </div>
                     </div>
-                    <div className="w-full pt-4 ">
+                    <div className="w-full pt- ">
                         <div className='w-full flex flex-col justify-center'>
                             <ReactApexChart
                                 key={2}

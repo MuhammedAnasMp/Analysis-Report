@@ -19,6 +19,15 @@ const ChartModal: React.FC<ChartModalProps> = ({
 }) => {
     const [value, setValue] = useState(600); // 0 = Low, 1 = Medium, 2 = High
     const [isDetailed, setDetailed] = useState(false)
+    const [updatedOptions, setUpdatedOptions] = useState({
+        ...options,
+        chart: {
+            ...options.chart,
+            type: "bar" 
+        }
+    })
+
+
     return (
         <div className="fixed top-0 inset-0 z-50  bg-opacity-40 backdrop-blur-sm  flex flex-col items-center justify-center overflow-auto">
 
@@ -100,6 +109,26 @@ const ChartModal: React.FC<ChartModalProps> = ({
                                 return true; // always allow tab change
                             }}
                         />
+                        <Tabs
+                            tabs={[
+                                {
+                                    id: "0",
+                                    label: "Summary",
+                                    content: <p className="text-sm text-blue-700">First tab content</p>,
+                                },
+                                {
+                                    id: "1",
+                                    label: "Detailed",
+                                    content: <p className="text-sm text-blue-700">Second tab content</p>,
+                                },
+                            ]}
+
+                            onChange={(tabId) => {
+                                const isDetailedTab = tabId === "1";
+                                setDetailed(isDetailedTab);
+                                return true; // always allow tab change
+                            }}
+                        />
                     </div>
 
                     <button
@@ -118,12 +147,12 @@ const ChartModal: React.FC<ChartModalProps> = ({
                     {
                         !isDetailed ?
                             <ReactApexChart
-                                options={options}
+                                options={updatedOptions}
                                 series={series}
-                                type="bar"
+                                type={updatedOptions.chart.type}
                                 height={value}
                             /> :
-                            <SingleChart series={series} options={options} height={value} />
+                            <SingleChart series={series} options={updatedOptions} height={value} />
                     }
 
 

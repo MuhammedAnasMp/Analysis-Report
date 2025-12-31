@@ -93,7 +93,7 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
     }
   }, [searchTerm, locations]);
   return (
-    <header className=" flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-3 dark:bg-neutral-800 border-b-1 border-neutral-300">
+    <header className=" flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-2 dark:bg-neutral-800 border-b-1 border-neutral-300">
       <nav className="w-full mx-auto px-50 sm:flex sm:items-center sm:justify-between">
         <div className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore &&  capitalizeEachWord( selectedStore.LOCATION_NAME)}</div>
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">

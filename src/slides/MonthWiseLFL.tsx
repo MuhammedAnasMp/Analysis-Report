@@ -240,7 +240,7 @@ export default function MonthWiseLFL(props:any) {
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -408,7 +408,7 @@ export default function MonthWiseLFL(props:any) {
 
             {
                 !hideView && rowData.length > 0 &&
-                <div className="w-full pt-4">
+                <div className="w-full pt-">
 
                     <ReactApexChart
                         options={options}

@@ -13,8 +13,8 @@ import ReactApexChart from 'react-apexcharts'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function GMCustomer(props:any) {
-   const { headerTitle} = props;
+export default function GMCustomer(props: any) {
+    const { headerTitle } = props;
     const { openChartModal } = useChartModal();
 
 
@@ -24,19 +24,21 @@ export default function GMCustomer(props:any) {
     const gridRef = useRef<AgGridReact | any>(null)
 
     const [colDef] = useState<ColDef<any>[]>([
-        { field: "MONTH", headerName: "Month", cellClass: "text-center", flex: 1 },
-        { field: "CUSTOMER_COUNT", headerName: "Customer Count", cellClass: "text-center", flex: 1 },
+        { field: "MONTH", headerName: "Month", cellClass: "text-center ", flex: 1 },
+        { field: "CUSTOMER_COUNT", headerName: "Customer Count", cellClass: "text-right", flex: 1 },
         {
-            field: "GME_CONT", headerName: "GME Contributio ", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "GRANDME_BILL", headerName: "GME Customers Count", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
-            }
+            },
+           
+            
         },
         {
-            field: "GRANDME_BILL", headerName: "GME Bill", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "GME_CONT", headerName: "GME Contribution (%) ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
-            }
+                return params.value.toLocaleString() + " %";
+            },
         },
         {
             field: "PURCHASE_POINT", headerName: "Purchase Point", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
@@ -45,12 +47,13 @@ export default function GMCustomer(props:any) {
             }
         },
         {
-            field: "RED_POINT", headerName: "Redeemed  Point", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "RED_POINT", headerName: "Redeemed  Point", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                const point = params.value *100 
+                return point.toLocaleString();
             }
         },
-      
+
 
     ])
 
@@ -116,7 +119,7 @@ export default function GMCustomer(props:any) {
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         //console.log("data", data)
-        const numericCols = ["BK_2022", "BK_2023", "BK_2024", "BK_2025",]
+        const numericCols = ["CUSTOMER_COUNT", "GME_CONT", "GRANDME_BILL", "PURCHASE_POINT", "RED_POINT"]
 
         //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -161,40 +164,37 @@ export default function GMCustomer(props:any) {
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
                     let formattedVal = val
-22
-23
-24
-25
 
-                    if (col.field === 'BK_2022' && data?.length) {
-                        const total_sales22 = data.reduce((sum, item) => sum + (item.SALES22 || 0), 0);
-                        const total_customer22 = data.reduce((sum, item) => sum + (item.CUSTOMER22 || 0), 0);
 
-                        const DIF_PERC = total_customer22 ? (total_sales22/ total_customer22)  : 0;
+                    // if (col.field === 'BK_2022' && data?.length) {
+                    //     const total_sales22 = data.reduce((sum, item) => sum + (item.SALES22 || 0), 0);
+                    //     const total_customer22 = data.reduce((sum, item) => sum + (item.CUSTOMER22 || 0), 0);
 
-                        formattedVal = DIF_PERC;
-                    }
-                    if (col.field === 'BK_2023' && data?.length) {
-                        const total_sales23 = data.reduce((sum, item) => sum + (item.SALES23 || 0), 0);
-                        const total_customer23 = data.reduce((sum, item) => sum + (item.CUSTOMER23 || 0), 0);
+                    //     const DIF_PERC = total_customer22 ? (total_sales22/ total_customer22)  : 0;
 
-                        const DIF_PERC = total_customer23 ? (total_sales23/ total_customer23)  : 0;
+                    //     formattedVal = DIF_PERC;
+                    // }
+                    // if (col.field === 'BK_2023' && data?.length) {
+                    //     const total_sales23 = data.reduce((sum, item) => sum + (item.SALES23 || 0), 0);
+                    //     const total_customer23 = data.reduce((sum, item) => sum + (item.CUSTOMER23 || 0), 0);
 
-                        formattedVal = DIF_PERC;
-                    }
-                    if (col.field === 'BK_2024' && data?.length) {
-                        const total_sales24 = data.reduce((sum, item) => sum + (item.SALES24 || 0), 0);
-                        const total_customer24 = data.reduce((sum, item) => sum + (item.CUSTOMER24 || 0), 0);
+                    //     const DIF_PERC = total_customer23 ? (total_sales23/ total_customer23)  : 0;
 
-                        const DIF_PERC = total_customer24 ? (total_sales24/ total_customer24)  : 0;
+                    //     formattedVal = DIF_PERC;
+                    // }
+                    if (col.field === 'RED_POINT' && data?.length) {
+                        const tota_point = data.reduce((sum, item) => sum + (item.RED_POINT || 0), 0);
+                    
+
+                        const DIF_PERC = tota_point *100 ;
 
                         formattedVal = DIF_PERC;
                     }
-                    if (col.field === 'BK_2025' && data?.length) {
-                        const total_sales25 = data.reduce((sum, item) => sum + (item.SALES25 || 0), 0);
-                        const total_customer25 = data.reduce((sum, item) => sum + (item.CUSTOMER25 || 0), 0);
+                    if (col.field === 'GME_CONT' && data?.length) {
+                        const total_gme_bill = data.reduce((sum, item) => sum + (item.GRANDME_BILL || 0), 0);
+                        const total_customer_count = data.reduce((sum, item) => sum + (item.CUSTOMER_COUNT|| 0), 0);
 
-                        const DIF_PERC = total_customer25 ? (total_sales25/ total_customer25)  : 0;
+                        const DIF_PERC = total_gme_bill ? ( total_gme_bill/total_customer_count *100)  : 0;
 
                         formattedVal = DIF_PERC;
                     }
@@ -202,14 +202,14 @@ export default function GMCustomer(props:any) {
                     const formatted = formattedVal.toLocaleString()
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
+                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GME_CONT' ? '%' : ''}</div>`
                 } else {
                     rowHTML += `<div></div>`
                 }
             })
 
             customFooter.innerHTML = `
-                    <div class="w-full bg-black border-t  border-gray-300 "
+                    <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
                     </div>
@@ -284,25 +284,21 @@ export default function GMCustomer(props:any) {
         const anySctive = isAnyFilterActive()
 
         const source = newData && !anySctive ? rowData : filtered
-        const categories = source.map(item => item.MM?.trim());
+        const categories = source.map(item => item.MONTH?.trim());
 
         // Build series
         const newSeries = [
             {
-                name: "Basket Value2022",
-                data: source.map(item => item.BK_2022 ?? 0)
+                name: "Customers",
+                data: source.map(item => item.CUSTOMER_COUNT ?? 0)
             },
             {
-                name: "Basket Value2023",
-                data: source.map(item => item.BK_2023 ?? 0)
+                name: "GME Customers",
+                data: source.map(item => item.GRANDME_BILL ?? 0)
             },
             {
-                name: "Basket Value2024",
-                data: source.map(item => item.BK_2024 ?? 0)
-            },
-            {
-                name: "Basket Value2025",
-                data: source.map(item => item.BK_2025 ?? 0)
+                name: "New Customers",
+                data: source.map(item => item.GRANDME_BILL *2 ?? 0)  //TBD
             }
         ];
 
@@ -330,7 +326,7 @@ export default function GMCustomer(props:any) {
                 }
             },
             yaxis: {
-                  tickAmount: 15,
+                tickAmount: 15,
                 labels: {
                     formatter: (v: number) => v.toLocaleString()
                 }
@@ -376,13 +372,13 @@ export default function GMCustomer(props:any) {
             </div>
             {
                 !hideView && rowData.length > 0 &&
-                <div className="w-full pt-4">
+                <div className="w-full pt-">
 
                     <ReactApexChart
                         options={options}
                         series={series}
                         type="bar"
-                         height={380} onClick={()=>openChartModal(options, series , headerTitle)}
+                        height={380} onClick={() => openChartModal(options, series, headerTitle)}
                     />
                 </div>
             }
