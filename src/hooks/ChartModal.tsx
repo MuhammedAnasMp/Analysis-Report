@@ -1,5 +1,5 @@
-import { ChatBubbleLeftEllipsisIcon, CheckIcon, WindowIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import React, { useState } from "react";
+import { ArrowTrendingUpIcon, ChartBarIcon, ChatBubbleLeftEllipsisIcon, CheckIcon, PresentationChartLineIcon, WindowIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import SingleChart from "./SingleChart";
 import { Tabs } from "../componenets/Tabs";
@@ -17,16 +17,42 @@ const ChartModal: React.FC<ChartModalProps> = ({
     onClose,
     heading
 }) => {
-    const [value, setValue] = useState(600); // 0 = Low, 1 = Medium, 2 = High
+    const [value, setValue] = useState(600);
     const [isDetailed, setDetailed] = useState(false)
-    const [updatedOptions, setUpdatedOptions] = useState({
+    const [updatedOptions, setUpdateOption] = useState({
         ...options,
         chart: {
             ...options.chart,
-            type: "bar" 
+            type: options.chart.type
         }
     })
 
+    const [typeOption, setTypeOption] = useState<'bar' | 'line'>(options.chart.type)
+
+
+    useEffect(() => {
+        setUpdateOption({
+            ...options,
+            chart: {
+                ...options.chart,
+                type: typeOption
+            },
+            stroke: { width: 2.5 },
+            dataLabels: {
+                // enabled: typeOption === 'bar' ? true : false,
+                enabled: true,
+                style: {
+                    fontSize: '12px',  // adjust size
+                    fontWeight: 'bold',
+                    // colors: ['#000']   // optional: color
+                },
+                background: {
+                    enabled: false,  // Disable background box
+                },
+
+            },
+        })
+    }, [typeOption])
 
     return (
         <div className="fixed top-0 inset-0 z-50  bg-opacity-40 backdrop-blur-sm  flex flex-col items-center justify-center overflow-auto">
@@ -94,40 +120,42 @@ const ChartModal: React.FC<ChartModalProps> = ({
                                 {
                                     id: "0",
                                     label: "Summary",
-                                    content: <p className="text-sm text-blue-700">First tab content</p>,
                                 },
                                 {
                                     id: "1",
                                     label: "Detailed",
-                                    content: <p className="text-sm text-blue-700">Second tab content</p>,
                                 },
                             ]}
 
                             onChange={(tabId) => {
                                 const isDetailedTab = tabId === "1";
                                 setDetailed(isDetailedTab);
-                                return true; // always allow tab change
+                                return true;
                             }}
                         />
                         <Tabs
                             tabs={[
                                 {
                                     id: "0",
-                                    label: "Summary",
-                                    content: <p className="text-sm text-blue-700">First tab content</p>,
+                                    label: <><ChartBarIcon height={19} width={12} /></>,
+
                                 },
                                 {
                                     id: "1",
-                                    label: "Detailed",
-                                    content: <p className="text-sm text-blue-700">Second tab content</p>,
+                                    label: <><ArrowTrendingUpIcon height={19} width={12} /></>,
                                 },
                             ]}
 
                             onChange={(tabId) => {
-                                const isDetailedTab = tabId === "1";
-                                setDetailed(isDetailedTab);
-                                return true; // always allow tab change
+                                if (tabId === "1") {
+                                    setTypeOption("line");
+                                }
+                                else {
+                                    setTypeOption("bar");
+                                }
+                                return true;
                             }}
+                            defaultTabId={`${typeOption === "line" ? '1' : '0'}`}
                         />
                     </div>
 
@@ -143,16 +171,17 @@ const ChartModal: React.FC<ChartModalProps> = ({
             </div>
             <div className={`bg-white dark:bg-neutral-800  w-full max-w-[95%]  flex flex-col  pointer-events-auto  shadow-lg rounded-lg rounded-t-none max-h-[90vh] overflow-y-auto  overflow-x-hidden`}>
 
-                <div className="w-full">
+                <div className={`w-full ${typeOption ==="line" && 'paren'}`}>
                     {
                         !isDetailed ?
                             <ReactApexChart
+                                key={updatedOptions.chart.type}
                                 options={updatedOptions}
                                 series={series}
                                 type={updatedOptions.chart.type}
                                 height={value}
                             /> :
-                            <SingleChart series={series} options={updatedOptions} height={value} />
+                            <SingleChart key={updatedOptions.chart.type} series={series} options={updatedOptions} height={value} />
                     }
 
 

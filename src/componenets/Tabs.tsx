@@ -1,12 +1,19 @@
 import { useState } from "react";
+
+type Tab = {
+  id: string;
+  label: any;
+};
+
 type TabsProps = {
-  tabs: any[];
-  defaultTabId?: string;
+  tabs: Tab[];
+  defaultTabId?: string; // optional default selected tab
   onChange?: (tabId: string) => boolean;
 };
 
 export function Tabs({ tabs, defaultTabId, onChange }: TabsProps) {
-  const [activeTab, setActiveTab] = useState(
+  // default to the provided defaultTabId or the first tab's id
+  const [activeTab, setActiveTab] = useState<string | undefined>(
     defaultTabId ?? tabs[0]?.id
   );
 

@@ -94,7 +94,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       id: 8,
       component: WeekWiseFresh,
       label: "WEEK WISE FRESH",
-      headerTitle: "Grand Me Customer",
+      headerTitle: "Week Wise Fresh Sales",
     },
     {
       id: 9,

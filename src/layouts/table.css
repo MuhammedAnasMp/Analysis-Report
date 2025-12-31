@@ -33,6 +33,14 @@
 }
 
 
+.paren .apexcharts-datalabel {
+    transform: rotate(0deg);
+    transform-origin: center;
+    transform-box: fill-box;
+    fill: #000000 !important;
+    color: #E2E6F5 !important;
+}
+
 /* Change background color and text color of header cells */
 .ag-header-cell {
     background-color: #0e0606; /* green background */

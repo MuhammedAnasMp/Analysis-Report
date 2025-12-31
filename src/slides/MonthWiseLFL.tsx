@@ -338,11 +338,8 @@ export default function MonthWiseLFL(props:any) {
 
         // ApexChart options
         const newOptions: any = {
-            chart: {
-                type: "bar",
-                height: 380,
-                toolbar: { show: false }
-            },
+            chart: { type: "bar", height: 380, toolbar: { show: false }
+},
             plotOptions: {
                 bar: {
                     borderRadius: 6,
@@ -351,8 +348,10 @@ export default function MonthWiseLFL(props:any) {
             },
             colors: ["#2563EB", "#10B981", "#F59E0B"],
             dataLabels: {
-                enabled: true
+                enabled: true ,
+
             },
+            stroke: { width: 2.5 },
             xaxis: {
                 categories,
                 labels: {

@@ -310,7 +310,7 @@ export default function MonthWiseFreshComparison(props: any) {
     const [newData, setNewData] = useState(false)
 
 
-    const [options, setOptions] = useState({});
+    const [options, setOptions] = useState<ApexCharts.ApexOptions>({});
     const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
     const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
@@ -362,11 +362,17 @@ export default function MonthWiseFreshComparison(props: any) {
 
         const newOptions: ApexCharts.ApexOptions = {
             chart: { type: "line", height: 450, toolbar: { show: false } },
+            plotOptions: {
+                bar: {
+                    borderRadius: 6,
+                    columnWidth: "45%"
+                }
+            },
             colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A", "#40a9ff"],
             stroke: { width: 2.5 },
             xaxis: { categories },
             yaxis: { tickAmount: 15 },
-            legend: { show: false }, // hide built-in legend
+            legend: { show: true }, // hide built-in legend
             tooltip: { shared: true, intersect: false }
         };
 
@@ -472,10 +478,10 @@ export default function MonthWiseFreshComparison(props: any) {
                         </div>
                         <div className="w-full pt-8">
 
-                            <ReactApexChart
+                            <ReactApexChart key={options.chart?.type}
                                 options={options}
                                 series={series}
-                                type="line"
+                                type={options.chart?.type}
                                 onClick={() => openChartModal(options, series, headerTitle)}
 
                                 height={330}

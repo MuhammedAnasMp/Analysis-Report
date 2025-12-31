@@ -399,6 +399,214 @@ def weekwisefresh():
 @app.route('/api/monthly-lfl', methods=['GET'])
 def monthwiselfl():
 
+
+    return({
+  "data": [
+    {
+      "LM_VALUE": 207839.555,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 217887.867,
+      "MTD_VALUE": 206287.968,
+      "SEC_CODE": "01  ",
+      "SEC_NAME": "FOOD                     ",
+      "TM_VS_LM_PCT": -0.75,
+      "TM_VS_LY_PCT": -5.32
+    },
+    {
+      "LM_VALUE": 24789.455,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 23001.99,
+      "MTD_VALUE": 24882.319,
+      "SEC_CODE": "01-1",
+      "SEC_NAME": "HOTFOOD                  ",
+      "TM_VS_LM_PCT": 0.37,
+      "TM_VS_LY_PCT": 8.17
+    },
+    {
+      "LM_VALUE": 2337.156,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 2648.56,
+      "MTD_VALUE": 2374.084,
+      "SEC_CODE": "01-2",
+      "SEC_NAME": "OWN BAKERY               ",
+      "TM_VS_LM_PCT": 1.58,
+      "TM_VS_LY_PCT": -10.36
+    },
+    {
+      "LM_VALUE": 37703.336,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 31291.68,
+      "MTD_VALUE": 34057.995,
+      "SEC_CODE": "02-1",
+      "SEC_NAME": "BEVERAGES                ",
+      "TM_VS_LM_PCT": -9.67,
+      "TM_VS_LY_PCT": 8.84
+    },
+    {
+      "LM_VALUE": 26003.765,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 31954.684,
+      "MTD_VALUE": 26765.557,
+      "SEC_CODE": "02-2",
+      "SEC_NAME": "FROZEN                   ",
+      "TM_VS_LM_PCT": 2.93,
+      "TM_VS_LY_PCT": -16.24
+    },
+    {
+      "LM_VALUE": 1615.216,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 2070.757,
+      "MTD_VALUE": 1648.496,
+      "SEC_CODE": "02-3",
+      "SEC_NAME": "DELI                     ",
+      "TM_VS_LM_PCT": 2.06,
+      "TM_VS_LY_PCT": -20.39
+    },
+    {
+      "LM_VALUE": 92530.352,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 102640.4,
+      "MTD_VALUE": 92463.647,
+      "SEC_CODE": "03  ",
+      "SEC_NAME": "ROASTRY & SPICES         ",
+      "TM_VS_LM_PCT": -0.07,
+      "TM_VS_LY_PCT": -9.91
+    },
+    {
+      "LM_VALUE": 148858.032,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 148010.373,
+      "MTD_VALUE": 146535.742,
+      "SEC_CODE": "04  ",
+      "SEC_NAME": "FRUITS & VEG             ",
+      "TM_VS_LM_PCT": -1.56,
+      "TM_VS_LY_PCT": -1
+    },
+    {
+      "LM_VALUE": 15186.976,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 16035.289,
+      "MTD_VALUE": 14780.283,
+      "SEC_CODE": "05  ",
+      "SEC_NAME": "BUTCHERY                 ",
+      "TM_VS_LM_PCT": -2.68,
+      "TM_VS_LY_PCT": -7.83
+    },
+    {
+      "LM_VALUE": 18031.271,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 17541.24,
+      "MTD_VALUE": 18416.772,
+      "SEC_CODE": "06  ",
+      "SEC_NAME": "FISHERY                  ",
+      "TM_VS_LM_PCT": 2.14,
+      "TM_VS_LY_PCT": 4.99
+    },
+    {
+      "LM_VALUE": 136044.864,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 161271.647,
+      "MTD_VALUE": 138973.639,
+      "SEC_CODE": "07  ",
+      "SEC_NAME": "NON FOOD                 ",
+      "TM_VS_LM_PCT": 2.15,
+      "TM_VS_LY_PCT": -13.83
+    },
+    {
+      "LM_VALUE": 33713.177,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 39985.884,
+      "MTD_VALUE": 36432.287,
+      "SEC_CODE": "08  ",
+      "SEC_NAME": "GARMENTS                 ",
+      "TM_VS_LM_PCT": 8.07,
+      "TM_VS_LY_PCT": -8.89
+    },
+    {
+      "LM_VALUE": 14426.254,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 14218.198,
+      "MTD_VALUE": 14106.692,
+      "SEC_CODE": "09  ",
+      "SEC_NAME": "FOOTWEAR                 ",
+      "TM_VS_LM_PCT": -2.22,
+      "TM_VS_LY_PCT": -0.78
+    },
+    {
+      "LM_VALUE": 31076.395,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 38977.383,
+      "MTD_VALUE": 31393.757,
+      "SEC_CODE": "10  ",
+      "SEC_NAME": "ELECTRONICS              ",
+      "TM_VS_LM_PCT": 1.02,
+      "TM_VS_LY_PCT": -19.46
+    },
+    {
+      "LM_VALUE": 16624.182,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 17511.854,
+      "MTD_VALUE": 17345.8,
+      "SEC_CODE": "11  ",
+      "SEC_NAME": "APPLIANCES               ",
+      "TM_VS_LM_PCT": 4.34,
+      "TM_VS_LY_PCT": -0.95
+    },
+    {
+      "LM_VALUE": 21476.178,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 23677.982,
+      "MTD_VALUE": 22657.876,
+      "SEC_CODE": "12  ",
+      "SEC_NAME": "HOUSE HOLD               ",
+      "TM_VS_LM_PCT": 5.5,
+      "TM_VS_LY_PCT": -4.31
+    },
+    {
+      "LM_VALUE": 24371.634,
+      "LOCATION": "FAHAHEEL",
+      "LOC_CODE": 802,
+      "LY_VALUE": 27922.724,
+      "MTD_VALUE": 24548.053,
+      "SEC_CODE": "13  ",
+      "SEC_NAME": "OTHERS                   ",
+      "TM_VS_LM_PCT": 0.72,
+      "TM_VS_LY_PCT": -12.09
+    }
+  ],
+  "dates": {
+    "current": [
+      "Wed, 01 Oct 2025 00:00:00 GMT",
+      "Fri, 31 Oct 2025 00:00:00 GMT"
+    ],
+    "prev_month": [
+      "Wed, 03 Sep 2025 00:00:00 GMT",
+      "Fri, 03 Oct 2025 00:00:00 GMT"
+    ],
+    "prev_year": [
+      "Wed, 02 Oct 2024 00:00:00 GMT",
+      "Fri, 01 Nov 2024 00:00:00 GMT"
+    ]
+  }
+}
+)
+
     def next_same_weekday(base_date, target_weekday):
         days_ahead = (target_weekday - base_date.weekday() + 7) % 7
         return base_date + timedelta(days=days_ahead)

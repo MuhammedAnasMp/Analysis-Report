@@ -199,18 +199,18 @@ export default function StockInWereHouseNotInStore(props: any) {
             customFooter.className = "custom-footer";   // important!
             agRoot.appendChild(customFooter);
 
-            
+
             const { total } = calculateTotals(filtered.length ? filtered : rowData)
-            
-      
-            
+
+
+
             const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`
 
             let rowHTML = ''
-            colDef.forEach((col:any )=> {
+            colDef.forEach((col: any) => {
                 // console.log(col)
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
@@ -379,7 +379,11 @@ export default function StockInWereHouseNotInStore(props: any) {
 
             colors: ["blue", "red",],
             dataLabels: {
-                enabled: true
+                enabled: true, style: {
+                    fontSize: '14px',  // adjust size
+                    fontWeight: 'bold',
+                    colors: ['#000']   // optional: color
+                }
             },
             xaxis: {
                 categories,
