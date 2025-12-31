@@ -31,6 +31,27 @@ def connection():
         raise
 
 
+def connection_v6_menu():
+    username = "V6MENU"
+    password = "V6MENU"
+    dsn = "172.16.4.101:1521/REGENCY"
+    client_path = r"C:\instantclient_19_5"
+
+    try:
+        print("Initializing Oracle client...")
+        oracledb.init_oracle_client(lib_dir=client_path)
+        print("Connecting to Oracle Database...")
+        conn = oracledb.connect(user=username, password=password, dsn=dsn)
+        print("Connected to Oracle Database successfully!")
+        return conn
+    except oracledb.Error as e:
+        print("❌ Error connecting to Oracle Database:", e)
+        raise
+    except Exception as e:
+        print("❌ Unexpected error in connection:", e)
+        raise
+
+
 @app.route("/api/target-vs-achievement", methods=['GET', 'POST'])
 def salestable():
     if request.method == 'GET':
@@ -244,6 +265,82 @@ def monthwisefresh():
             """
 
     cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
+@app.route('/api/stock-in-warehouse-not-in-store', methods=['GET'])
+def stockinwarehousenotinstore():
+    location = request.args.get("location")  # e.g., "ST01"
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+           SELECT DISTINCT SITE_ID LOC,GET_AM_NAME(SITE_ID)AM_NAME,
+                            GET_LOC_NAME(SITE_ID),
+                            SECTION_CODE,SECTION_NAME,COUNT(*)TOTAL_SKU,
+                            NVL(SUM(CASE WHEN WH_STOCK-NVL(DMG_sTOCK,0)>=24 AND BALADIYA_APPROV_YN ='Y' THEN 1 END),0)ACTUAL_sTOCK,
+                            NVL(SUM(CASE WHEN WH_STOCK-NVL(DMG_sTOCK,0)>=24 AND BALADIYA_APPROV_YN ='Y' AND NVL(SOH,0) BETWEEN 0 AND 3 THEN 1 END),0)OOS,
+                            NVL(SUM(CASE WHEN WH_STOCK-NVL(DMG_sTOCK,0)>=24 AND BALADIYA_APPROV_YN ='Y' AND NVL(SOH,0) NOT BETWEEN 0 AND 3 THEN 1 END),0)AVLBL,
+                            NVL(SUM(CASE WHEN WH_STOCK-NVL(DMG_sTOCK,0)>=24 AND BALADIYA_APPROV_YN ='Y' AND SOLD_6MONTH>0 THEN 1 ELSE 0  END),0)TOTAL_sALE_ITEM,
+                            NVL(SUM(CASE WHEN WH_STOCK-NVL(DMG_sTOCK,0)>=24 AND BALADIYA_APPROV_YN ='Y' AND SOLD_6MONTH>0 AND NVL(SOH,0) BETWEEN 0 AND 3 THEN 1 ELSE 0  END),0)OOS_sALE_ITEM,
+                            NVL(SUM(CASE WHEN WH_STOCK-NVL(DMG_sTOCK,0)>=24 AND BALADIYA_APPROV_YN ='Y' AND SOLD_6MONTH>0 AND NVL(SOH,0) NOT BETWEEN 0 AND 3 THEN 1 ELSE 0  END),0)AVLBL_sALE_ITEM
+                            FROM KWT_WH_LOC_SKU A, GRAND_PRD_MASTER_FULL B
+                            WHERE PROD_CODE=PRODUCT_CODE
+                            AND A.SU=B.SU
+                            AND SITE_ID = :loc
+                            GROUP BY SITE_ID,SECTION_CODE,SECTION_NAME
+            """
+
+    cur.execute(sql_query, {'loc': location})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+def convert_to_date(value):
+    # Extract year and month
+    year = value // 100
+    month = value % 100
+
+    # Return the formatted date as MM-YYYY
+    return f"{month:02d}-{year}"
+
+
+@app.route('/api/gm-customer', methods=['GET'])
+def gmcustomer():
+    location = request.args.get("location")  # e.g., "ST01"
+    yyyymm = request.args.get("yyyymm") 
+    conn = connection_v6_menu()
+    cur = conn.cursor()
+
+    sql_query = """
+           SELECT * fROM KWT_BRM_GME_CUST_DETL WHERE GOLD_LOC=:loc
+            """
+
+    cur.execute(sql_query, {'loc': location})
     columns = [col[0] for col in cur.description]
 
     cur.execute(sql_query)
@@ -648,6 +745,8 @@ def get_improvement_plans_by_yyyymm(yyyymm):
             "created_at": row[5].strftime("%Y-%m-%d %H:%M:%S") if row[5] else None,
             "yyyymm": row[6]
         })
+    cursor.close()
+    conn.close()
     return jsonify(plans)
 
 
@@ -866,7 +965,7 @@ def decode():
     except Exception as e:
         return jsonify({"error": "Invalid token"})
 
-    return jsonify({"username": user_name, "id": user_id})
+    return jsonify({"username": user_name.lower(), "id": user_id})
 
 
 def simple_encrypt(plain_text, key=23):

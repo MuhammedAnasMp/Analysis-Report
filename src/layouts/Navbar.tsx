@@ -10,6 +10,20 @@ interface Locations {
   LOCATION_ID: number,
   LOCATION_NAME: string
 }
+export function capitalizeEachWord(sentence:string) {
+  // Split the sentence into an array of words
+  const words = sentence.split(" ");
+
+  // Map over each word to capitalize its first letter
+  for (let i = 0; i < words.length; i++) {
+    if (words[i].length > 0) {
+      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
+    }
+  }
+
+  // Join the array of words back into a sentence
+  return words.join(" ");
+}
 export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   const [locations, setLocations] = useState<Locations[]>()
   const [filteredLocations, setFilteredLocations] = useState<Locations[]>();
@@ -33,20 +47,6 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
 
   }, [userDetails])
 
-function capitalizeEachWord(sentence:string) {
-  // Split the sentence into an array of words
-  const words = sentence.split(" ");
-
-  // Map over each word to capitalize its first letter
-  for (let i = 0; i < words.length; i++) {
-    if (words[i].length > 0) {
-      words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
-    }
-  }
-
-  // Join the array of words back into a sentence
-  return words.join(" ");
-}
 
 
 
@@ -179,7 +179,7 @@ function capitalizeEachWord(sentence:string) {
             <FullScreenModal />
           }
           <div className="flex justify-center items-center text-xl">
-            <UserCircleIcon className="text-gray-400" height={40} widths={40} /> {userDetails?.username}
+            <UserCircleIcon className="text-gray-400 " height={40} widths={40} /> <span className="capitalize">{userDetails?.username}</span>
           </div>
 
           {/* <a className="font-medium text-blue-500 focus:outline-hidden"  aria-current="page">Landing</a>

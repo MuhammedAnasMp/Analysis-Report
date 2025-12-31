@@ -27,6 +27,8 @@ import { useDispatch } from "react-redux";
 import { setUserDetails } from "../redux/features/pptState/storeSlice";
 import YearWiseGP from "../slides/YearWiseGP";
 import YearWiseWeekEndSales from "../slides/YearWiseWeekEndSales";
+import StockInWereHouseNotInStore from "../slides/StockInWereHouseNotInStore";
+import GMCustomer from "../slides/GMCustomer";
 
 export type Slide = {
   id: number;
@@ -43,7 +45,7 @@ type LandingSlidesProps = {
 export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
 
-  const slides :SlideConfig[]  = [
+  const slides: SlideConfig[] = [
     {
       id: 1,
       component: TargetVsAchievement,
@@ -56,6 +58,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "STOCK",
       headerTitle: "Stock v/s Ageing",
     },
+
     {
       id: 3,
       component: MonthWiseSalesComparison,
@@ -98,6 +101,19 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "WEEKEND SALES",
       headerTitle: "Weekdays & Weekend Sales",
       image: "/weekdays.png",
+    },
+    {
+      id: 10,
+      component: StockInWereHouseNotInStore,
+      label: "STOCK IN WAREHOUSE",
+      headerTitle: "Stock In Ware House Not In Store ",
+      image: "/weekdays.png",
+    },
+    { 
+      id: 12,
+      component: GMCustomer,
+      label: "GRAND ME",
+      headerTitle: "Grand Me Customer",
     },
   ];
 

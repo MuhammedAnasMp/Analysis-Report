@@ -4,6 +4,9 @@ import React, {
   useState,
 } from "react";
 import ChartModal from "./ChartModal";
+import { useSelector } from "react-redux";
+import type { RootState } from "../redux/app/rootReducer";
+import { capitalizeEachWord } from "../layouts/Navbar";
 
 interface ChartModalContextType {
   openChartModal: (options: any, serasdies: ApexAxisChartSeries , heading : any) => void;
@@ -51,7 +54,7 @@ export const ChartModalProvider: React.FC<ChartModalProviderProps> = ({
     setHeading('')
     setSeries(null);
   };
-
+    const { selectedStore} = useSelector((state: RootState) => state.store);
   return (
     <ChartModalContext.Provider value={{ openChartModal, closeChartModal }}>
       {children}
@@ -60,7 +63,7 @@ export const ChartModalProvider: React.FC<ChartModalProviderProps> = ({
         <ChartModal
           options={options}
           series={series}
-          heading ={heading}
+          heading ={`${heading}  ${capitalizeEachWord(selectedStore?.LOCATION_NAME || '')}`}
           onClose={closeChartModal}
         />
       )}

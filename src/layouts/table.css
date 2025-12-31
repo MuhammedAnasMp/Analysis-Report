@@ -50,3 +50,12 @@
     background-color: #e6ffe6;
     color: green;
 }
+
+
+/* Targeting the wrapper inside ag-header-group-cell */
+:where(.ag-header-group-cell) .ag-header-cell-comp-wrapper {
+  display: flex;
+  justify-content: center; /* Horizontally center the header content */
+  align-items: center;     /* Vertically center the header content */
+}
+
