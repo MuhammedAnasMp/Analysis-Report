@@ -248,6 +248,50 @@ def monthwisesalescomparison():
 
     return jsonify(results)
 
+@app.route('/api/fast-line', methods=['GET'])
+def fastline():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+           SELECT DISTINCT LOC,GET_LOC_NAME(LOC)LOCATION,SECTION_CODE,
+                    SECTION_NAME ,COUNT(*)SKU_COUNT,COUNT(*)-SUM(TOTAL_OOS) STOCK_SKU,
+                    NVL(SUM(CASE WHEN LOC_STK<0 THEN 1 END),0)NEG_sTOCK,
+                    NVL(SUM(CASE WHEN WH_sTK>=50 THEN 1 END),0)WH_sTOCK,
+                    NVL(SUM(CASE WHEN WH_sTK>=50 AND TOTAL_OOS=1 THEN 1 END),0)WH_sTOCK_NOTIN_sTORE,
+					SUM(TOTAL_OOS)TOTAL_OOS
+                    FROM(
+                    SELECT FST_SITE LOC,SECTION_CODE,SECTION_NAME,CATEGORY_CODE,CATEGORY_NAMNE,
+                    FST_GOLD_CODE,FST_SU,LOC_sTK,WH_sTK,LESS_THAN_OOS, AVG_SALE_OOS, TOTAL_OOS,PO_NO
+                    FROM KUWAIT_FASTLINE,grand_prd_master_full B
+                    where FST_GOLD_CODE=PRODUCT_CODE
+                    AND  FST_SU= SU
+                    AND  FST_STATUS='Y'
+                    and FST_SITE=:loc
+                    )
+                    GROUP BY LOC,SECTION_CODE,SECTION_NAME
+            """
+
+    cur.execute(sql_query, {'loc': location})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
 
 @app.route('/api/month-wise-sales-fresh', methods=['GET'])
 def monthwisefresh():
@@ -398,214 +442,6 @@ def weekwisefresh():
 
 @app.route('/api/monthly-lfl', methods=['GET'])
 def monthwiselfl():
-
-
-    return({
-  "data": [
-    {
-      "LM_VALUE": 207839.555,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 217887.867,
-      "MTD_VALUE": 206287.968,
-      "SEC_CODE": "01  ",
-      "SEC_NAME": "FOOD                     ",
-      "TM_VS_LM_PCT": -0.75,
-      "TM_VS_LY_PCT": -5.32
-    },
-    {
-      "LM_VALUE": 24789.455,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 23001.99,
-      "MTD_VALUE": 24882.319,
-      "SEC_CODE": "01-1",
-      "SEC_NAME": "HOTFOOD                  ",
-      "TM_VS_LM_PCT": 0.37,
-      "TM_VS_LY_PCT": 8.17
-    },
-    {
-      "LM_VALUE": 2337.156,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 2648.56,
-      "MTD_VALUE": 2374.084,
-      "SEC_CODE": "01-2",
-      "SEC_NAME": "OWN BAKERY               ",
-      "TM_VS_LM_PCT": 1.58,
-      "TM_VS_LY_PCT": -10.36
-    },
-    {
-      "LM_VALUE": 37703.336,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 31291.68,
-      "MTD_VALUE": 34057.995,
-      "SEC_CODE": "02-1",
-      "SEC_NAME": "BEVERAGES                ",
-      "TM_VS_LM_PCT": -9.67,
-      "TM_VS_LY_PCT": 8.84
-    },
-    {
-      "LM_VALUE": 26003.765,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 31954.684,
-      "MTD_VALUE": 26765.557,
-      "SEC_CODE": "02-2",
-      "SEC_NAME": "FROZEN                   ",
-      "TM_VS_LM_PCT": 2.93,
-      "TM_VS_LY_PCT": -16.24
-    },
-    {
-      "LM_VALUE": 1615.216,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 2070.757,
-      "MTD_VALUE": 1648.496,
-      "SEC_CODE": "02-3",
-      "SEC_NAME": "DELI                     ",
-      "TM_VS_LM_PCT": 2.06,
-      "TM_VS_LY_PCT": -20.39
-    },
-    {
-      "LM_VALUE": 92530.352,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 102640.4,
-      "MTD_VALUE": 92463.647,
-      "SEC_CODE": "03  ",
-      "SEC_NAME": "ROASTRY & SPICES         ",
-      "TM_VS_LM_PCT": -0.07,
-      "TM_VS_LY_PCT": -9.91
-    },
-    {
-      "LM_VALUE": 148858.032,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 148010.373,
-      "MTD_VALUE": 146535.742,
-      "SEC_CODE": "04  ",
-      "SEC_NAME": "FRUITS & VEG             ",
-      "TM_VS_LM_PCT": -1.56,
-      "TM_VS_LY_PCT": -1
-    },
-    {
-      "LM_VALUE": 15186.976,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 16035.289,
-      "MTD_VALUE": 14780.283,
-      "SEC_CODE": "05  ",
-      "SEC_NAME": "BUTCHERY                 ",
-      "TM_VS_LM_PCT": -2.68,
-      "TM_VS_LY_PCT": -7.83
-    },
-    {
-      "LM_VALUE": 18031.271,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 17541.24,
-      "MTD_VALUE": 18416.772,
-      "SEC_CODE": "06  ",
-      "SEC_NAME": "FISHERY                  ",
-      "TM_VS_LM_PCT": 2.14,
-      "TM_VS_LY_PCT": 4.99
-    },
-    {
-      "LM_VALUE": 136044.864,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 161271.647,
-      "MTD_VALUE": 138973.639,
-      "SEC_CODE": "07  ",
-      "SEC_NAME": "NON FOOD                 ",
-      "TM_VS_LM_PCT": 2.15,
-      "TM_VS_LY_PCT": -13.83
-    },
-    {
-      "LM_VALUE": 33713.177,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 39985.884,
-      "MTD_VALUE": 36432.287,
-      "SEC_CODE": "08  ",
-      "SEC_NAME": "GARMENTS                 ",
-      "TM_VS_LM_PCT": 8.07,
-      "TM_VS_LY_PCT": -8.89
-    },
-    {
-      "LM_VALUE": 14426.254,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 14218.198,
-      "MTD_VALUE": 14106.692,
-      "SEC_CODE": "09  ",
-      "SEC_NAME": "FOOTWEAR                 ",
-      "TM_VS_LM_PCT": -2.22,
-      "TM_VS_LY_PCT": -0.78
-    },
-    {
-      "LM_VALUE": 31076.395,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 38977.383,
-      "MTD_VALUE": 31393.757,
-      "SEC_CODE": "10  ",
-      "SEC_NAME": "ELECTRONICS              ",
-      "TM_VS_LM_PCT": 1.02,
-      "TM_VS_LY_PCT": -19.46
-    },
-    {
-      "LM_VALUE": 16624.182,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 17511.854,
-      "MTD_VALUE": 17345.8,
-      "SEC_CODE": "11  ",
-      "SEC_NAME": "APPLIANCES               ",
-      "TM_VS_LM_PCT": 4.34,
-      "TM_VS_LY_PCT": -0.95
-    },
-    {
-      "LM_VALUE": 21476.178,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 23677.982,
-      "MTD_VALUE": 22657.876,
-      "SEC_CODE": "12  ",
-      "SEC_NAME": "HOUSE HOLD               ",
-      "TM_VS_LM_PCT": 5.5,
-      "TM_VS_LY_PCT": -4.31
-    },
-    {
-      "LM_VALUE": 24371.634,
-      "LOCATION": "FAHAHEEL",
-      "LOC_CODE": 802,
-      "LY_VALUE": 27922.724,
-      "MTD_VALUE": 24548.053,
-      "SEC_CODE": "13  ",
-      "SEC_NAME": "OTHERS                   ",
-      "TM_VS_LM_PCT": 0.72,
-      "TM_VS_LY_PCT": -12.09
-    }
-  ],
-  "dates": {
-    "current": [
-      "Wed, 01 Oct 2025 00:00:00 GMT",
-      "Fri, 31 Oct 2025 00:00:00 GMT"
-    ],
-    "prev_month": [
-      "Wed, 03 Sep 2025 00:00:00 GMT",
-      "Fri, 03 Oct 2025 00:00:00 GMT"
-    ],
-    "prev_year": [
-      "Wed, 02 Oct 2024 00:00:00 GMT",
-      "Fri, 01 Nov 2024 00:00:00 GMT"
-    ]
-  }
-}
-)
 
     def next_same_weekday(base_date, target_weekday):
         days_ahead = (target_weekday - base_date.weekday() + 7) % 7
@@ -963,26 +799,7 @@ def yeardateperiods():
     cur.close()
     conn.close()
 
-    return jsonify([
-  {
-    "YYYYMM": "202512"
-  },
-  {
-    "YYYYMM": "202511"
-  },
-  {
-    "YYYYMM": "202510"
-  },
-  {
-    "YYYYMM": "202509"
-  },
-  {
-    "YYYYMM": "202508"
-  },
-  {
-    "YYYYMM": "202507"
-  },
-])
+    return jsonify(results)
 
 
 @app.route('/improvement_plans/<yyyymm>', methods=['GET'])

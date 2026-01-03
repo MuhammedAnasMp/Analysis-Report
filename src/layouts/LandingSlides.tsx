@@ -30,6 +30,7 @@ import YearWiseWeekEndSales from "../slides/YearWiseWeekEndSales";
 import StockInWereHouseNotInStore from "../slides/StockInWereHouseNotInStore";
 import GMCustomer from "../slides/GMCustomer";
 import WeekWiseFresh from "../slides/WeekWiseFresh";
+import Fastline from "../slides/FastLine";
 
 export type Slide = {
   id: number;
@@ -121,6 +122,12 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       component: GMCustomer,
       label: "GRAND ME",
       headerTitle: "Grand Me Customer",
+    },
+    { 
+      id: 14,
+      component: Fastline,
+      label: "FAST LINE",
+      headerTitle: "Fast Line",
     },
     
   ];

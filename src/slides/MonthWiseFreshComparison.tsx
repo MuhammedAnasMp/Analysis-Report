@@ -340,8 +340,8 @@ export default function MonthWiseFreshComparison(props: any) {
             { name: "BUTCHERY", data: source.map(d => d.BUTCHERY), color: "#36A2EB" },
             { name: "BUTCHERY PREV", data: source.map(d => d.BUTCHERY_PREV), color: "#89CFF0" },
 
-            { name: "FISHERY", data: source.map(d => d.FISHERY), color: "#FFCE56" },
-            { name: "FISHERY PREV", data: source.map(d => d.FISHERY_PREV), color: "#FFE29A" },
+            { name: "FISHERY", data: source.map(d => d.FISHERY), color: "#ff5f03" },
+            { name: "FISHERY PREV", data: source.map(d => d.FISHERY_PREV), color: "#ba4400" },
 
             { name: "FRUITS VEG", data: source.map(d => d.FRUITS_VEG), color: "#4BC0C0" },
             { name: "FRUITS VEG PREV", data: source.map(d => d.FRUITS_VEG_PREV), color: "#9DE0E0" },

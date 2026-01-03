@@ -56,7 +56,7 @@ export default function StockInWereHouseNotInStore(props: any) {
                 },
                 {
 
-                    field: "OOS_PERC", headerName: "OOS (%)", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
+                    field: "OOS_PERC", headerName: "OOS (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
                         if (params.value == null) return (params.data.OOS / params.data.TOTAL_SKU * 100).toLocaleString() + ' %';
                         return params.value.toLocaleString();
                     }
@@ -98,7 +98,7 @@ export default function StockInWereHouseNotInStore(props: any) {
                     }
                 },
                 {
-                    field: "OOS_SALE_ITEM_PERC", headerName: "OOS Sale Item % ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
+                    field: "OOS_SALE_ITEM_PERC", headerName: "OOS Sale Item % ", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
                         if (params.value == null) return (params.data.OOS_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString() + ' %';
                         return params.value.toLocaleString();
                     }
