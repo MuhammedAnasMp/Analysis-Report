@@ -380,7 +380,7 @@ const FullScreenModal: React.FC = () => {
                 className="text-lg font-bold text-gray-800 dark:text-white "
               >Action Plan For improvements </h3>
               <div className="absolute right-12">
-                <SmallDatePicker value={selectedDate} onDateChange={() => { }} key={3} />
+                <SmallDatePicker  value={selectedDate} onDateChange={() => { }} key={3} />
               </div>
               <button
                 type="button"

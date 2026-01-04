@@ -43,7 +43,10 @@ export default function GMCustomer(props: any) {
         {
             field: "PURCHASE_POINT", headerName: "Purchase Point", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
             }
         },
         {
@@ -199,7 +202,10 @@ export default function GMCustomer(props: any) {
                         formattedVal = DIF_PERC;
                     }
 
-                    const formatted = formattedVal.toLocaleString()
+                    const formatted = formattedVal.toLocaleString(undefined, {
+                        // minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GME_CONT' ? '%' : ''}</div>`
@@ -296,10 +302,10 @@ export default function GMCustomer(props: any) {
                 name: "GME Customers",
                 data: source.map(item => item.GRANDME_BILL ?? 0)
             },
-            {
-                name: "New Customers",
-                data: source.map(item => item.GRANDME_BILL *2 ?? 0)  //TBD
-            }
+            // {
+            //     name: "New Customers",
+            //     data: source.map(item => item.GRANDME_BILL *2 ?? 0)  //TBD
+            // }
         ];
 
         // ApexChart options
@@ -311,7 +317,7 @@ export default function GMCustomer(props: any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

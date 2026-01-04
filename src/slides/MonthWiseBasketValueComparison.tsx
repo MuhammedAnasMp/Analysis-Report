@@ -29,25 +29,37 @@ export default function MonthWiseBasketValueComparison(props:any) {
         {
             field: "BK_2022", headerName: "Basket Value - 2022", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });;
             }
         },
         {
             field: "BK_2023", headerName: "Basket Value - 2023", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });;
             }
         },
         {
             field: "BK_2024", headerName: "Basket Value - 2024", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });;
             }
         },
         {
             field: "BK_2025", headerName: "Basket Value - 2025", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
             }
         },
       
@@ -199,7 +211,10 @@ export default function MonthWiseBasketValueComparison(props:any) {
                         formattedVal = DIF_PERC;
                     }
 
-                    const formatted = formattedVal.toLocaleString()
+                    const formatted = formattedVal.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
@@ -315,7 +330,7 @@ export default function MonthWiseBasketValueComparison(props:any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

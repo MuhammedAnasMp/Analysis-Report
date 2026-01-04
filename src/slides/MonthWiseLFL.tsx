@@ -62,19 +62,28 @@ export default function MonthWiseLFL(props:any) {
             {
                 field: "MTD_VALUE", headerName: `TM (${formatDateRange(dates.current[0], dates.current[1])})`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                     if (params.value == null) return "";
-                    return params.value.toLocaleString();
+                    return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
                 }
             },
             {
                 field: "LM_VALUE", headerName: `LM (${formatDateRange(dates.prev_month[0], dates.prev_month[1])})`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                     if (params.value == null) return "";
-                    return params.value.toLocaleString();
+                    return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
                 }
             },
             {
                 field: "LY_VALUE", headerName: `LY (${formatDateRange(dates.prev_year[0], dates.prev_year[1])})`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                     if (params.value == null) return "";
-                    return params.value.toLocaleString();
+                    return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
                 }
             },
             {
@@ -226,7 +235,10 @@ export default function MonthWiseLFL(props:any) {
 
                     }
 
-                    const formatted = formattedVal.toLocaleString()
+                    const formatted = formattedVal.toLocaleString(undefined, {
+                        // minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
                     const colorClass = formattedVal < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'TM_VS_LM_PCT' || col.field === 'TM_VS_LY_PCT' ? '%' : ''}</div>`
@@ -342,7 +354,7 @@ export default function MonthWiseLFL(props:any) {
 },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

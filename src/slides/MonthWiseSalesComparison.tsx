@@ -293,8 +293,8 @@ export default function MonthWiseSalesComparison(props: any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
-                    columnWidth: "45%"
+                    //borderRadius: 6,
+                    columnWidth: "50%"
                 }
             },
             colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A"],

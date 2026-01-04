@@ -364,7 +364,7 @@ export default function MonthWiseFreshComparison(props: any) {
             chart: { type: "line", height: 450, toolbar: { show: false } },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },
@@ -433,7 +433,7 @@ export default function MonthWiseFreshComparison(props: any) {
                                             display: "inline-block",
                                             width: "10px",
                                             height: "10px",
-                                            borderRadius: "50%",
+                                            //borderRadius: "50%",
                                             background: selectedCategories.includes("ALL") ? allColor : "#ccc",
                                             marginRight: "5px"
                                         }}
@@ -464,7 +464,7 @@ export default function MonthWiseFreshComparison(props: any) {
                                                     display: "inline-block",
                                                     width: "10px",
                                                     height: "10px",
-                                                    borderRadius: "50%",
+                                                    //borderRadius: "50%",
                                                     background: cat.color,
                                                     opacity: isSelected ? 1 : 0.3,
                                                     marginRight: "5px"

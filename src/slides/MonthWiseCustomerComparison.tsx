@@ -280,7 +280,7 @@ export default function MonthWiseCustomerComparison(props:any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

@@ -53,7 +53,10 @@ export default function Fastline(props: any) {
         },
         {
             field: "OOS_PERC", headerName: "Total OOS (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return (params.data.TOTAL_OOS / params.data.SKU_COUNT * 100).toLocaleString() + ' %';
+                if (params.value == null) return (params.data.TOTAL_OOS / params.data.SKU_COUNT * 100).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    }); + ' %';
                 return params.value.toLocaleString();
             }
         },
@@ -189,7 +192,10 @@ export default function Fastline(props: any) {
                         formattedVal = TOTAL_OOS ? TOTAL_OOS / SKU_COUNT * 100 : 0;
 
                     }
-                    const formatted = formattedVal.toLocaleString()
+                    const formatted = formattedVal.toLocaleString(undefined, {
+                        // minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'OOS_PERC' ? '%' : ''}</div>`
@@ -304,7 +310,7 @@ export default function Fastline(props: any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

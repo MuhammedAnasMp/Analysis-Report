@@ -1,8 +1,10 @@
 import { ArrowTrendingUpIcon, ChartBarIcon, ChatBubbleLeftEllipsisIcon, CheckIcon, PresentationChartLineIcon, WindowIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import SingleChart from "./SingleChart";
 import { Tabs } from "../componenets/Tabs";
+import { useAnalyticsLogger } from "../types/useAnalyticsLogger";
+import { AnalyticsEvent } from "../types/analyticsEvents";
 
 export interface ChartModalProps {
     options: any;
@@ -28,8 +30,36 @@ const ChartModal: React.FC<ChartModalProps> = ({
     })
 
     const [typeOption, setTypeOption] = useState<'bar' | 'line'>(options.chart.type)
+    const chartStartRef = useRef<number | null>(null);
+    const { logUIEvent } = useAnalyticsLogger();
+
+    const handleClose = () => {
+        if (!chartStartRef.current) return;
+
+        const duration = Date.now() - chartStartRef.current;
+
+        logUIEvent({
+            eventName: AnalyticsEvent.CHART_VIEW,
+            component: "chart",
+            cardId: "1",
+            chartId: "2",
+            durationMs: duration,
+        });
+
+        chartStartRef.current = null;
+        onClose()
+    }
 
 
+    useEffect(() => {
+        chartStartRef.current = Date.now();
+        // logUIEvent({
+        //     eventName: AnalyticsEvent.CHART_VIEW,
+        //     component: "chart",
+        //     cardId: "1",
+        //     chartId: "2",
+        // });
+    }, [])
     useEffect(() => {
         setUpdateOption({
             ...options,
@@ -53,6 +83,7 @@ const ChartModal: React.FC<ChartModalProps> = ({
             },
         })
     }, [typeOption])
+
 
     return (
         <div className="fixed top-0 inset-0 z-50  bg-opacity-40 backdrop-blur-sm  flex flex-col items-center justify-center overflow-auto">
@@ -161,7 +192,7 @@ const ChartModal: React.FC<ChartModalProps> = ({
 
                     <button
                         type="button"
-                        onClick={onClose}
+                        onClick={handleClose}
                         className="h-8 w-8 flex justify-center items-center !rounded-full hover:scale-120 hover:bg-gray-600  dark:bg-neutral-700 dark:hover:bg-neutral-600"
                         aria-label="Close"
                     >
@@ -171,7 +202,7 @@ const ChartModal: React.FC<ChartModalProps> = ({
             </div>
             <div className={`bg-white dark:bg-neutral-800  w-full max-w-[95%]  flex flex-col  pointer-events-auto  shadow-lg rounded-lg rounded-t-none max-h-[90vh] overflow-y-auto  overflow-x-hidden`}>
 
-                <div className={`w-full ${typeOption ==="line" && 'paren'}`}>
+                <div className={`w-full ${typeOption === "line" && 'paren'}`}>
                     {
                         !isDetailed ?
                             <ReactApexChart

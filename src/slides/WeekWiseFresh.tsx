@@ -25,21 +25,24 @@ export default function WeekWiseFresh(props: any) {
     const [colDef] = useState<ColDef<any>[]>([
         { field: "SECTION_NAME", headerName: "Section", cellClass: "text-center", flex: 1 },
         {
-            field: "SECTION_CODE", headerName: "Code", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SECTION_CODE", headerName: "Code", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
             }
         },
         {
-            field: "DT", headerName: "Periods", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "DT", headerName: "Periods", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
             }
         },
         {
-            field: "SALE", headerName: "Sales Amount", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SALE", headerName: "Sales Amount", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
             }
         },
 
@@ -161,7 +164,7 @@ export default function WeekWiseFresh(props: any) {
                     const formatted = formattedVal.toLocaleString()
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
+                    rowHTML += `<div class="text-left px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
                 } else {
                     rowHTML += `<div></div>`
                 }
@@ -306,7 +309,7 @@ export default function WeekWiseFresh(props: any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

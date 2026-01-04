@@ -57,13 +57,19 @@ export default function StockInWereHouseNotInStore(props: any) {
                 {
 
                     field: "OOS_PERC", headerName: "OOS (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
-                        if (params.value == null) return (params.data.OOS / params.data.TOTAL_SKU * 100).toLocaleString() + ' %';
+                        if (params.value == null) return (params.data.OOS / params.data.TOTAL_SKU * 100).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }); + ' %';
                         return params.value.toLocaleString();
                     }
                 },
                 {
                     field: "AVLBL_PERC", headerName: "Avlbl (%)", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
-                        if (params.value == null) return (params.data.AVLBL / params.data.TOTAL_SKU * 100).toLocaleString() + ' %';
+                        if (params.value == null) return (params.data.AVLBL / params.data.TOTAL_SKU * 100).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }); + ' %';
                         return params.value.toLocaleString();
                     }
                 },
@@ -92,14 +98,20 @@ export default function StockInWereHouseNotInStore(props: any) {
                     }
                 },
                 {
-                    field: "AVLBL_SALE_ITEM_PERC", headerName: "Avlbl Sale Item % ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
-                        if (params.value == null) return (params.data.AVLBL_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString() + ' %';
+                    field: "OOS_SALE_ITEM_PERC", headerName: "OOS Sale Item % ", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
+                        if (params.value == null) return (params.data.OOS_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }); + ' %';
                         return params.value.toLocaleString();
                     }
                 },
                 {
-                    field: "OOS_SALE_ITEM_PERC", headerName: "OOS Sale Item % ", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
-                        if (params.value == null) return (params.data.OOS_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString() + ' %';
+                    field: "AVLBL_SALE_ITEM_PERC", headerName: "Avlbl Sale Item % ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
+                        if (params.value == null) return (params.data.AVLBL_SALE_ITEM / params.data.TOTAL_SALE_ITEM * 100).toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        }); + ' %';
                         return params.value.toLocaleString();
                     }
                 },
@@ -177,7 +189,7 @@ export default function StockInWereHouseNotInStore(props: any) {
         numericCols.forEach(col => {
             const sum = data.reduce((acc, row) => acc + (parseFloat(row[col]) || 0), 0)
             total[col] = col === 'GP_PERC' ? sum : Math.round(sum)
-            avg[col] = col === 'GP_PERC' ? sum / data.length : Math.round(sum / data.length)
+            avg[col] = col === 'OOS_PERC' ? sum / data.length : Math.round(sum / data.length)
         })
 
         return { total, avg }
@@ -206,61 +218,77 @@ export default function StockInWereHouseNotInStore(props: any) {
 
             const data = filtered.length ? filtered : rowData
             const current = total
-            const colCount = colDef.length
-            const gridTemplate = `repeat(${colCount + 0}, 1fr)`
-
+            
             let rowHTML = ''
-            colDef.forEach((col: any) => {
-                // console.log(col)
-                const val = current[col.field!] ?? ''
-                if (typeof val === 'number') {
-                    let formattedVal = val
+            const allCol: any[] = []
+            colDef.forEach((colMain: any) => {
+                if (colMain.children){
 
-                    if (col.field === 'OOS_PERC' && data) {
-
-
-                        const OOS = data.reduce((sum, item) => sum + (item.OOS || 0), 0);
-                        const TOTAL_AVAILABLE = data.reduce((sum, item) => sum + (item.TOTAL_SKU || 0), 0);
-                        formattedVal = OOS ? OOS / TOTAL_AVAILABLE * 100 : 0;
-
-                    }
-                    if (col.field === 'AVLBL_PERC' && data) {
-
-
-                        const AVLBL = data.reduce((sum, item) => sum + (item.AVLBL || 0), 0);
-                        const TOTAL_AVAILABLE = data.reduce((sum, item) => sum + (item.TOTAL_SKU || 0), 0);
-                        formattedVal = AVLBL ? AVLBL / TOTAL_AVAILABLE * 100 : 0;
-
-                    }
-                    if (col.field === 'AVLBL_SALE_ITEM_PERC' && data) {
-
-
-                        const AVLBL_SALE_ITEM = data.reduce((sum, item) => sum + (item.AVLBL_SALE_ITEM || 0), 0);
-                        const TOTAL_SALE_ITEM = data.reduce((sum, item) => sum + (item.TOTAL_SALE_ITEM || 0), 0);
-                        formattedVal = AVLBL_SALE_ITEM ? AVLBL_SALE_ITEM / TOTAL_SALE_ITEM * 100 : 0;
-
-                    }
-                    if (col.field === 'OOS_SALE_ITEM_PERC' && data) {
-
-
-                        const OOS_SALE_ITEM = data.reduce((sum, item) => sum + (item.OOS_SALE_ITEM || 0), 0);
-                        const TOTAL_SALE_ITEM = data.reduce((sum, item) => sum + (item.TOTAL_SALE_ITEM || 0), 0);
-
-                        formattedVal = OOS_SALE_ITEM ? OOS_SALE_ITEM / TOTAL_SALE_ITEM * 100 : 0;
-
-                    }
-
-
-                    const formatted = formattedVal.toLocaleString()
-                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
-
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'OOS_SALE_ITEM_PERC' || col.field === 'AVLBL_SALE_ITEM_PERC' ? '%' : ''}</div>`
-                } else {
-                    rowHTML += `<div></div>`
+                    colMain.children.forEach((col: any) => {
+                        allCol.push(col)
+                    })
                 }
+                else{
+                    allCol.push(colMain)
+                }  
             })
+            console.table(allCol.length)
+            const colCount = allCol.length 
+            const gridTemplate = `repeat(${colCount + 0}, 1fr)`
+            
+            allCol.forEach((col: any) => {
+                    const val = current[col.field!] ?? ''
+                    console.log(col.field)
+                    if (typeof val === 'number' && col.field !== 'SECTION_CODE') {
+                        let formattedVal = val
+                        if (col.field === 'OOS_PERC' && data) {
 
-            customFooter.innerHTML = `
+
+                            const OOS = data.reduce((sum, item) => sum + (item.OOS || 0), 0);
+                            const TOTAL_AVAILABLE = data.reduce((sum, item) => sum + (item.TOTAL_SKU || 0), 0);
+                            formattedVal = OOS ? OOS / TOTAL_AVAILABLE * 100 : 0;
+
+                        }
+                        if (col.field === 'AVLBL_PERC' && data) {
+
+
+                            const AVLBL = data.reduce((sum, item) => sum + (item.AVLBL || 0), 0);
+                            const TOTAL_AVAILABLE = data.reduce((sum, item) => sum + (item.TOTAL_SKU || 0), 0);
+                            formattedVal = AVLBL ? AVLBL / TOTAL_AVAILABLE * 100 : 0;
+
+                        }
+                        if (col.field === 'AVLBL_SALE_ITEM_PERC' && data) {
+
+
+                            const AVLBL_SALE_ITEM = data.reduce((sum, item) => sum + (item.AVLBL_SALE_ITEM || 0), 0);
+                            const TOTAL_SALE_ITEM = data.reduce((sum, item) => sum + (item.TOTAL_SALE_ITEM || 0), 0);
+                            formattedVal = AVLBL_SALE_ITEM ? AVLBL_SALE_ITEM / TOTAL_SALE_ITEM * 100 : 0;
+
+                        }
+                        if (col.field === 'OOS_SALE_ITEM_PERC' && data) {
+
+
+                            const OOS_SALE_ITEM = data.reduce((sum, item) => sum + (item.OOS_SALE_ITEM || 0), 0);
+                            const TOTAL_SALE_ITEM = data.reduce((sum, item) => sum + (item.TOTAL_SALE_ITEM || 0), 0);
+
+                            formattedVal = OOS_SALE_ITEM ? OOS_SALE_ITEM / TOTAL_SALE_ITEM * 100 : 0;
+
+                        }
+
+
+                        const formatted = formattedVal.toLocaleString(undefined, {
+                        // minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
+                        const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
+
+                        rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'OOS_SALE_ITEM_PERC' || col.field === 'AVLBL_SALE_ITEM_PERC' ||col.field === 'OOS_PERC' || col.field === 'AVLBL_PERC' ? '%' : ''}</div>`
+                    } else {
+                        rowHTML += `<div>{xxx}</div>`
+                    }
+                })
+
+                customFooter.innerHTML = `
                     <div class="w-full bg-black border-t pr-3  border-gray-300 "
                         style="display:grid; grid-template-columns:${gridTemplate}; align-items:center;">
                         ${rowHTML}
@@ -269,18 +297,19 @@ export default function StockInWereHouseNotInStore(props: any) {
 
 
 
-            // Pagination update
-            const gridPanels = document.getElementsByClassName('ag-paging-panel')
-            if (gridPanels.length > 0) {
-                const paginationPanel = gridPanels[0]
-                let customDiv = paginationPanel.querySelector('.custom-btn') as HTMLDivElement
-                if (!customDiv) {
-                    customDiv = document.createElement('div')
-                    customDiv.className = 'custom-btn mr-auto text-[13px] font-medium flex items-center text-gray-800'
-                    paginationPanel.prepend(customDiv)
+                // Pagination update
+                const gridPanels = document.getElementsByClassName('ag-paging-panel')
+                if (gridPanels.length > 0) {
+                    const paginationPanel = gridPanels[0]
+                    let customDiv = paginationPanel.querySelector('.custom-btn') as HTMLDivElement
+                    if (!customDiv) {
+                        customDiv = document.createElement('div')
+                        customDiv.className = 'custom-btn mr-auto text-[13px] font-medium flex items-center text-gray-800'
+                        paginationPanel.prepend(customDiv)
+                    }
+                    customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowData.length}`
                 }
-                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowData.length}`
-            }
+          
         }, 200)
 
         return () => clearTimeout(timer)
@@ -372,7 +401,7 @@ export default function StockInWereHouseNotInStore(props: any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },
@@ -463,7 +492,7 @@ export default function StockInWereHouseNotInStore(props: any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

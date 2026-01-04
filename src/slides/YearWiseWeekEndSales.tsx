@@ -27,7 +27,10 @@ export default function YearWiseWeekEndSales(props:any) {
         {
             field: "WEEKDAYS_SALES", headerName: "Weekdays Sales", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
             }
         },
         {
@@ -45,7 +48,10 @@ export default function YearWiseWeekEndSales(props:any) {
         {
             field: "WEEKENDS_SALES", headerName: "Weekend Sales", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString();
+                return params.value.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
             }
         },
         {
@@ -307,7 +313,7 @@ export default function YearWiseWeekEndSales(props:any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },
@@ -391,7 +397,7 @@ export default function YearWiseWeekEndSales(props:any) {
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 6,
+                    //borderRadius: 6,
                     columnWidth: "45%"
                 }
             },

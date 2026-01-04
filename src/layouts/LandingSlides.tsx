@@ -1,64 +1,55 @@
-import { useEffect, useRef, useState } from "react";
-import SlideTemplate from "./SlideTemplate";
-export interface SlideProps {
-  id: number;
-  label: string;
-  headerTitle: string;
-  image?: string;
-}
-
-interface SlideConfig extends SlideProps {
-  component: React.ComponentType<SlideProps>;
-}
-
+import { useEffect, useRef, useState, type JSX } from "react";
 import TargetVsAchievement from "../slides/TargetVsAchievement";
 import StockvsAgeing from "../slides/StockvsAgeing";
-import Chart from "../slides/Chart";
-import SectionPerformanceChart from "../slides/Chart2";
 import MonthWiseCustomerComparison from "../slides/MonthWiseCustomerComparison";
 import MonthWiseSalesComparison from "../slides/MonthWiseSalesComparison";
 import MonthWiseBasketValueComparison from "../slides/MonthWiseBasketValueComparison";
 import MonthWiseLFL from "../slides/MonthWiseLFL";
 import MonthWiseFreshComparison from "../slides/MonthWiseFreshComparison";
-import Modal from "../componenets/ActionPlanModal";
-import FullScreenModal from "../componenets/ActionPlanModal";
-import { useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUserDetails } from "../redux/features/pptState/storeSlice";
 import YearWiseGP from "../slides/YearWiseGP";
 import YearWiseWeekEndSales from "../slides/YearWiseWeekEndSales";
 import StockInWereHouseNotInStore from "../slides/StockInWereHouseNotInStore";
 import GMCustomer from "../slides/GMCustomer";
 import WeekWiseFresh from "../slides/WeekWiseFresh";
 import Fastline from "../slides/FastLine";
-
-export type Slide = {
+import { AnalyticsEvent } from "../types/analyticsEvents";
+import { useAnalyticsLogger } from "../types/useAnalyticsLogger";
+import { ArrowTrendingUpIcon, ChartPieIcon, CursorArrowRippleIcon, DocumentMagnifyingGlassIcon, HomeIcon, HomeModernIcon, IdentificationIcon, InboxStackIcon, PresentationChartBarIcon, PresentationChartLineIcon, RectangleGroupIcon, ShoppingCartIcon, SparklesIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+export interface SlideProps {
   id: number;
-  component: any;
   label: string;
   headerTitle: string;
+  image?: string;
+  icon?: JSX.Element;
+}
 
-};
+interface SlideConfig extends SlideProps {
+  component: React.ComponentType<SlideProps>;
+}
+
+
 type LandingSlidesProps = {
-  onChange: (data: Slide) => void;
+  onChange: (data: SlideConfig) => void;
 };
 
 
 export default function LandingSlides({ onChange }: LandingSlidesProps) {
 
-
+  const { logUIEvent } = useAnalyticsLogger();
   const slides: SlideConfig[] = [
     {
       id: 1,
       component: TargetVsAchievement,
       label: "TARGET",
       headerTitle: "Target v/s Achievement",
+      icon: <CursorArrowRippleIcon />
     },
     {
       id: 2,
       component: StockvsAgeing,
       label: "STOCK",
       headerTitle: "Stock v/s Ageing",
+      icon: <InboxStackIcon/>
     },
 
     {
@@ -66,42 +57,49 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       component: MonthWiseSalesComparison,
       label: "ANNUAL \n SALES",
       headerTitle: "Yearly Sales Amount",
+      icon: <ArrowTrendingUpIcon className=""/>
     },
     {
       id: 4,
       component: MonthWiseCustomerComparison,
       label: "ANNUAL CUSTOMERS",
       headerTitle: "Yearly Customer Count",
+      icon: <UserGroupIcon/>
     },
     {
       id: 5,
       component: MonthWiseBasketValueComparison,
       label: "ANNUAL \n BV",
       headerTitle: "Yearly Basket Value",
+      icon: <ShoppingCartIcon/>
     },
     {
       id: 6,
       component: MonthWiseLFL,
       label: "LFL",
       headerTitle: "Month Wise LFL",
+      icon: <DocumentMagnifyingGlassIcon/>
     },
     {
       id: 7,
       component: MonthWiseFreshComparison,
       label: "FRESH \n SALES",
       headerTitle: "Yearly Fresh Sales Report",
+      icon: <PresentationChartLineIcon/>
     },
-    { 
+    {
       id: 8,
       component: WeekWiseFresh,
       label: "WEEK WISE FRESH",
       headerTitle: "Week Wise Fresh Sales",
+      icon: <PresentationChartBarIcon/>
     },
     {
       id: 9,
       component: YearWiseGP,
       label: "ANNUAL \n GP",
       headerTitle: "This Year Gross Profit",
+      icon: <ChartPieIcon/>
     },
     {
       id: 10,
@@ -109,6 +107,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "WEEKEND SALES",
       headerTitle: "Weekdays & Weekend Sales",
       image: "/weekdays.png",
+      icon: <ArrowTrendingUpIcon className=""/>
     },
     {
       id: 11,
@@ -116,25 +115,28 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       label: "STOCK IN WAREHOUSE",
       headerTitle: "Stock In Ware House Not In Store ",
       image: "/weekdays.png",
+      icon: <HomeModernIcon/>
     },
-    { 
+    {
       id: 13,
       component: GMCustomer,
       label: "GRAND ME",
       headerTitle: "Grand Me Customer",
+      icon: <IdentificationIcon/>
     },
-    { 
+    {
       id: 14,
       component: Fastline,
       label: "FAST LINE",
       headerTitle: "Fast Line",
+      icon: <RectangleGroupIcon/>
     },
-    
+
   ];
 
 
   const [selectedId, setselectedId] = useState<number>(1);
-  const [selectedSlide, setSelectedSlide] = useState<Slide>(slides[0]);
+  const [selectedSlide, setSelectedSlide] = useState<SlideConfig>(slides[0]);
   useEffect(() => {
 
     setSelectedSlide(slides[selectedId - 1])
@@ -196,7 +198,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
         <div className="hs-carousel flex flex-col md:flex-row gap-2 ">
           {/* side slider items */}
           <div className="md:order-1 px-4 flex-none">
-            <div className="hs-carousel-pagination h-[calc(100vh-100px)] flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto px-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+            <div className="hs-carousel-pagination h-[calc(100vh-100px)]  flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto px-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
             ">
               {slides
                 .map((slide, index) => {
@@ -204,39 +206,47 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                   let shortcutLabel;
 
                   if (index < 9) {
-                    // 1–10 just show numbers
-                    shortcutLabel = index + 1;
+                    shortcutLabel = `Alt-${index + 1}`;
+
                   } else {
                     // Beyond 10: show "Alt+1+<n>"
-                    const altGroup = Math.floor(index / 10);
-                    const innerIndex = (index % 10) + 1;
-                    shortcutLabel = `Alt+${altGroup}+${innerIndex}`;
-                    shortcutLabel = ``;
+                    // const altGroup = Math.floor(index / 10);
+                    // const innerIndex = (index % 10) + 1;
+                    // shortcutLabel = `Alt+${altGroup}+${innerIndex}`;
+                    // shortcutLabel = ``;
+                    shortcutLabel = `${index + 1}`;
                   }
 
                   return (
                     <div
                       key={slide.id}
-                      onClick={() => { setselectedId(slide.id); setSelectedSlide(slide) }}
+                      onClick={() => {
+                        logUIEvent({
+                          eventName: AnalyticsEvent.CARD_SELECT,
+                          component: "left_card",
+                          cardId: '12',
+                        });
+
+                        { setselectedId(slide.id); setSelectedSlide(slide) }
+                      }}
                       className="hs-carousel-pagination-item shrink-0 border hover:scale-105 hover:z-50 border-gray-200 rounded-md overflow-hidden cursor-pointer size-20 md:size-32 hs-carousel-active:border-blue-400 dark:border-neutral-700"
                     >
-                      <div ref={(el: any) => (refs.current[index + 1] = el)} className="relative hover:bg-gray-100  flex justify-center items-center text-center size-full bg-white p-2 dark:bg-neutral-900">
-                        <span className="
 
-                        text-gray-700 dark:text-white
-                        capitalize
-                        text-md
-                        font-extrabold
-                        whitespace-pre-line
-                        tracking-wide
-                        leading-snug 
-                        ">
+                      <div ref={(el: any) => (refs.current[index + 1] = el)} className="relative  hover:bg-gray-100 gap-1 flex flex-col justify-center items-center text-center size-full bg-white p-2 dark:bg-neutral-900">
+                        {
+                          slide.icon && <>
+                            <span className="inline-flex justify-center items-center size-9 p-1 rounded-full border-4 border-blue-100 bg-blue-200 text-blue-800 dark:border-blue-900 dark:bg-blue-800 dark:text-blue-400">
+                              {slide.icon}
+                            </span>
+                          </>
+                        }
+
+
+                        <span className=" text-gray-700 dark:text-white capitalize text-md font-extrabold whitespace-pre-line tracking-wide leading-snug  ">
                           {slide.label}
                         </span>
-
-                        {/* <img src={`${slide.image}`} className=" object-fill " alt="" /> */}
-                        <div className="absolute right-0 bottom-0 text-xs text-gray-500 dark:text-gray-300">
-                          <kbd className="px-1 py-0.5  inline-flex justify-center items-center  bg-white border border-gray-200 font-mono text-xs text-gray-800 rounded-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200">
+                        <div className="absolute right-0 bottom-0 text-[10px] text-gray-500 dark:text-gray-300">
+                          <kbd className="px-1 py-0.5 m-0.5  inline-flex justify-center items-center  bg-white border border-gray-200 font-mono text-[10px] text-gray-800 rounded-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200">
 
                             {shortcutLabel}
 
@@ -259,6 +269,8 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                 return (
                   <div key={slide.id} className="hs-carousel-slide w-7xl">
                     <SlideComponent {...slide} />
+
+
                   </div>
                 );
               })}

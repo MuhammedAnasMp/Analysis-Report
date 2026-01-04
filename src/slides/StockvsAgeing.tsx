@@ -312,7 +312,7 @@ export default function TargetVsAchievement() {
 
 
                     const formatted = Number(formattedVal).toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
+                        // minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                     });
 

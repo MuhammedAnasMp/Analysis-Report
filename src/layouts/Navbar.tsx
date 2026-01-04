@@ -95,7 +95,8 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   return (
     <header className=" flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-2 dark:bg-neutral-800 border-b-1 border-neutral-300">
       <nav className="w-full mx-auto px-50 sm:flex sm:items-center sm:justify-between">
-        <div className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore &&  capitalizeEachWord( selectedStore.LOCATION_NAME)}</div>
+        <h4 className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore &&  capitalizeEachWord( selectedStore.LOCATION_NAME)}</h4>
+
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
           {/* DARK MODE  */}
           {/* <label htmlFor="darkSwtich" className="relative inline-block w-11 h-6 cursor-pointer">
@@ -111,10 +112,11 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
 
 
               }}
-              className="py-2 rs-picker-input-group rs-input-group justify-evenly px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+              className="py-2 rs-picker-input-group rs-input-group justify-between px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-2xs hover:bg-gray-50 focus:outline-hidden focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-800 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
             >
               <span className="text-blue-600 truncate">  {selectedStore ? selectedStore.LOCATION_NAME : "Select store"} </span>
-              <svg className={`size-3 transition-transform ${isOpen ? "rotate-180" : ""}`} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" fill="none"><path d="m6 9 6 6 6-6" />   </svg>
+             
+              <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false" className={`size-3 transition-transform ${isOpen ? "rotate-180" : ""}`} aria-label="arrow down line" data-category="direction" data-testid="caret"><path d="M3.166 5.128a.5.5 0 0 1 .706.037L8 9.752l4.128-4.587a.5.5 0 1 1 .743.669l-4.5 5a.5.5 0 0 1-.744 0l-4.5-5a.5.5 0 0 1 .037-.706z"></path></svg>
             </button>
 
             {isOpen && (
@@ -169,7 +171,7 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
             )}
           </div>
 
-          <SmallDatePicker value={selectedDate} onDateChange={handleDateChange} />
+          <SmallDatePicker key={1} value={selectedDate} onDateChange={handleDateChange} />
 
           {/* {
               currentSlide && currentSlide.id ==7 ? "NEW DROP" : ""

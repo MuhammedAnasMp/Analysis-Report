@@ -610,10 +610,10 @@ def yearwisegpcomparison():
 
     sql_query = """
        select  TO_CHAR(TO_DATE(DATEMONTH,'YYYYMM'),'MM-MON') MM,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2022' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100  END),0) AS sale_value22 ,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2023' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),0) AS sale_value23,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2024' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),0) AS sale_value24,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2025' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),0) AS sale_value25
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2022' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100  END),2) AS sale_value22 ,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2023' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),2) AS sale_value23,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2024' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),2) AS sale_value24,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2025' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),2) AS sale_value25
 from KWT_BRM_GP_SUMMARY 
 where loc_code = :loc
 GROUP BY  TO_CHAR(TO_DATE(DATEMONTH,'YYYYMM'),'MM-MON')
