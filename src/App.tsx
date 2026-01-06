@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import LandingSlides from './layouts/LandingSlides';
 import Navbar from './layouts/Navbar';
@@ -41,6 +41,7 @@ function App() {
     const navigate = useNavigate();
     const dispatch = useDispatch()
     const [showNavBar,setShowNavBar] = useState<boolean>(true)
+    
     useEffect(() => {
       // dispatch(resetStoreState())
     
@@ -78,7 +79,7 @@ function App() {
   return (
     <div className="bg-gray-50">
         {showNavBar && <Navbar currentSlide={activeSlide} />}
-        
+
       <Routes>
         <Route path="/:token" element={<LandingSlides onChange={(slide) => setActiveSlide(slide)} />} />
         <Route path="/why-here" element={<NotFoundPage />} />
@@ -89,5 +90,8 @@ function App() {
 
 }
 export default App;
+
+
+
 
 

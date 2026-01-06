@@ -65,7 +65,29 @@ const ChartModal: React.FC<ChartModalProps> = ({
             ...options,
             chart: {
                 ...options.chart,
-                type: typeOption
+                type: typeOption,
+                toolbar: {
+                show: true,
+                offsetX: -0, // move horizontally
+                offsetY: 0, // move vertically if needed
+                tools: {
+                    download: true,
+                    selection: false,
+                    zoom: false,
+                    zoomin: false,
+                    zoomout: false,
+                    pan: false,
+                    reset: false
+                },
+                export: {
+                    csv: {
+                        filename: 'chart-data',
+                        columnDelimiter: ',',
+                        headerCategory: 'Category',
+                        headerSeries: 'Series'
+                    }
+                }
+            },
             },
             stroke: { width: 2.5 },
             dataLabels: {

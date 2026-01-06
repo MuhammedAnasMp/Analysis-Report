@@ -414,16 +414,27 @@ def weekwisefresh():
     cur = conn.cursor()
 
     sql_query = """
-          SELECT DISTINCT 
+         SELECT LOCATION_ID,LOC_NAME,SECTION_CODE,SECTION_NAME,
+        DT,MM,
+        SALE,PROFIT,
+        ROUND((PROFIT/SALE)*100,3)GP,
+        DMG_VAL,
+        ROUND((DMG_VAL/SALE)*100,3)DMG_PERC
+FROM
+(SELECT DISTINCT 
         LOCATION_ID,GET_LOC_NAME(LOCATION_ID)LOC_NAME,
         SECTION_CODE,SECTION_NAME,ROUND(SUM(CMO_VALUE),3)SALE,
+        ROUND(
+        NVL(SUM(CMO_VALUE),0)
+        - ( NVL(SUM(OP_VALUE),0) + NVL(SUM(GRN_VALUE),0) + NVL(SUM(TRANS_IN_VALUE),0) )
+        + ( NVL(SUM(PR_VALUE),0) + NVL(SUM(TRANS_OUT_VALUE),0) + NVL(SUM(CL_VALUE),0)),2) AS PROFIT,
+        ROUND(SUM(PDTDMG_VALUE)+SUM(POSTED_SHRINK_VALUE),3)DMG_VAL,   
         OP_DATE||','||CL_DATE DT,TO_CHAR(CL_DATE,'YYYYMM')MM
-                FROM KWT_FRESH_DETAILED_REPORT WHERE  TO_CHAR(CL_DATE,'YYYYMM')= :YYYYMM
+                FROM KWT_FRESH_DETAILED_REPORT WHERE  TO_CHAR(CL_DATE,'YYYYMM')= :yyyymm
                 AND LOCATION_ID=:loc
-             --   AND SECTION_CODE='1S0301'
+           --     AND SECTION_CODE='1S0301'
                 GROUP BY 
-                LOCATION_ID,SECTION_CODE,SECTION_NAME,OP_DATE,CL_DATE
-                ORDER BY OP_DATE||','||CL_DATE DESC
+                LOCATION_ID,SECTION_CODE,SECTION_NAME,OP_DATE,CL_DATE)A
             """
 
     cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
@@ -614,22 +625,20 @@ def stockoutloss():
     cur = conn.cursor()
 
     sql_query = """
-          SELECT A.*,
-(Select sum(MONTH_SALES) from  KWT_PPT_STOCK_VS_SALES
-		where YYYYMM=a.YYYYMM
-		AND LOC=STORE_ID
-		and SEC_CODE=a.SEC_CODE)TOTAL_sALES,
-'' SALES_LOSS_PERC,
-(Select sum(MONTH_SALES-MONTH_COST) from  KWT_PPT_STOCK_VS_SALES
-		where YYYYMM=a.YYYYMM
-		AND LOC=STORE_ID
-		and SEC_CODE=a.SEC_CODE)TOTAL_PROFIT,
-'' PROFIT_LOSS_PERC
-FROM  KWT_PPT_STOCK_OUT_LOSS_ZEDI A
-WHERE STORE_ID=:loc
-AND YYYYMM=:yyyymm
-ORDER BY SEC_CODE
-            """
+            SELECT A.*,
+            (Select sum(MONTH_SALES) from  KWT_PPT_STOCK_VS_SALES
+                    where YYYYMM=a.YYYYMM
+                    AND LOC=STORE_ID
+                    and SEC_CODE=a.SEC_CODE)TOTAL_sALES,
+            (Select sum(MONTH_SALES-MONTH_COST) from  KWT_PPT_STOCK_VS_SALES
+                    where YYYYMM=a.YYYYMM
+                    AND LOC=STORE_ID
+                    and SEC_CODE=a.SEC_CODE)TOTAL_PROFIT
+            FROM  KWT_PPT_STOCK_OUT_LOSS_ZEDI A
+            WHERE STORE_ID=:loc
+            AND YYYYMM=:yyyymm
+            ORDER BY SEC_CODE
+                        """
 
     cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
     columns = [col[0] for col in cur.description]

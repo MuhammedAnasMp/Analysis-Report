@@ -17,86 +17,84 @@ export default function StockOutLoss(props: any) {
     const { headerTitle } = props;
     const { openChartModal } = useChartModal();
 
+
     const [isLoading, setLoading] = useState(false)
-    const [rowCustomerData, setRowData] = useState<any[]>([])
+    const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
 
     const [colDef] = useState<ColDef<any>[]>([
-        { field: "SEC_CODE", headerName: "CODE", cellClass: "text-center", flex: 1 },
-        { field: "SEC_NAME", headerName: "NAME", cellClass: "text-center", flex: 1 },
+        { field: "SEC_NAME", headerName: "Name", cellClass: "text-left ", flex: 1 },
+
+        { field: "SEC_CODE", headerName: "Code", cellClass: "text-right", flex: 1 },
         {
-            field: "SKU_COUNT", headerName: "Total SKU", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SKU_COUNT", headerName: "SKU Count", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
+        },
+        {
+            field: "SALES_TM", headerName: "TM Sales", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            },
+        },
+        {
+            field: "SALES_LM", headerName: "LM Sales", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
             }
         },
         {
-            field: "SALES_TM", headerName: "TM Sale", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SALES_LY", headerName: "LY Sales", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                    // minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                })
+                return params.value.toLocaleString();
             }
         },
         {
-            field: "SALES_LM", headerName: "LM Sale", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "TOTAL_PROFIT", headerName: "Total Profit ", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                    // minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                })
-            }
-        },
-        {
-            field: "SALES_LY", headerName: "LY Sale", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                    // minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                })
-            }
-        },
-        {
-            field: "TOTAL_PROFIT", headerName: "Total Profit", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                    // minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                })
+                return params.value.toLocaleString();
             }
         },
         {
             field: "PROFIT_LOSS", headerName: "Profit Loss", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                    // minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                })
+                return params.value.toLocaleString();
             }
         },
         {
             field: "PROFIT_LOSS_PERC", headerName: "Profit Loss (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return (params.data.PROFIT_LOSS / params.data.TOTAL_PROFIT * 100).toLocaleString();
-                return params.value.toLocaleString();
-            }
-        },
-        {
-            field: "SALE_LOSS", headerName: "Sale Loss", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                    // minimumFractionDigits: 2,
+                if (params.value == null) return (params.data.PROFIT_LOSS / params.data.TOTAL_PROFIT * 100).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
-                })
-            }
-        },
-        {
-            field: "SALE_LOSS_PERC", headerName: "Sale Loss (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
-                if (params.value == null) return (params.data.SALE_LOSS / params.data.TOTAL_PROFIT * 100).toLocaleString();
+                }) + ' %';
                 return params.value.toLocaleString();
             }
         },
+        {
+            field: "TOTAL_SALES", headerName: "Total Sales", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+        },
+        {
+            field: "SALE_LOSS", headerName: "Sales Loss", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+        },
+        {
+            field: "SALES_LOSS_PERC", headerName: "Sales Loss (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return (params.data.SALE_LOSS / params.data.TOTAL_SALES * 100).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }) + ' %';
+                return params.value.toLocaleString();
+            }
+        },
+
+
 
 
     ])
@@ -131,11 +129,12 @@ export default function StockOutLoss(props: any) {
 
                 setRowData(transformed)
                 setLoading(false)
-                setFiltered([])
                 setNewData(true)
+                setFiltered([])
             })
             .catch(() => setLoading(false))
     }, [selectedDate, selectedStore]);
+
 
     const getFilteredData = () => {
         if (!gridRef.current) return;
@@ -158,10 +157,11 @@ export default function StockOutLoss(props: any) {
 
         return filteredNodes;
     };
+
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         //console.log("data", data)
-        const numericCols = ["PROFIT_LOSS", "SALES_LM", "SALES_LY", "SALE_VALUE25", "SALES_TM", "SKU_COUNT", "SALE_LOSS","SALE_LOSS_PERC","PROFIT_LOSS_PERC", "TOTAL_PROFIT"]
+        const numericCols = ["SKU_COUNT", "STOCK_SKU", "NEG_STOCK", "PURCHASE_POINT", "TOTAL_OOS", "OOS_PERC", "WH_STOCK", "WH_STOCK_NOTIN_STORE"]
 
         //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -179,7 +179,7 @@ export default function StockOutLoss(props: any) {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const wrapper = rootRef.current;
+            const wrapper = rootRefSale.current;
             if (!wrapper) return;
 
             const agRoot = wrapper.querySelector(".ag-root");
@@ -193,9 +193,9 @@ export default function StockOutLoss(props: any) {
             agRoot.appendChild(customFooter);
 
 
-            const { total } = calculateTotals(filtered.length ? filtered : rowCustomerData)
+            const { total } = calculateTotals(filtered.length ? filtered : rowData)
 
-            const data = filtered.length ? filtered : rowCustomerData
+            const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`
@@ -206,30 +206,21 @@ export default function StockOutLoss(props: any) {
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
                     let formattedVal = val
+                    if (col.field === 'OOS_PERC' && data) {
 
-                    if (col.field === 'SALE_LOSS_PERC' && data) {
 
-
-                        const total_SALE_LOSS = data.reduce((sum, item) => sum + (item.SALE_LOSS || 0), 0);
-                        const total_PROFIT = data.reduce((sum, item) => sum + (item.TOTAL_PROFIT || 0), 0);
-
-                        formattedVal = total_SALE_LOSS ? total_SALE_LOSS / total_PROFIT  : 0;
+                        const TOTAL_OOS = data.reduce((sum, item) => sum + (item.TOTAL_OOS || 0), 0);
+                        const SKU_COUNT = data.reduce((sum, item) => sum + (item.SKU_COUNT || 0), 0);
+                        formattedVal = TOTAL_OOS ? TOTAL_OOS / SKU_COUNT * 100 : 0;
 
                     }
-                    if (col.field === 'PROFIT_LOSS_PERC' && data) {
-
-
-                        const total_PROFIT_LOSS = data.reduce((sum, item) => sum + (item.PROFIT_LOSS || 0), 0);
-                        const total_PROFIT = data.reduce((sum, item) => sum + (item.TOTAL_PROFIT || 0), 0);
-
-                        formattedVal = total_PROFIT_LOSS ? total_PROFIT_LOSS / total_PROFIT  : 0;
-
-                    }
-
-                    const formatted = formattedVal.toLocaleString()
+                    const formatted = formattedVal.toLocaleString(undefined, {
+                        // minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    });
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
+                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'OOS_PERC' ? '%' : ''}</div>`
                 } else {
                     rowHTML += `<div></div>`
                 }
@@ -254,12 +245,12 @@ export default function StockOutLoss(props: any) {
                     customDiv.className = 'custom-btn mr-auto text-[13px] font-medium flex items-center text-gray-800'
                     paginationPanel.prepend(customDiv)
                 }
-                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowCustomerData.length}`
+                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowData.length}`
             }
         }, 200)
 
         return () => clearTimeout(timer)
-    }, [filtered, rowCustomerData, colDef])
+    }, [filtered, rowData, colDef])
 
 
     const NoRowsOverlay = () => (
@@ -283,14 +274,14 @@ export default function StockOutLoss(props: any) {
             )}
         </div>
     );
-    const rootRef = useRef<HTMLDivElement | null>(null);
+    const rootRefSale = useRef<HTMLDivElement | null>(null);
 
     const [newData, setNewData] = useState(false)
+    const [hideView, setHideView] = useState<boolean>(false);
 
 
     const [options, setOptions] = useState({});
     const [series, setSeries] = useState<any>([]);
-    const [hideView, setHideView] = useState<boolean>(false);
     useEffect(() => {
 
         const isAnyFilterActive = () => {
@@ -310,22 +301,24 @@ export default function StockOutLoss(props: any) {
 
         const anySctive = isAnyFilterActive()
 
-        const source = newData && !anySctive ? rowCustomerData : filtered
-        const categories = source.map(item => item.MM?.trim());
+        const source = newData && !anySctive ? rowData : filtered
+        const categories = source.map(item => item.SEC_NAME?.trim());
 
-        const profit_loss = source.map((item) => (item.PROFIT_LOSS / item.TOTAL_PROFIT * 100 || 0), 0);
-        const sales_loss = source.map((item) => (item.SALE_LOSS / item.TOTAL_PROFIT * 100 || 0), 0);
-        console.table(profit_loss)
-        // Build series
+
+        const SALE_LOSS_PERC = source.map((item) => (item.SALE_LOSS / item.TOTAL_SALES * 100 || 0), 0);
+
+        const PROFIT_LOSS_PERC = source.map((item) => (item.PROFIT_LOSS / item.TOTAL_PROFIT * 100 || 0), 0);
+
         const newSeries = [
-            {
-                name: "Profit Loss (%)",
-                data: profit_loss.map(num => num.toFixed(3))
-            },
+
             {
                 name: "Sales Loss (%)",
-                data: sales_loss.map(num => num.toFixed(3))
-            }
+                data: SALE_LOSS_PERC.map(num => num.toFixed(3))
+            },
+            {
+                name: "Profit Loss(%)",
+                data: PROFIT_LOSS_PERC.map(num => num.toFixed(3))
+            },
         ];
 
         // ApexChart options
@@ -333,7 +326,8 @@ export default function StockOutLoss(props: any) {
             chart: {
                 type: "bar",
                 height: 380,
-                toolbar: { show: false }
+                toolbar: { show: false },
+                stacked: false
             },
             plotOptions: {
                 bar: {
@@ -341,9 +335,14 @@ export default function StockOutLoss(props: any) {
                     columnWidth: "45%"
                 }
             },
-            colors: ["#2563EB", "#10B981", "#F59E0B", "#FF391A"],
+
+            colors: ["#FF2E2E", "#A30000",],
             dataLabels: {
-                enabled: true
+                enabled: true, style: {
+                    fontSize: '14px',  // adjust size
+                    fontWeight: 'bold',
+                    colors: ['#000']   // optional: color
+                }
             },
             xaxis: {
                 categories,
@@ -371,14 +370,17 @@ export default function StockOutLoss(props: any) {
         setOptions(newOptions);
         setNewData(false)
 
-    }, [rowCustomerData, filtered, selectedStore, selectedDate]);   // 🔥 return whenever data changes
+    }, [rowData, filtered, selectedStore, selectedDate]);
+
+
     return (
-        <div className="summary-grid-wrapper" ref={rootRef}>
-            <div className={`ag-theme-quartz ${!hideView && rowCustomerData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
+        <div className="summary-grid-wrapper " ref={rootRefSale}>
+
+            <div className={`ag-theme-quartz ${!hideView && rowData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
 
                 <AgGridReact
                     ref={gridRef}
-                    rowData={rowCustomerData}
+                    rowData={rowData}
                     columnDefs={colDef}
                     // pagination={true}
                     defaultColDef={{
@@ -396,7 +398,7 @@ export default function StockOutLoss(props: any) {
                 />
             </div>
             {
-                !hideView && rowCustomerData.length > 0 &&
+                !hideView && rowData.length > 0 &&
                 <div className="w-full pt-">
 
                     <ReactApexChart

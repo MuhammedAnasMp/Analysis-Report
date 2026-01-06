@@ -13,12 +13,24 @@ import ReactApexChart from 'react-apexcharts'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
+
+const parseDate = (str: string) => {
+    // Convert "DD-MMM-YY" to "YYYY-MM-DD" for Date parsing
+    const [day, monthStr, year] = str.split("-");
+    const monthNames: Record<string, string> = {
+        JAN: "01", FEB: "02", MAR: "03", APR: "04", MAY: "05", JUN: "06",
+        JUL: "07", AUG: "08", SEP: "09", OCT: "10", NOV: "11", DEC: "12"
+    };
+    const fullYear = "20" + year; // Assuming 20YY
+    return new Date(`${fullYear}-${monthNames[monthStr.toUpperCase()]}-${day}`);
+};
+
 export default function WeekWiseFresh(props: any) {
     const { headerTitle } = props;
     const { openChartModal } = useChartModal();
 
     const [isLoading, setLoading] = useState(false)
-    const [rowCustomerData, setRowData] = useState<any[]>([])
+    const [rowData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
 
@@ -37,15 +49,62 @@ export default function WeekWiseFresh(props: any) {
             }
         },
         {
+            field: "DIFF_DAYS", headerName: "Total Days", cellClass: "text-center", flex: 1, valueFormatter: (params) => {
+                const [date1, date2] = params.data.DT.split(",")
+                const d1 = parseDate(date1);
+                const d2 = parseDate(date2);
+                const diffDays = Math.abs(Math.round((d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24)));
+                return `${diffDays}`;
+
+
+            }
+        },
+        {
             field: "SALE", headerName: "Sales Amount", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    });
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
             }
         },
 
+        {
+            field: "PROFIT", headerName: "Profit", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+            }
+        },
+        {
+            field: "DMG_VAL", headerName: "Damage Value", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+            }
+        },
+        {
+            field: "GP", headerName: "GP (%)", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+            }
+        },
+        {
+            field: "DMG_PERC", headerName: "Damage (%)", cellClass: "text-left", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
+            }
+        },
 
 
     ])
@@ -67,15 +126,8 @@ export default function WeekWiseFresh(props: any) {
         fetch(`http://172.16.4.167:5000/api/week-wise-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
-                // Convert all numeric fields to integer except DIF_PERC
                 const transformed = data.map((row: any) => ({
                     ...row,
-                    // TOTAL_BUDGET: Math.round(row.TOTAL_BUDGET),
-                    // BUD_AVG: Math.round(row.BUD_AVG),
-                    // TILL_SALES: Math.round(row.TILL_SALES),
-                    // AVG_SALE: Math.round(row.AVG_SALE),
-                    // DIFFERENCE: Math.round(row.DIFFERENCE),
-                    // DIF_PERC: parseFloat(row.DIF_PERC), // keep as float
                 }))
 
                 setRowData(transformed)
@@ -142,9 +194,9 @@ export default function WeekWiseFresh(props: any) {
             agRoot.appendChild(customFooter);
 
 
-            const { total } = calculateTotals(filtered.length ? filtered : rowCustomerData)
+            const { total } = calculateTotals(filtered.length ? filtered : rowData)
 
-            const data = filtered.length ? filtered : rowCustomerData
+            const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`
@@ -189,12 +241,23 @@ export default function WeekWiseFresh(props: any) {
                     customDiv.className = 'custom-btn mr-auto text-[13px] font-medium flex items-center text-gray-800'
                     paginationPanel.prepend(customDiv)
                 }
-                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowCustomerData.length}`
+                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowData.length}`
             }
         }, 200)
 
         return () => clearTimeout(timer)
-    }, [filtered, rowCustomerData, colDef])
+    }, [filtered, rowData, colDef])
+
+    const [activeTab, setActiveTab] = useState<"gp" | "damage" | "sales">("gp");
+
+    const tabClass = (tab: any) =>
+        `py-2 px-4 text-sm font-medium !border-b-2 transition-colors
+     ${activeTab === tab
+            ? "!border-blue-600 text-blue-600"
+            : "border-transparent text-gray-500 hover:text-blue-600"
+        } dark:text-neutral-400 dark:hover:text-blue-500`;
+
+
 
 
     const NoRowsOverlay = () => (
@@ -218,6 +281,11 @@ export default function WeekWiseFresh(props: any) {
             )}
         </div>
     );
+
+
+
+
+
     const rootRef = useRef<HTMLDivElement | null>(null);
 
     const [newData, setNewData] = useState(false)
@@ -227,6 +295,7 @@ export default function WeekWiseFresh(props: any) {
     const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
     useEffect(() => {
+
 
         const isAnyFilterActive = () => {
             const api = gridRef.current?.api;
@@ -245,7 +314,10 @@ export default function WeekWiseFresh(props: any) {
 
         const anySctive = isAnyFilterActive()
 
-        const source = newData && !anySctive ? rowCustomerData : filtered
+        console.log("rowData", rowData)
+        console.log("rowData", rowData)
+
+        const source = newData && !anySctive ? rowData : filtered
 
         const uniqueDates = Array.from(
             new Set(source.map(item => item.DT))
@@ -257,8 +329,18 @@ export default function WeekWiseFresh(props: any) {
             if (!sectionData[item.SECTION_NAME]) {
                 sectionData[item.SECTION_NAME] = {};
             }
-            sectionData[item.SECTION_NAME][item.DT] = item.SALE;
+            if (activeTab === "gp") {
+                sectionData[item.SECTION_NAME][item.DT] = item.GP;
+            }
+            else if (activeTab === "damage") {
+                sectionData[item.SECTION_NAME][item.DT] = item.DMG_VAL;
+            }
+            else {
+                sectionData[item.SECTION_NAME][item.DT] = item.SALE;
+            }
+
         });
+        console.table(sectionData)
         function toCamelCase(input: string): string {
             return input
                 .toLowerCase()
@@ -266,7 +348,7 @@ export default function WeekWiseFresh(props: any) {
                 .map(word =>
                     word.charAt(0).toUpperCase() + word.slice(1)
                 )
-                .join(',');
+                .join(',') + " " + activeTab.charAt(0).toUpperCase() + activeTab.slice(1);
         }
 
         const series = Object.keys(sectionData).map(sectionName => ({
@@ -281,16 +363,10 @@ export default function WeekWiseFresh(props: any) {
 
 
 
-        const parseDate = (str: string) => {
-            // Convert "DD-MMM-YY" to "YYYY-MM-DD" for Date parsing
-            const [day, monthStr, year] = str.split("-");
-            const monthNames: Record<string, string> = {
-                JAN: "01", FEB: "02", MAR: "03", APR: "04", MAY: "05", JUN: "06",
-                JUL: "07", AUG: "08", SEP: "09", OCT: "10", NOV: "11", DEC: "12"
-            };
-            const fullYear = "20" + year; // Assuming 20YY
-            return new Date(`${fullYear}-${monthNames[monthStr.toUpperCase()]}-${day}`);
-        };
+
+
+
+
 
 
         const withDays = uniqueDates.map(item => {
@@ -300,6 +376,7 @@ export default function WeekWiseFresh(props: any) {
             const diffDays = Math.abs(Math.round((d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24)));
             return `${item} (${diffDays}D)`;
         });
+
 
         const newOptions: any = {
             chart: {
@@ -340,21 +417,17 @@ export default function WeekWiseFresh(props: any) {
         };
 
 
-
-
-
-
         setOptions(newOptions);
         setNewData(false)
 
-    }, [rowCustomerData, filtered, selectedStore, selectedDate]);   // 🔥 return whenever data changes
+    }, [rowData, filtered, selectedStore, selectedDate, activeTab]);
     return (
         <div className="summary-grid-wrapper" ref={rootRef}>
-            <div className={`ag-theme-quartz ${!hideView && rowCustomerData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
+            <div className={`ag-theme-quartz ${!hideView && rowData.length > 0 ? " h-[calc(50vh-40px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
 
                 <AgGridReact
                     ref={gridRef}
-                    rowData={rowCustomerData}
+                    rowData={rowData}
                     columnDefs={colDef}
                     // pagination={true}
                     defaultColDef={{
@@ -371,11 +444,60 @@ export default function WeekWiseFresh(props: any) {
                     loadingOverlayComponent={CustomLoadingOverlay}
                 />
             </div>
+
+            <div className="w-full rounded-lg bg-white shadow-md dark:bg-neutral-800">
+                {/* Tabs */}
+                <div className="border-b border-gray-200 px-4 dark:border-neutral-700">
+                    <nav className="flex justify-center gap-4">
+                        <button
+                            onClick={() => { setNewData(true); setActiveTab("gp") }}
+                            className={tabClass("gp")}
+                        >
+                            GP %
+                        </button>
+
+                        <button
+                            onClick={() => { setNewData(true); setActiveTab("damage") }}
+                            className={tabClass("damage")}
+                        >
+                            Damage %
+                        </button>
+
+                        <button
+                            onClick={() => { setNewData(true); setActiveTab("sales") }}
+                            className={tabClass("sales")}
+                        >
+                            Sales
+                        </button>
+                    </nav>
+                </div>
+
+                {/* <div className="p-4">
+                    {activeTab === "gp" && (
+                        <p className="text-gray-600 dark:text-neutral-300">
+                            This is the <span className="font-semibold">GP %</span> tab content.
+                        </p>
+                    )}
+
+                    {activeTab === "damage" && (
+                        <p className="text-gray-600 dark:text-neutral-300">
+                            This is the <span className="font-semibold">Damage %</span> tab content.
+                        </p>
+                    )}
+
+                    {activeTab === "sales" && (
+                        <p className="text-gray-600 dark:text-neutral-300">
+                            This is the <span className="font-semibold">Sales</span> tab content.
+                        </p>
+                    )}
+                </div> */}
+            </div>
             {
-                !hideView && rowCustomerData.length > 0 &&
+                !hideView && rowData.length > 0 &&
                 <div className="w-full pt-">
 
                     <ReactApexChart
+                        key={activeTab}
                         options={options}
                         series={series}
                         type="bar"

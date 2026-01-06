@@ -9,6 +9,8 @@ import _ from 'lodash';
 import noUiSlider from 'nouislider';
 import 'datatables.net';
 import 'dropzone/dist/dropzone-min.js';
+import '../src/api/load-widget.ts';
+
 import * as VanillaCalendarPro from 'vanilla-calendar-pro';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query'
 window._ = _;

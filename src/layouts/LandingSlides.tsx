@@ -16,6 +16,7 @@ import { AnalyticsEvent } from "../types/analyticsEvents";
 import { useAnalyticsLogger } from "../types/useAnalyticsLogger";
 import { ArrowTrendingUpIcon, ChartPieIcon, CursorArrowRippleIcon, DocumentMagnifyingGlassIcon, HomeModernIcon, IdentificationIcon, InboxStackIcon, PresentationChartBarIcon, PresentationChartLineIcon, RectangleGroupIcon, ShoppingCartIcon, UserGroupIcon } from "@heroicons/react/24/solid";
 import StockOutLoss from "../slides/StockOutLoss";
+import CreditsWidget from "../componenets/CreditsWidget";
 export interface SlideProps {
   id: number;
   label: string;
@@ -99,7 +100,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       id: 9,
       component: YearWiseGP,
       label: "ANNUAL \n GP",
-      headerTitle: "This Year Gross Profit",
+      headerTitle: "Yearwise Gross Profit",
       icon: <ChartPieIcon />
     },
     {
@@ -244,13 +245,13 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                       >
                         {slide.icon && (
                           <span className="inline-flex justify-center items-center size-9 p-1 rounded-full border-4 border-blue-100 bg-blue-200 text-blue-800 dark:border-blue-900 dark:bg-blue-800 dark:text-blue-400
-      transform transition-all duration-300
-      group-hover:scale-110
-      group-hover:bg-blue-300
-      group-hover:text-blue-900
-      dark:group-hover:bg-blue-700
-      dark:group-hover:text-blue-200
-      ">
+                                  transform transition-all duration-300
+                                  group-hover:scale-110
+                                  group-hover:bg-blue-300
+                                  group-hover:text-blue-900
+                                  dark:group-hover:bg-blue-700
+                                  dark:group-hover:text-blue-200
+                                  ">
                             {slide.icon}
                           </span>
                         )}
@@ -270,6 +271,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                     </div>
                   );
                 })}
+                <CreditsWidget/>
             </div>
           </div>
 
@@ -282,12 +284,10 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                 return (
                   <div key={slide.id} className="hs-carousel-slide w-7xl">
                     <SlideComponent {...slide} />
-
-
                   </div>
                 );
               })}
-
+        
 
             </div>
             <button onClick={() => setselectedId(selectedId - 1)} ref={(el: any) => (refs.current[1000] = el)} type="button" className="hs-carousel-prev hs-carousel-disabled:opacity-50 hs-carousel-disabled:pointer-events-none absolute inset-y-0 start-0 inline-flex justify-center items-center w-11.5 h-full text-gray-800 hover:bg-gray-800/10 focus:outline-hidden focus:bg-gray-800/10 rounded-s-lg dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
