@@ -76,7 +76,7 @@ function App() {
     fetchStores()
     }, [])
   return (
-    <div className="">
+    <div className="bg-gray-50">
         {showNavBar && <Navbar currentSlide={activeSlide} />}
         
       <Routes>

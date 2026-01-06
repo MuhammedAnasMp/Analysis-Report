@@ -32,7 +32,7 @@ export default function MonthWiseFreshComparison(props: any) {
         setColDef([
             { field: "MM", headerName: "Month", cellClass: "text-center", flex: 1 },
             {
-                field: "BAKERY", headerName: `Backery ${year}`, flex: 1, valueFormatter: (params) => {
+                field: "BAKERY", headerName: `Bacery ${year}`, flex: 1, valueFormatter: (params) => {
                     if (params.value == null) return "";
                     return params.value.toLocaleString();
                 },
@@ -46,7 +46,7 @@ export default function MonthWiseFreshComparison(props: any) {
                 },
             },
             {
-                field: "BAKERY_PREV", headerName: `Backery ${year && year - 1}`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                field: "BAKERY_PREV", headerName: `Bakery ${year && year - 1}`, cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                     if (params.value == null) return "";
                     return params.value.toLocaleString();
                 }
@@ -149,9 +149,7 @@ export default function MonthWiseFreshComparison(props: any) {
         setYear(year)
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
-
-        // fetch(`http://172.16.4.167:5000/api/month-wise-sales-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
-        fetch(`http://172.16.4.167:5000/api/month-wise-sales-fresh?yyyymm=202511&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://172.16.4.167:5000/api/month-wise-sales-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC

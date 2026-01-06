@@ -73,10 +73,10 @@ def salestable():
                 REMARK,
                 LOC_CODE,
                 YYYYMM,
-                NVL(TOTAL_BUDGET,0) - NVL(TILL_SALES,0) AS DIFFERENCE,
+                NVL(TILL_SALES,0) - NVL(TOTAL_BUDGET,0) AS DIFFERENCE,
                 CASE 
                     WHEN NVL(TILL_SALES,0) = 0 THEN 0
-                    ELSE ROUND((NVL(TOTAL_BUDGET,0) - NVL(TILL_SALES,0)) / NVL(TILL_SALES,0) * 100, 2)
+                    ELSE ROUND((NVL(TILL_SALES,0) - NVL(TOTAL_BUDGET,0)) / NVL(TOTAL_BUDGET,0) * 100, 2)
                 END AS DIF_PERC
             FROM 
                 KWT_PPT_SALES_BUDGET A
@@ -248,6 +248,7 @@ def monthwisesalescomparison():
 
     return jsonify(results)
 
+
 @app.route('/api/fast-line', methods=['GET'])
 def fastline():
     yyyymm = request.args.get("yyyymm")        # e.g., "202510"
@@ -325,6 +326,7 @@ def monthwisefresh():
 
     return jsonify(results)
 
+
 @app.route('/api/stock-in-warehouse-not-in-store', methods=['GET'])
 def stockinwarehousenotinstore():
     location = request.args.get("location")  # e.g., "ST01"
@@ -364,6 +366,8 @@ def stockinwarehousenotinstore():
     conn.close()
 
     return jsonify(results)
+
+
 def convert_to_date(value):
     # Extract year and month
     year = value // 100
@@ -376,7 +380,7 @@ def convert_to_date(value):
 @app.route('/api/gm-customer', methods=['GET'])
 def gmcustomer():
     location = request.args.get("location")  # e.g., "ST01"
-    yyyymm = request.args.get("yyyymm") 
+    yyyymm = request.args.get("yyyymm")
     conn = connection_v6_menu()
     cur = conn.cursor()
 
@@ -405,7 +409,7 @@ def gmcustomer():
 @app.route('/api/week-wise-fresh', methods=['GET'])
 def weekwisefresh():
     location = request.args.get("location")  # e.g., "ST01"
-    yyyymm = request.args.get("yyyymm") 
+    yyyymm = request.args.get("yyyymm")
     conn = connection()
     cur = conn.cursor()
 
@@ -422,7 +426,7 @@ def weekwisefresh():
                 ORDER BY OP_DATE||','||CL_DATE DESC
             """
 
-    cur.execute(sql_query, {'loc': location , 'yyyymm':yyyymm})
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
     columns = [col[0] for col in cur.description]
 
     cur.execute(sql_query)
@@ -600,6 +604,51 @@ def monthwisecustomercomparison():
     return jsonify(results)
 
 
+
+@app.route('/api/stock-out-loss', methods=['GET'])
+def stockoutloss():
+    yyyymm = request.args.get("yyyymm")        # e.g., "202510"
+    location = request.args.get("location")  # e.g., "ST01"
+
+    conn = connection()
+    cur = conn.cursor()
+
+    sql_query = """
+          SELECT A.*,
+(Select sum(MONTH_SALES) from  KWT_PPT_STOCK_VS_SALES
+		where YYYYMM=a.YYYYMM
+		AND LOC=STORE_ID
+		and SEC_CODE=a.SEC_CODE)TOTAL_sALES,
+'' SALES_LOSS_PERC,
+(Select sum(MONTH_SALES-MONTH_COST) from  KWT_PPT_STOCK_VS_SALES
+		where YYYYMM=a.YYYYMM
+		AND LOC=STORE_ID
+		and SEC_CODE=a.SEC_CODE)TOTAL_PROFIT,
+'' PROFIT_LOSS_PERC
+FROM  KWT_PPT_STOCK_OUT_LOSS_ZEDI A
+WHERE STORE_ID=:loc
+AND YYYYMM=:yyyymm
+ORDER BY SEC_CODE
+            """
+
+    cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
+    columns = [col[0] for col in cur.description]
+
+    cur.execute(sql_query)
+
+    columns = [col[0] for col in cur.description]
+
+    results = []
+    for row in cur.fetchall():
+        row_dict = dict(zip(columns, row))
+        results.append(row_dict)
+
+    cur.close()
+    conn.close()
+
+    return jsonify(results)
+
+
 @app.route('/api/year-wise-gp-comparison', methods=['GET'])
 def yearwisegpcomparison():
     yyyymm = request.args.get("yyyymm")        # e.g., "202510"
@@ -610,10 +659,10 @@ def yearwisegpcomparison():
 
     sql_query = """
        select  TO_CHAR(TO_DATE(DATEMONTH,'YYYYMM'),'MM-MON') MM,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2022' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100  END),2) AS sale_value22 ,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2023' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),2) AS sale_value23,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2024' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),2) AS sale_value24,
-ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2025' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),2) AS sale_value25
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2022' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100  END),3) AS sale_value22 ,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2023' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),3) AS sale_value23,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2024' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),3) AS sale_value24,
+ROUND(SUM(CASE WHEN TO_CHAR(TO_DATE(datemonth,'YYYYMM'),'YYYY') = '2025' THEN (((sale_value-COGS)+TOTAL_DN_VALUE)/sale_value)*100 END),3) AS sale_value25
 from KWT_BRM_GP_SUMMARY 
 where loc_code = :loc
 GROUP BY  TO_CHAR(TO_DATE(DATEMONTH,'YYYYMM'),'MM-MON')
@@ -639,8 +688,6 @@ ORDER BY 1
     return jsonify(results)
 
 
-
-
 @app.route('/api/year-wise-weekend-sales', methods=['GET'])
 def monthwiseweekendsales():
     yyyymm = request.args.get("yyyymm")        # e.g., "202510"
@@ -650,8 +697,7 @@ def monthwiseweekendsales():
     cur = conn.cursor()
 
     sql_query = """
-           SELECT
-    TO_CHAR(DOC_DATE, 'MM-MONTH') AS MM, 
+           SELECT TO_CHAR(DOC_DATE, 'YY-MM-MONTH') AS MM, 
     SUM(CASE 
             WHEN TO_CHAR(DOC_DATE, 'DY', 'NLS_DATE_LANGUAGE=ENGLISH') IN ('THU','FRI','SAT') 
             THEN SALE_VALUE 
@@ -673,11 +719,13 @@ def monthwiseweekendsales():
             ELSE 0 
         END) AS WEEKENDS_CUSTOMERS
 FROM KWT_LIVE_SALE_SUMMARY_DETL
-WHERE LOC_CODE = :loc 
-AND TO_CHAR(DOC_dATE,'YYYYMM')<=:yyyymm
-AND DOC_DATE >= TRUNC(SYSDATE, 'YEAR')
-GROUP BY TO_CHAR(DOC_DATE, 'MM-MONTH')
-ORDER BY TO_CHAR(DOC_DATE, 'MM-MONTH') 
+WHERE LOC_CODE = :loc
+AND DOC_DATE BETWEEN 
+    ADD_MONTHS(TO_DATE(:yyyymm || '01', 'YYYYMMDD'), -11)
+    AND LAST_DAY(TO_DATE(:yyyymm || '01', 'YYYYMMDD'))
+--AND DOC_DATE >= TRUNC(SYSDATE, 'YEAR')
+GROUP BY TO_CHAR(DOC_DATE, 'YY-MM-MONTH')
+ORDER BY TO_CHAR(DOC_DATE, 'YY-MM-MONTH')
             """
 
     cur.execute(sql_query, {'loc': location, 'yyyymm': yyyymm})
@@ -742,6 +790,7 @@ def monthwisebasketvaluecomparison():
     conn.close()
 
     return jsonify(results)
+
 
 
 @app.route('/api/locations', methods=["GET"])

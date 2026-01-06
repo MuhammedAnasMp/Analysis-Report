@@ -75,7 +75,7 @@ export default function TargetVsAchievement() {
             cellClass: "text-right",
             flex: 1,
             cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : { backgroundColor: "#e6ffe6", color: "green" },
             valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
@@ -87,9 +87,19 @@ export default function TargetVsAchievement() {
             cellClass: "text-center",
             flex: 1,
             cellStyle: params =>
-                params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : null,
+                params.value < 0
+                    ? { backgroundColor: "#ffe6e6", color: "red" }
+                    : { backgroundColor: "#e6ffe6", color: "green" },
 
+            valueFormatter: (params) => {
+                if (params.value == null || isNaN(params.value)) return "";
+                return params.value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }) + " %";
+            },
         },
+
         {
             field: "REMARK",
             headerName: "Remarks",
@@ -144,7 +154,7 @@ export default function TargetVsAchievement() {
 
         } catch (err) {
             console.error("❌ Update failed:", err);
-              
+
             // event.node.setDataValue("REMARK", oldValue);
         }
     };
@@ -228,7 +238,7 @@ export default function TargetVsAchievement() {
 
 
             const { total } = calculateTotals(filtered.length ? filtered : rowData)
-       
+
             const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
@@ -259,8 +269,7 @@ export default function TargetVsAchievement() {
                         // minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                     });
-
-                    const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
+                    const colorClass = val < 0.00 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'DIF_PERC' ? '%' : ''}</div>`
                 } else {

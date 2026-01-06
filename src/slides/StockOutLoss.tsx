@@ -9,60 +9,95 @@ import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
-import { param } from 'jquery'
 import ReactApexChart from 'react-apexcharts'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
-export default function MonthWiseBasketValueComparison(props:any) {
-   const { headerTitle} = props;
+export default function StockOutLoss(props: any) {
+    const { headerTitle } = props;
     const { openChartModal } = useChartModal();
 
-
     const [isLoading, setLoading] = useState(false)
-    const [rowData, setRowData] = useState<any[]>([])
+    const [rowCustomerData, setRowData] = useState<any[]>([])
     const [filtered, setFiltered] = useState<any[]>([])
     const gridRef = useRef<AgGridReact | any>(null)
 
     const [colDef] = useState<ColDef<any>[]>([
-        { field: "MM", headerName: "Month", cellClass: "text-center", flex: 1 },
+        { field: "SEC_CODE", headerName: "CODE", cellClass: "text-center", flex: 1 },
+        { field: "SEC_NAME", headerName: "NAME", cellClass: "text-center", flex: 1 },
         {
-            field: "BK_2022", headerName: "Basket Value - 2022", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SKU_COUNT", headerName: "Total SKU", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                return params.value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 3,
-                    });;
+                return params.value.toLocaleString();
             }
         },
         {
-            field: "BK_2023", headerName: "Basket Value - 2023", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SALES_TM", headerName: "TM Sale", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 3,
-                    });;
+                    // minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
             }
         },
         {
-            field: "BK_2024", headerName: "Basket Value - 2024", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SALES_LM", headerName: "LM Sale", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 3,
-                    });;
+                    // minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
             }
         },
         {
-            field: "BK_2025", headerName: "Basket Value - 2025", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "SALES_LY", headerName: "LY Sale", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 3,
-                    });
+                    // minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
             }
         },
-      
+        {
+            field: "TOTAL_PROFIT", headerName: "Total Profit", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    // minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
+            }
+        },
+        {
+            field: "PROFIT_LOSS", headerName: "Profit Loss", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    // minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
+            }
+        },
+        {
+            field: "PROFIT_LOSS_PERC", headerName: "Profit Loss (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return (params.data.PROFIT_LOSS / params.data.TOTAL_PROFIT * 100).toLocaleString();
+                return params.value.toLocaleString();
+            }
+        },
+        {
+            field: "SALE_LOSS", headerName: "Sale Loss", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString(undefined, {
+                    // minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
+            }
+        },
+        {
+            field: "SALE_LOSS_PERC", headerName: "Sale Loss (%)", cellClass: "text-right text-red", flex: 1, valueFormatter: (params) => {
+                if (params.value == null) return (params.data.SALE_LOSS / params.data.TOTAL_PROFIT * 100).toLocaleString();
+                return params.value.toLocaleString();
+            }
+        },
+
 
     ])
 
@@ -80,21 +115,27 @@ export default function MonthWiseBasketValueComparison(props:any) {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://172.16.4.167:5000/api/month-wise-basket-value-comparison?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`http://172.16.4.167:5000/api/stock-out-loss?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
+                // Convert all numeric fields to integer except DIF_PERC
                 const transformed = data.map((row: any) => ({
                     ...row,
+                    // TOTAL_BUDGET: Math.round(row.TOTAL_BUDGET),
+                    // BUD_AVG: Math.round(row.BUD_AVG),
+                    // TILL_SALES: Math.round(row.TILL_SALES),
+                    // AVG_SALE: Math.round(row.AVG_SALE),
+                    // DIFFERENCE: Math.round(row.DIFFERENCE),
+                    // DIF_PERC: parseFloat(row.DIF_PERC), // keep as float
                 }))
 
                 setRowData(transformed)
                 setLoading(false)
-                setNewData(true)
                 setFiltered([])
+                setNewData(true)
             })
             .catch(() => setLoading(false))
     }, [selectedDate, selectedStore]);
-
 
     const getFilteredData = () => {
         if (!gridRef.current) return;
@@ -117,11 +158,10 @@ export default function MonthWiseBasketValueComparison(props:any) {
 
         return filteredNodes;
     };
-
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         //console.log("data", data)
-        const numericCols = ["BK_2022", "BK_2023", "BK_2024", "BK_2025",]
+        const numericCols = ["PROFIT_LOSS", "SALES_LM", "SALES_LY", "SALE_VALUE25", "SALES_TM", "SKU_COUNT", "SALE_LOSS","SALE_LOSS_PERC","PROFIT_LOSS_PERC", "TOTAL_PROFIT"]
 
         //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -139,7 +179,7 @@ export default function MonthWiseBasketValueComparison(props:any) {
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            const wrapper = rootRefSale.current;
+            const wrapper = rootRef.current;
             if (!wrapper) return;
 
             const agRoot = wrapper.querySelector(".ag-root");
@@ -153,9 +193,9 @@ export default function MonthWiseBasketValueComparison(props:any) {
             agRoot.appendChild(customFooter);
 
 
-            const { total } = calculateTotals(filtered.length ? filtered : rowData)
+            const { total } = calculateTotals(filtered.length ? filtered : rowCustomerData)
 
-            const data = filtered.length ? filtered : rowData
+            const data = filtered.length ? filtered : rowCustomerData
             const current = total
             const colCount = colDef.length
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`
@@ -166,48 +206,27 @@ export default function MonthWiseBasketValueComparison(props:any) {
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
                     let formattedVal = val
-22
-23
-24
-25
 
-                    if (col.field === 'BK_2022' && data?.length) {
-                        const total_sales22 = data.reduce((sum, item) => sum + (item.SALES22 || 0), 0);
-                        const total_customer22 = data.reduce((sum, item) => sum + (item.CUSTOMER22 || 0), 0);
+                    if (col.field === 'SALE_LOSS_PERC' && data) {
 
-                        const DIF_PERC = total_customer22 ? (total_sales22/ total_customer22)  : 0;
 
-                        formattedVal = DIF_PERC;
+                        const total_SALE_LOSS = data.reduce((sum, item) => sum + (item.SALE_LOSS || 0), 0);
+                        const total_PROFIT = data.reduce((sum, item) => sum + (item.TOTAL_PROFIT || 0), 0);
+
+                        formattedVal = total_SALE_LOSS ? total_SALE_LOSS / total_PROFIT  : 0;
+
                     }
-                    if (col.field === 'BK_2023' && data?.length) {
-                        const total_sales23 = data.reduce((sum, item) => sum + (item.SALES23 || 0), 0);
-                        const total_customer23 = data.reduce((sum, item) => sum + (item.CUSTOMER23 || 0), 0);
+                    if (col.field === 'PROFIT_LOSS_PERC' && data) {
 
-                        const DIF_PERC = total_customer23 ? (total_sales23/ total_customer23)  : 0;
 
-                        formattedVal = DIF_PERC;
-                    }
-                    if (col.field === 'BK_2024' && data?.length) {
-                        const total_sales24 = data.reduce((sum, item) => sum + (item.SALES24 || 0), 0);
-                        const total_customer24 = data.reduce((sum, item) => sum + (item.CUSTOMER24 || 0), 0);
+                        const total_PROFIT_LOSS = data.reduce((sum, item) => sum + (item.PROFIT_LOSS || 0), 0);
+                        const total_PROFIT = data.reduce((sum, item) => sum + (item.TOTAL_PROFIT || 0), 0);
 
-                        const DIF_PERC = total_customer24 ? (total_sales24/ total_customer24)  : 0;
+                        formattedVal = total_PROFIT_LOSS ? total_PROFIT_LOSS / total_PROFIT  : 0;
 
-                        formattedVal = DIF_PERC;
-                    }
-                    if (col.field === 'BK_2025' && data?.length) {
-                        const total_sales25 = data.reduce((sum, item) => sum + (item.SALES25 || 0), 0);
-                        const total_customer25 = data.reduce((sum, item) => sum + (item.CUSTOMER25 || 0), 0);
-
-                        const DIF_PERC = total_customer25 ? (total_sales25/ total_customer25)  : 0;
-
-                        formattedVal = DIF_PERC;
                     }
 
-                    const formatted = formattedVal.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 3,
-                    })
+                    const formatted = formattedVal.toLocaleString()
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GP_PERC' ? '%' : ''}</div>`
@@ -235,12 +254,12 @@ export default function MonthWiseBasketValueComparison(props:any) {
                     customDiv.className = 'custom-btn mr-auto text-[13px] font-medium flex items-center text-gray-800'
                     paginationPanel.prepend(customDiv)
                 }
-                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowData.length}`
+                customDiv.innerText = `Result Count:  ${filtered.length ? filtered.length : rowCustomerData.length}`
             }
         }, 200)
 
         return () => clearTimeout(timer)
-    }, [filtered, rowData, colDef])
+    }, [filtered, rowCustomerData, colDef])
 
 
     const NoRowsOverlay = () => (
@@ -264,7 +283,7 @@ export default function MonthWiseBasketValueComparison(props:any) {
             )}
         </div>
     );
-    const rootRefSale = useRef<HTMLDivElement | null>(null);
+    const rootRef = useRef<HTMLDivElement | null>(null);
 
     const [newData, setNewData] = useState(false)
 
@@ -291,26 +310,21 @@ export default function MonthWiseBasketValueComparison(props:any) {
 
         const anySctive = isAnyFilterActive()
 
-        const source = newData && !anySctive ? rowData : filtered
+        const source = newData && !anySctive ? rowCustomerData : filtered
         const categories = source.map(item => item.MM?.trim());
 
+        const profit_loss = source.map((item) => (item.PROFIT_LOSS / item.TOTAL_PROFIT * 100 || 0), 0);
+        const sales_loss = source.map((item) => (item.SALE_LOSS / item.TOTAL_PROFIT * 100 || 0), 0);
+        console.table(profit_loss)
         // Build series
         const newSeries = [
             {
-                name: "Basket Value2022",
-                data: source.map(item => item.BK_2022 ?? 0)
+                name: "Profit Loss (%)",
+                data: profit_loss.map(num => num.toFixed(3))
             },
             {
-                name: "Basket Value2023",
-                data: source.map(item => item.BK_2023 ?? 0)
-            },
-            {
-                name: "Basket Value2024",
-                data: source.map(item => item.BK_2024 ?? 0)
-            },
-            {
-                name: "Basket Value2025",
-                data: source.map(item => item.BK_2025 ?? 0)
+                name: "Sales Loss (%)",
+                data: sales_loss.map(num => num.toFixed(3))
             }
         ];
 
@@ -338,7 +352,7 @@ export default function MonthWiseBasketValueComparison(props:any) {
                 }
             },
             yaxis: {
-                  tickAmount: 15,
+                tickAmount: 15,
                 labels: {
                     formatter: (v: number) => v.toLocaleString()
                 }
@@ -355,17 +369,16 @@ export default function MonthWiseBasketValueComparison(props:any) {
 
         setSeries(newSeries);
         setOptions(newOptions);
+        setNewData(false)
 
-    }, [rowData, filtered]);   // 🔥 return whenever data changes
-
+    }, [rowCustomerData, filtered, selectedStore, selectedDate]);   // 🔥 return whenever data changes
     return (
-        <div className="summary-grid-wrapper " ref={rootRefSale}>
-
-            <div className={`ag-theme-quartz ${!hideView && rowData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
+        <div className="summary-grid-wrapper" ref={rootRef}>
+            <div className={`ag-theme-quartz ${!hideView && rowCustomerData.length > 0 ? " h-[calc(50vh-10px)]" : "h-[calc(100vh-100px)]"} w-full relative`}>
 
                 <AgGridReact
                     ref={gridRef}
-                    rowData={rowData}
+                    rowData={rowCustomerData}
                     columnDefs={colDef}
                     // pagination={true}
                     defaultColDef={{
@@ -383,14 +396,14 @@ export default function MonthWiseBasketValueComparison(props:any) {
                 />
             </div>
             {
-                !hideView && rowData.length > 0 &&
+                !hideView && rowCustomerData.length > 0 &&
                 <div className="w-full pt-">
 
                     <ReactApexChart
                         options={options}
                         series={series}
                         type="bar"
-                         height={380} onClick={()=>openChartModal(options, series , headerTitle)}
+                        height={380} onClick={() => openChartModal(options, series, headerTitle)}
                     />
                 </div>
             }

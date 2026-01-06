@@ -232,13 +232,11 @@ export default function StockInWereHouseNotInStore(props: any) {
                     allCol.push(colMain)
                 }  
             })
-            console.table(allCol.length)
             const colCount = allCol.length 
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`
             
             allCol.forEach((col: any) => {
                     const val = current[col.field!] ?? ''
-                    console.log(col.field)
                     if (typeof val === 'number' && col.field !== 'SECTION_CODE') {
                         let formattedVal = val
                         if (col.field === 'OOS_PERC' && data) {

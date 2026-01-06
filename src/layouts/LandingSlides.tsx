@@ -14,7 +14,8 @@ import WeekWiseFresh from "../slides/WeekWiseFresh";
 import Fastline from "../slides/FastLine";
 import { AnalyticsEvent } from "../types/analyticsEvents";
 import { useAnalyticsLogger } from "../types/useAnalyticsLogger";
-import { ArrowTrendingUpIcon, ChartPieIcon, CursorArrowRippleIcon, DocumentMagnifyingGlassIcon, HomeIcon, HomeModernIcon, IdentificationIcon, InboxStackIcon, PresentationChartBarIcon, PresentationChartLineIcon, RectangleGroupIcon, ShoppingCartIcon, SparklesIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import { ArrowTrendingUpIcon, ChartPieIcon, CursorArrowRippleIcon, DocumentMagnifyingGlassIcon, HomeModernIcon, IdentificationIcon, InboxStackIcon, PresentationChartBarIcon, PresentationChartLineIcon, RectangleGroupIcon, ShoppingCartIcon, UserGroupIcon } from "@heroicons/react/24/solid";
+import StockOutLoss from "../slides/StockOutLoss";
 export interface SlideProps {
   id: number;
   label: string;
@@ -49,7 +50,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       component: StockvsAgeing,
       label: "STOCK",
       headerTitle: "Stock v/s Ageing",
-      icon: <InboxStackIcon/>
+      icon: <InboxStackIcon />
     },
 
     {
@@ -57,79 +58,84 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       component: MonthWiseSalesComparison,
       label: "ANNUAL \n SALES",
       headerTitle: "Yearly Sales Amount",
-      icon: <ArrowTrendingUpIcon className=""/>
+      icon: <ArrowTrendingUpIcon className="" />
     },
     {
       id: 4,
       component: MonthWiseCustomerComparison,
       label: "ANNUAL CUSTOMERS",
       headerTitle: "Yearly Customer Count",
-      icon: <UserGroupIcon/>
+      icon: <UserGroupIcon />
     },
     {
       id: 5,
       component: MonthWiseBasketValueComparison,
       label: "ANNUAL \n BV",
       headerTitle: "Yearly Basket Value",
-      icon: <ShoppingCartIcon/>
+      icon: <ShoppingCartIcon />
     },
     {
       id: 6,
       component: MonthWiseLFL,
       label: "LFL",
       headerTitle: "Month Wise LFL",
-      icon: <DocumentMagnifyingGlassIcon/>
+      icon: <DocumentMagnifyingGlassIcon />
     },
     {
       id: 7,
       component: MonthWiseFreshComparison,
       label: "FRESH \n SALES",
       headerTitle: "Yearly Fresh Sales Report",
-      icon: <PresentationChartLineIcon/>
+      icon: <PresentationChartLineIcon />
     },
     {
       id: 8,
       component: WeekWiseFresh,
       label: "WEEK WISE FRESH",
       headerTitle: "Week Wise Fresh Sales",
-      icon: <PresentationChartBarIcon/>
+      icon: <PresentationChartBarIcon />
     },
     {
       id: 9,
       component: YearWiseGP,
       label: "ANNUAL \n GP",
       headerTitle: "This Year Gross Profit",
-      icon: <ChartPieIcon/>
+      icon: <ChartPieIcon />
     },
     {
       id: 10,
       component: YearWiseWeekEndSales,
       label: "WEEKEND SALES",
       headerTitle: "Weekdays & Weekend Sales",
-      image: "/weekdays.png",
-      icon: <ArrowTrendingUpIcon className=""/>
+      icon: <ArrowTrendingUpIcon className="" />
     },
     {
       id: 11,
       component: StockInWereHouseNotInStore,
       label: "STOCK IN WAREHOUSE",
       headerTitle: "Stock In Ware House Not In Store ",
-      image: "/weekdays.png",
-      icon: <HomeModernIcon/>
+      icon: <HomeModernIcon />
     },
     {
-      id: 13,
+      id: 12,
       component: GMCustomer,
       label: "GRAND ME",
       headerTitle: "Grand Me Customer",
-      icon: <IdentificationIcon/>
+      icon: <IdentificationIcon />
     },
     {
-      id: 14,
+      id: 13,
       component: Fastline,
       label: "FAST LINE",
       headerTitle: "Fast Line",
-      icon: <RectangleGroupIcon/>
+      icon: <RectangleGroupIcon />
+    },
+    {
+      id: 14,
+      component: StockOutLoss,
+      label: "STOCK OUT LOSS",
+      headerTitle: "Stock out Loss - ZedEye",
+      icon: <RectangleGroupIcon />
     },
 
   ];
@@ -197,8 +203,8 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       <div data-hs-carousel='{ "loadingClasses": "opacity-0"}' className="relative ">
         <div className="hs-carousel flex flex-col md:flex-row gap-2 ">
           {/* side slider items */}
-          <div className="md:order-1 px-4 flex-none">
-            <div className="hs-carousel-pagination h-[calc(100vh-100px)]  flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto px-1  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
+          <div className="md:order-1 p flex-none">
+            <div className="hs-carousel-pagination h-[calc(100vh-100px)]   flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto px-1 bg-gray-50  overflow-y-auto  [&::-webkit-scrollbar]:w-1  [&::-webkit-scrollbar-track]:rounded-full  [&::-webkit-scrollbar-track]:bg-gray-100  [&::-webkit-scrollbar-thumb]:rounded-full  [&::-webkit-scrollbar-thumb]:bg-gray-300  dark:[&::-webkit-scrollbar-track]:bg-neutral-700  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500
             ">
               {slides
                 .map((slide, index) => {
@@ -232,27 +238,34 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
                       className="hs-carousel-pagination-item shrink-0 border hover:scale-105 hover:z-50 border-gray-200 rounded-md overflow-hidden cursor-pointer size-20 md:size-32 hs-carousel-active:border-blue-400 dark:border-neutral-700"
                     >
 
-                      <div ref={(el: any) => (refs.current[index + 1] = el)} className="relative  hover:bg-gray-100 gap-1 flex flex-col justify-center items-center text-center size-full bg-white p-2 dark:bg-neutral-900">
-                        {
-                          slide.icon && <>
-                            <span className="inline-flex justify-center items-center size-9 p-1 rounded-full border-4 border-blue-100 bg-blue-200 text-blue-800 dark:border-blue-900 dark:bg-blue-800 dark:text-blue-400">
-                              {slide.icon}
-                            </span>
-                          </>
-                        }
+                      <div
+                        ref={(el: any) => (refs.current[index + 1] = el)}
+                        className="relative hover:bg-gray-100 gap-1 flex flex-col justify-center items-center text-center size-full bg-white p-2 dark:bg-neutral-900 group transition-all duration-300"
+                      >
+                        {slide.icon && (
+                          <span className="inline-flex justify-center items-center size-9 p-1 rounded-full border-4 border-blue-100 bg-blue-200 text-blue-800 dark:border-blue-900 dark:bg-blue-800 dark:text-blue-400
+      transform transition-all duration-300
+      group-hover:scale-110
+      group-hover:bg-blue-300
+      group-hover:text-blue-900
+      dark:group-hover:bg-blue-700
+      dark:group-hover:text-blue-200
+      ">
+                            {slide.icon}
+                          </span>
+                        )}
 
-
-                        <span className=" text-gray-700 dark:text-white capitalize text-md font-extrabold whitespace-pre-line tracking-wide leading-snug  ">
+                        <span className="text-gray-700 dark:text-white capitalize text-md font-extrabold whitespace-pre-line tracking-wide leading-snug">
                           {slide.label}
                         </span>
+
                         <div className="absolute right-0 bottom-0 text-[10px] text-gray-500 dark:text-gray-300">
-                          <kbd className="px-1 py-0.5 m-0.5  inline-flex justify-center items-center  bg-white border border-gray-200 font-mono text-[10px] text-gray-800 rounded-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200">
-
+                          <kbd className="px-1 py-0.5 m-0.5 inline-flex justify-center items-center bg-white border border-gray-200 font-mono text-[10px] text-gray-800 rounded-md dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-200">
                             {shortcutLabel}
-
                           </kbd>
                         </div>
                       </div>
+
 
                     </div>
                   );

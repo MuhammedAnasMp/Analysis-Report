@@ -25,14 +25,21 @@ export default function GMCustomer(props: any) {
 
     const [colDef] = useState<ColDef<any>[]>([
         { field: "MONTH", headerName: "Month", cellClass: "text-center ", flex: 1 },
-        { field: "CUSTOMER_COUNT", headerName: "Customer Count", cellClass: "text-right", flex: 1 },
         {
-            field: "GRANDME_BILL", headerName: "GME Customers Count", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
+            field: "CUSTOMER_COUNT", headerName: "Customer Count", cellClass: "text-right", flex: 1,
+            valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString();
-            },
-           
-            
+            }
+        },
+        {
+            field: "GRANDME_BILL", headerName: "GME Customers Count", cellClass: "text-right", flex: 1,
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString();
+            }
+
+
         },
         {
             field: "GME_CONT", headerName: "GME Contribution (%) ", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
@@ -44,18 +51,39 @@ export default function GMCustomer(props: any) {
             field: "PURCHASE_POINT", headerName: "Purchase Point", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
                 return params.value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                    });
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                });
             }
         },
         {
-            field: "RED_POINT", headerName: "Redeemed  Point", cellClass: "text-right text-green", flex: 1, valueFormatter: (params) => {
+            field: "RED_POINT", headerName: "Redeemed  Point", cellClass: "text-right", flex: 1, valueFormatter: (params) => {
                 if (params.value == null) return "";
-                const point = params.value *100 
+                const point = params.value * 100
                 return point.toLocaleString();
             }
         },
+        {
+            field: "RED_POINT_PERC",
+            headerName: "Redeemed (%)",
+            cellClass: "text-right text-green",
+            flex: 1,
+            valueFormatter: (params) => {
+                let value;
+
+                if (params.value == null) {
+                    value = (params.data.RED_POINT / params.data.PURCHASE_POINT) * 10000;
+                } else {
+                    value = params.value;
+                }
+
+                return value.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                }) + " %";
+            }
+        }
+
 
 
     ])
@@ -122,7 +150,7 @@ export default function GMCustomer(props: any) {
     const calculateTotals = (data: any[]) => {
         if (data.length === 0) return { total: {}, avg: {} }
         //console.log("data", data)
-        const numericCols = ["CUSTOMER_COUNT", "GME_CONT", "GRANDME_BILL", "PURCHASE_POINT", "RED_POINT"]
+        const numericCols = ["CUSTOMER_COUNT", "GME_CONT", "GRANDME_BILL", "PURCHASE_POINT", "RED_POINT", "RED_POINT_PERC"]
 
         //console.log('numericCols', numericCols)
         const total: Record<string, number> = {}
@@ -167,38 +195,27 @@ export default function GMCustomer(props: any) {
                 const val = current[col.field!] ?? ''
                 if (typeof val === 'number') {
                     let formattedVal = val
-
-
-                    // if (col.field === 'BK_2022' && data?.length) {
-                    //     const total_sales22 = data.reduce((sum, item) => sum + (item.SALES22 || 0), 0);
-                    //     const total_customer22 = data.reduce((sum, item) => sum + (item.CUSTOMER22 || 0), 0);
-
-                    //     const DIF_PERC = total_customer22 ? (total_sales22/ total_customer22)  : 0;
-
-                    //     formattedVal = DIF_PERC;
-                    // }
-                    // if (col.field === 'BK_2023' && data?.length) {
-                    //     const total_sales23 = data.reduce((sum, item) => sum + (item.SALES23 || 0), 0);
-                    //     const total_customer23 = data.reduce((sum, item) => sum + (item.CUSTOMER23 || 0), 0);
-
-                    //     const DIF_PERC = total_customer23 ? (total_sales23/ total_customer23)  : 0;
-
-                    //     formattedVal = DIF_PERC;
-                    // }
                     if (col.field === 'RED_POINT' && data?.length) {
                         const tota_point = data.reduce((sum, item) => sum + (item.RED_POINT || 0), 0);
-                    
 
-                        const DIF_PERC = tota_point *100 ;
+
+                        const DIF_PERC = tota_point * 100;
 
                         formattedVal = DIF_PERC;
                     }
                     if (col.field === 'GME_CONT' && data?.length) {
                         const total_gme_bill = data.reduce((sum, item) => sum + (item.GRANDME_BILL || 0), 0);
-                        const total_customer_count = data.reduce((sum, item) => sum + (item.CUSTOMER_COUNT|| 0), 0);
+                        const total_customer_count = data.reduce((sum, item) => sum + (item.CUSTOMER_COUNT || 0), 0);
 
-                        const DIF_PERC = total_gme_bill ? ( total_gme_bill/total_customer_count *100)  : 0;
+                        const DIF_PERC = total_gme_bill ? (total_gme_bill / total_customer_count * 100) : 0;
 
+                        formattedVal = DIF_PERC;
+                    }
+                    if (col.field === 'RED_POINT_PERC' && data?.length) {
+                        const total_red_point = data.reduce((sum, item) => sum + (item.RED_POINT || 0), 0);
+                        const total_purchase_point = data.reduce((sum, item) => sum + (item.PURCHASE_POINT || 0), 0);
+
+                        const DIF_PERC = total_red_point ? (total_red_point / total_purchase_point * 10000) : 0;
                         formattedVal = DIF_PERC;
                     }
 
@@ -208,7 +225,7 @@ export default function GMCustomer(props: any) {
                     })
                     const colorClass = val < 0 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
-                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'GME_CONT' ? '%' : ''}</div>`
+                    rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'RED_POINT_PERC' ? '%' : ''}</div>`
                 } else {
                     rowHTML += `<div></div>`
                 }

@@ -124,6 +124,10 @@ export default function TargetVsAchievement() {
             flex: 1,
             cellStyle: params =>
                 params.value < 0 ? { backgroundColor: '#ffe6e6', color: 'red' } : {backgroundColor: "#e6ffe6" , color: "green"},
+            valueFormatter: (params) => {
+                if (params.value == null) return "";
+                return params.value.toLocaleString()  +" %";   
+            },
         },
         {
             field: "STOCK_DAYS",

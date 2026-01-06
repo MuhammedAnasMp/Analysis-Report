@@ -39,12 +39,13 @@ export default function MonthWiseLFL(props:any) {
             const date = new Date(d);
             const day = String(date.getDate()).padStart(2, "0");
             const month = date.toLocaleString("en-US", { month: "short" }).toUpperCase();
-            return `${day}-${month}`;
+            return `${day}${month}`;
         };
 
-        const year = new Date(start).getFullYear(); // use start date's year
+        const year_start = new Date(start).getFullYear(); // use start date's year
+        const year_end = new Date(end).getFullYear(); // use start date's year
 
-        return `${format(start)} - ${format(end)} (${year})`;
+        return `${format(start)}(${year_start})-${format(end)}(${year_end})`;
     };
 
 

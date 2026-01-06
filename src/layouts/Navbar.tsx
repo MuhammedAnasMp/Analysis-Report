@@ -3,9 +3,10 @@ import SmallDatePicker from "../componenets/SmallDatePicker";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedDate, setSelectedStore } from "../redux/features/pptState/storeSlice";
 import type { RootState } from "../redux/app/rootReducer";
-import type { Slide } from "./LandingSlides";
+import type { SlideProps } from "./LandingSlides";
 import { BeakerIcon, MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import FullScreenModal from "../componenets/ActionPlanModal";
+import { current } from "@reduxjs/toolkit";
 interface Locations {
   LOCATION_ID: number,
   LOCATION_NAME: string
@@ -24,7 +25,7 @@ export function capitalizeEachWord(sentence:string) {
   // Join the array of words back into a sentence
   return words.join(" ");
 }
-export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
+export default function Navbar({ currentSlide }: { currentSlide: SlideProps }) {
   const [locations, setLocations] = useState<Locations[]>()
   const [filteredLocations, setFilteredLocations] = useState<Locations[]>();
   const [searchTerm, setSearchTerm] = useState("");
@@ -95,7 +96,7 @@ export default function Navbar({ currentSlide }: { currentSlide: Slide }) {
   return (
     <header className=" flex flexwrap sm:justify-start sm:flex-nowrap w-full bg-white text-sm py-2 dark:bg-neutral-800 border-b-1 border-neutral-300">
       <nav className="w-full mx-auto px-50 sm:flex sm:items-center sm:justify-between">
-        <h4 className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore &&  capitalizeEachWord( selectedStore.LOCATION_NAME)}</h4>
+        <h4 className="flex-none font-semibold text-lg text-black focus:outline-hidden focus:opacity-80 dark:text-white" aria-label="Brand">{currentSlide && currentSlide.headerTitle} {selectedStore &&  capitalizeEachWord( selectedStore.LOCATION_NAME)} {currentSlide && (currentSlide.id ===11|| currentSlide.id ===13) && "(Live)" }</h4>
 
         <div className="flex flex-row items-center gap-5 mt-5 sm:justify-end sm:mt-0 sm:ps-5">
           {/* DARK MODE  */}
