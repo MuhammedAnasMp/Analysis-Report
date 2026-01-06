@@ -42,7 +42,7 @@ const FullScreenModal: React.FC = () => {
 
   useEffect(() => {
     try {
-      fetch(`http://172.16.4.167:5000/sales_area`)
+      fetch(`${import.meta.env.VITE_API_BACKEND_URL}/sales_area`)
         .then(result => result.json())
         .then(data => {
           setOptions(data)
@@ -77,7 +77,7 @@ const FullScreenModal: React.FC = () => {
   useEffect(() => {
     if (!formattedDate) return
     try {
-      fetch(`http://172.16.4.167:5000/improvement_plans/${formattedDate}`)
+      fetch(`${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans/${formattedDate}`)
         .then(result => result.json())
         .then((data: FormData[]) => {
           setCreatedPlans(data.reverse());
@@ -167,7 +167,7 @@ const FullScreenModal: React.FC = () => {
 
     const postData = async () => {
       try {
-        const response = await fetch("http://172.16.4.167:5000/improvement_plans", {
+        const response = await fetch("${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -244,7 +244,7 @@ const FullScreenModal: React.FC = () => {
 
     const postData = async () => {
       try {
-        const response = await fetch("http://172.16.4.167:5000/sales_area", {
+        const response = await fetch("${import.meta.env.VITE_API_BACKEND_URL}/sales_area", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -300,7 +300,7 @@ const FullScreenModal: React.FC = () => {
   const handleDeletePlan = async (id: number) => {
 
     try {
-      const response = await fetch(`http://172.16.4.167:5000/improvement_plans/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json"

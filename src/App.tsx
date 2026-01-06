@@ -47,7 +47,7 @@ function App() {
     
       const fetchStores = async () => {
         try {
-          fetch(`http://172.16.4.167:5000/api/decode-token?token=${location.pathname.slice(1)}`)
+          fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/decode-token?token=${location.pathname.slice(1)}`)
             .then(result => result.json())
             .then(data => {
               if (data.error) {

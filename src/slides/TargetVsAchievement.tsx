@@ -142,7 +142,7 @@ export default function TargetVsAchievement() {
         lastEdit.current = { code, value: newValue };
 
         try {
-            const res = await fetch(`http://172.16.4.167:5000/api/target-vs-achievement`, {
+            const res = await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/target-vs-achievement`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -171,7 +171,7 @@ export default function TargetVsAchievement() {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://172.16.4.167:5000/api/target-vs-achievement?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/target-vs-achievement?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
@@ -269,6 +269,7 @@ export default function TargetVsAchievement() {
                         // minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                     });
+
                     const colorClass = val < 0.00 ? 'text-red-600 bg-[#ffe6e6]' : 'text-white'
 
                     rowHTML += `<div class="text-right px-2 text-lg  ${colorClass}">${formatted}${col.field === 'DIF_PERC' ? '%' : ''}</div>`

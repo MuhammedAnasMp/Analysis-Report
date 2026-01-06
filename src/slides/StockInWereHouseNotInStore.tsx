@@ -134,7 +134,7 @@ export default function StockInWereHouseNotInStore(props: any) {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`http://172.16.4.167:5000/api/stock-in-warehouse-not-in-store?location=${selectedStore?.LOCATION_ID}`)
+        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/stock-in-warehouse-not-in-store?location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC

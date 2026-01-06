@@ -24,7 +24,7 @@ export default function NotFoundPage() {
     const handleKeyDown = async (event: any) => {
         if (event.key === 'Enter') {
             try {
-                const response = await fetch(`http://172.16.4.167:5000/api/generatetoken?code=${code}`);
+                const response = await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/generatetoken?code=${code}`);
                 const data: any = await response.json();
 
                 if (data.code) {

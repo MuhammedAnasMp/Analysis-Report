@@ -149,7 +149,7 @@ export default function MonthWiseFreshComparison(props: any) {
         setYear(year)
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
-        fetch(`http://172.16.4.167:5000/api/month-wise-sales-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/month-wise-sales-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC
