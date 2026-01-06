@@ -4,7 +4,7 @@ import {store}  from '../redux/app/store'; // Adjust path if needed
 import type { RootState } from '../redux/app/rootReducer';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

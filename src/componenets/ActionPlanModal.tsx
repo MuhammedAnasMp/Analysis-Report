@@ -1,4 +1,4 @@
-import { BeakerIcon, BuildingStorefrontIcon, ChartBarIcon, ChartBarSquareIcon, CheckCircleIcon, CheckIcon, ExclamationCircleIcon, ExclamationTriangleIcon, PlusIcon, TicketIcon, TrashIcon, UserCircleIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { BeakerIcon, BuildingStorefrontIcon, ChartBarIcon, ChartBarSquareIcon, ChatBubbleLeftIcon, CheckCircleIcon, CheckIcon, ExclamationCircleIcon, ExclamationTriangleIcon, PlusIcon, TicketIcon, TrashIcon, UserCircleIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { result } from "lodash";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -601,7 +601,7 @@ const FullScreenModal: React.FC = () => {
                                             <div className="flex items-center">
                                               {/* Mic Button */}
                                               <button type="button" className="inline-flex shrink-0 justify-center items-center size-8 rounded-lg text-gray-500 hover:bg-gray-100 focus:z-10 focus:outline-hidden focus:bg-gray-100 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:focus:bg-neutral-800">
-                                                <ChartBarSquareIcon height={15} width={15} />
+                                                <ChatBubbleLeftIcon height={15} width={15} />
                                               </button>
                                               <span className="text-sm text-gray-600">
                                                 {

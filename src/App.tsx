@@ -7,8 +7,8 @@ import NotFoundPage from './layouts/NotFoundPage';
 import useToast from './hooks/Toast';
 import { useDispatch } from 'react-redux';
 import { XCircleIcon } from '@heroicons/react/24/solid';
-import { resetStoreState, setUserDetails } from './redux/features/pptState/storeSlice';
-import { logout } from './redux/features/auth/authSlice';
+import { setUserDetails } from './redux/features/pptState/storeSlice';
+
 
 
 async function loadPreline() {
