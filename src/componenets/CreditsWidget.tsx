@@ -22,7 +22,7 @@ export default function CreditsWidget() {
     { label: "ITM", value: "Sadakkthulla", icon: "security" },
     { label: "Developer", value: "Muhammed Anas", icon: "code" },
     { label: "Database Developer", value: "Mohammed Musfir", icon: "database" },
-    { label: "Database Developer", value: "Muhammed Midlag", icon: "database" },
+    { label: "Database Developer", value: "Muhammed Midlaj", icon: "database" },
     { label: "Data Analysis", value: "Yahya Parayil", icon: "frontend" },
   ];
 
