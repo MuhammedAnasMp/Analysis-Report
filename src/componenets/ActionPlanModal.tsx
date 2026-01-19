@@ -77,7 +77,8 @@ const FullScreenModal: React.FC = () => {
   useEffect(() => {
     if (!formattedDate) return
     try {
-      fetch(`${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans/${formattedDate}`)
+      // fetch(`${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans/${formattedDate}`)
+      fetch(`/api/improvement_plans.json`)
         .then(result => result.json())
         .then((data: FormData[]) => {
           setCreatedPlans(data.reverse());
@@ -244,7 +245,8 @@ const FullScreenModal: React.FC = () => {
 
     const postData = async () => {
       try {
-        const response = await fetch("${import.meta.env.VITE_API_BACKEND_URL}/sales_area", {
+        // const response = await fetch("${import.meta.env.VITE_API_BACKEND_URL}/sales_area", {
+        const response = await fetch("/api/sales_area.json", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

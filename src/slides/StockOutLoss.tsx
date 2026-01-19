@@ -113,7 +113,8 @@ export default function StockOutLoss(props: any) {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/stock-out-loss?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`/api/stock-out-loss.json`)
+        // fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/stock-out-loss?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())
             .then(data => {
                 // Convert all numeric fields to integer except DIF_PERC

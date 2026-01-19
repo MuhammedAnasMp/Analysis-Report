@@ -47,8 +47,7 @@ function App() {
     
       const fetchStores = async () => {
         try {
-          fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/decode-token?token=${location.pathname.slice(1)}`)
-          // fetch(`decode-token.json`)
+          fetch(`/api/decode-token.json`)
             .then(result => result.json())
             .then(data => {
               if (data.error) {
@@ -82,9 +81,9 @@ function App() {
         {showNavBar && <Navbar currentSlide={activeSlide} />}
 
       <Routes>
-        <Route path="/:token" element={<LandingSlides onChange={(slide) => setActiveSlide(slide)} />} />
-        <Route path="/why-here" element={<NotFoundPage />} />
-        <Route path="/" element={<NotFoundPage />} />
+        <Route path="/" element={<LandingSlides onChange={(slide) => setActiveSlide(slide)} />} />
+        <Route path="*" element={<NotFoundPage />} />
+        {/* <Route path="/" element={<NotFoundPage />} /> */}
       </Routes>
     </div>
   );

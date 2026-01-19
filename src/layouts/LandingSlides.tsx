@@ -120,8 +120,8 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
     {
       id: 12,
       component: GMCustomer,
-      label: "GRAND ME",
-      headerTitle: "Grand Me Customer",
+      label: "LOYALTY CUSTOMER",
+      headerTitle: "Loyalty Customer",
       icon: <IdentificationIcon />
     },
     {
@@ -135,7 +135,7 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
       id: 14,
       component: StockOutLoss,
       label: "STOCK OUT LOSS",
-      headerTitle: "Stock out Loss - ZedEye",
+      headerTitle: "Stock out Loss",
       icon: <RectangleGroupIcon />
     },
 

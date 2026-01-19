@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-const host = import.meta.env.VITE_FRONTEND_URL; // "172.16.4.167:8000"
+const host = import.meta.env.VITE_FRONTEND_URL;
 const script = document.createElement("script");
 script.src = `${host}/credits-widget.js`;
 script.onload = () => {

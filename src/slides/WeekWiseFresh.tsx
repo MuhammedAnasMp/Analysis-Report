@@ -123,7 +123,8 @@ export default function WeekWiseFresh(props: any) {
         const month = dateObj.getMonth() + 1; // JS months are 0-indexed
         const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
-        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/week-wise-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        // fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/week-wise-fresh?yyyymm=${yyyymm}&location=${selectedStore?.LOCATION_ID}`)
+        fetch(`/api/week-wise-fresh.json`)
             .then(result => result.json())
             .then(data => {
                 const transformed = data.map((row: any) => ({

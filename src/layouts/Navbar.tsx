@@ -33,8 +33,8 @@ export default function Navbar({ currentSlide }: { currentSlide: SlideProps }) {
   useEffect(() => {
     const fetchStores = async () => {
       try {
-        fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/locations?userId=${userDetails?.id}`)
-        // fetch(`/locations.json`)
+        // fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/locations?userId=${userDetails?.id}`)
+        fetch(`/api/locations.json`)
           .then(result => result.json())
           .then(data => {
             setLocations(data)

@@ -56,7 +56,7 @@ export default function CreditsWidget() {
   return (
     <>
       {/* Trigger */}
-      <div className="flex justify-center mb-2">
+      {/* <div className="flex justify-center mb-2">
         <div
           onClick={() => setOpen(true)}
           className="relative w-full h-10 rounded-md !shadow-2xl flex items-center justify-center cursor-pointer group border border-gray-200"
@@ -68,7 +68,7 @@ export default function CreditsWidget() {
                                   dark:group-hover:text-blue-200 !rounded-2xl" height={15} widths={15}/>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Modal */}
       {open && (
