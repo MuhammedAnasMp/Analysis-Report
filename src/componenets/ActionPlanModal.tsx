@@ -167,7 +167,7 @@ const FullScreenModal: React.FC = () => {
 
     const postData = async () => {
       try {
-        const response = await fetch("${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans", {
+        const response = await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/improvement_plans`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -452,7 +452,7 @@ const FullScreenModal: React.FC = () => {
                                   </div >
                                 </div>
 
-                                {
+                                {/* {
                                   (userDetails?.id === "ANAS" || userDetails?.id === "SADAKU") &&
                                   <div className="bg-yellow">
                                     <div
@@ -462,7 +462,7 @@ const FullScreenModal: React.FC = () => {
                                       <PlusIcon height={20} width={20} />Add Area
                                     </div>
                                   </div>
-                                }
+                                } */}
 
 
                               </>

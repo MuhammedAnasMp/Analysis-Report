@@ -17,6 +17,7 @@ const SmallDatePicker: React.FC<SmallDatePickerProps> = ({ value, onDateChange }
 
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/year-date-periods`)
+    // fetch(`/year-date-periods.json`)
       .then((res) => res.json())
       .then((data) => setYearDate(data))
       .catch((err) => console.error("Error:", err));

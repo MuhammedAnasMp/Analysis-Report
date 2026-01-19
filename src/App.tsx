@@ -48,6 +48,7 @@ function App() {
       const fetchStores = async () => {
         try {
           fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/decode-token?token=${location.pathname.slice(1)}`)
+          // fetch(`decode-token.json`)
             .then(result => result.json())
             .then(data => {
               if (data.error) {

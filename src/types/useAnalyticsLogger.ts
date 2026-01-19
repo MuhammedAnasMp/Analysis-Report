@@ -14,7 +14,7 @@ export const useAnalyticsLogger = () => {
   const { userDetails } = useSelector((state: RootState) => state.store);
   const logUIEvent = async (payload: AnalyticsPayload) => {
     try {
-      await fetch("/api/analytics/log", {
+      await fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/log?userId=${userDetails?.id}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

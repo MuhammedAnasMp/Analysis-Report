@@ -1157,6 +1157,12 @@ def encrypt():
     return jsonify({
         "code": simple_encrypt(user_code)
     })
+@app.route("/api/log", methods=['POST'])
+def analyticslog():
+   
+    return jsonify({
+        "status": "logged"
+    })
 
 
 if __name__ == "__main__":
