@@ -1,0 +1,194 @@
+[
+  {
+    "LOCATION_ID": 461,
+    "LOCATION_NAME": "COSTO KTN"
+  },
+  {
+    "LOCATION_ID": 462,
+    "LOCATION_NAME": "COSTO MHB"
+  },
+  {
+    "LOCATION_ID": 801,
+    "LOCATION_NAME": "CITY"
+  },
+  {
+    "LOCATION_ID": 802,
+    "LOCATION_NAME": "FAHAHEEL"
+  },
+  {
+    "LOCATION_ID": 803,
+    "LOCATION_NAME": "HAWALLY"
+  },
+  {
+    "LOCATION_ID": 804,
+    "LOCATION_NAME": "JLEEB"
+  },
+  {
+    "LOCATION_ID": 805,
+    "LOCATION_NAME": "HASAWI"
+  },
+  {
+    "LOCATION_ID": 806,
+    "LOCATION_NAME": "KHAITAN"
+  },
+  {
+    "LOCATION_ID": 807,
+    "LOCATION_NAME": "MAHBOULA1"
+  },
+  {
+    "LOCATION_ID": 808,
+    "LOCATION_NAME": "MAHBOULA2"
+  },
+  {
+    "LOCATION_ID": 809,
+    "LOCATION_NAME": "FARWANIYA"
+  },
+  {
+    "LOCATION_ID": 810,
+    "LOCATION_NAME": "ALRAI"
+  },
+  {
+    "LOCATION_ID": 811,
+    "LOCATION_NAME": "SOUK KABEER"
+  },
+  {
+    "LOCATION_ID": 812,
+    "LOCATION_NAME": "HAWALLY 2"
+  },
+  {
+    "LOCATION_ID": 813,
+    "LOCATION_NAME": "RIGGAI"
+  },
+  {
+    "LOCATION_ID": 814,
+    "LOCATION_NAME": "GRAND MANGAF"
+  },
+  {
+    "LOCATION_ID": 815,
+    "LOCATION_NAME": "SALMIYA"
+  },
+  {
+    "LOCATION_ID": 816,
+    "LOCATION_NAME": "HAWALLY 3"
+  },
+  {
+    "LOCATION_ID": 817,
+    "LOCATION_NAME": "JAHRA"
+  },
+  {
+    "LOCATION_ID": 818,
+    "LOCATION_NAME": "SHUWAIKH"
+  },
+  {
+    "LOCATION_ID": 819,
+    "LOCATION_NAME": "SALMIYA-2"
+  },
+  {
+    "LOCATION_ID": 820,
+    "LOCATION_NAME": "CITY - 2"
+  },
+  {
+    "LOCATION_ID": 821,
+    "LOCATION_NAME": "HAWALLY-6"
+  },
+  {
+    "LOCATION_ID": 822,
+    "LOCATION_NAME": "FARWANIYA-3"
+  },
+  {
+    "LOCATION_ID": 823,
+    "LOCATION_NAME": "MIRQAB"
+  },
+  {
+    "LOCATION_ID": 824,
+    "LOCATION_NAME": "EQAILA"
+  },
+  {
+    "LOCATION_ID": 825,
+    "LOCATION_NAME": "RIGGAI-2"
+  },
+  {
+    "LOCATION_ID": 826,
+    "LOCATION_NAME": "FAHAHEEL-2"
+  },
+  {
+    "LOCATION_ID": 827,
+    "LOCATION_NAME": "SALWA"
+  },
+  {
+    "LOCATION_ID": 828,
+    "LOCATION_NAME": "QURAIN"
+  },
+  {
+    "LOCATION_ID": 829,
+    "LOCATION_NAME": "JLEEB 2"
+  },
+  {
+    "LOCATION_ID": 2001,
+    "LOCATION_NAME": "FRESH MANGAF"
+  },
+  {
+    "LOCATION_ID": 2002,
+    "LOCATION_NAME": "ABU HALIFA"
+  },
+  {
+    "LOCATION_ID": 2003,
+    "LOCATION_NAME": "SOUKMASEEL"
+  },
+  {
+    "LOCATION_ID": 2004,
+    "LOCATION_NAME": "SABA SALIM"
+  },
+  {
+    "LOCATION_ID": 2005,
+    "LOCATION_NAME": "FARW FRESH"
+  },
+  {
+    "LOCATION_ID": 2006,
+    "LOCATION_NAME": "SALMIYA FR-1"
+  },
+  {
+    "LOCATION_ID": 2007,
+    "LOCATION_NAME": "SALMIYA B-12"
+  },
+  {
+    "LOCATION_ID": 2008,
+    "LOCATION_NAME": "SALMIYA B-11"
+  },
+  {
+    "LOCATION_ID": 2010,
+    "LOCATION_NAME": "SALMIYA B-10"
+  },
+  {
+    "LOCATION_ID": 2011,
+    "LOCATION_NAME": "FAHAHEEL FRESH"
+  },
+  {
+    "LOCATION_ID": 2012,
+    "LOCATION_NAME": "KHAITHAN FRESH"
+  },
+  {
+    "LOCATION_ID": 2013,
+    "LOCATION_NAME": "FRESH MANGAF-2"
+  },
+  {
+    "LOCATION_ID": 2201,
+    "LOCATION_NAME": "SULAIBIYA"
+  },
+  {
+    "LOCATION_ID": 2202,
+    "LOCATION_NAME": "HAWALLY4"
+  },
+  {
+    "LOCATION_ID": 2203,
+    "LOCATION_NAME": "HAWALLY-5"
+  },
+  {
+    "LOCATION_ID": 2204,
+    "LOCATION_NAME": "FARWANIYA-2"
+  },
+  {
+    "LOCATION_ID": 2205,
+    "LOCATION_NAME": "SHAAB"
+  }
+]

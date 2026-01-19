@@ -1,0 +1,110 @@
+[
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 1,
+    "SECTION_CODE": "1S0106",
+    "SECTION_NAME": "HOUSE KEEPING  AND  CLEANING",
+    "SKU_COUNT": 208,
+    "STOCK_SKU": 200,
+    "TOTAL_OOS": 8,
+    "WH_STOCK": 103,
+    "WH_STOCK_NOTIN_STORE": 1
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 0,
+    "SECTION_CODE": "1S0105",
+    "SECTION_NAME": "HEALTH  AND  PERSONAL CARE",
+    "SKU_COUNT": 592,
+    "STOCK_SKU": 568,
+    "TOTAL_OOS": 24,
+    "WH_STOCK": 315,
+    "WH_STOCK_NOTIN_STORE": 4
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 0,
+    "SECTION_CODE": "1S0107",
+    "SECTION_NAME": "TOBACCO  AND  ACCESSORIES",
+    "SKU_COUNT": 6,
+    "STOCK_SKU": 6,
+    "TOTAL_OOS": 0,
+    "WH_STOCK": 0,
+    "WH_STOCK_NOTIN_STORE": 0
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 4,
+    "SECTION_CODE": "1S0101",
+    "SECTION_NAME": "GROCERY",
+    "SKU_COUNT": 1208,
+    "STOCK_SKU": 1135,
+    "TOTAL_OOS": 73,
+    "WH_STOCK": 522,
+    "WH_STOCK_NOTIN_STORE": 9
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 2,
+    "SECTION_CODE": "1S0306",
+    "SECTION_NAME": "BAKERY INDUSTRIAL",
+    "SKU_COUNT": 37,
+    "STOCK_SKU": 30,
+    "TOTAL_OOS": 7,
+    "WH_STOCK": 0,
+    "WH_STOCK_NOTIN_STORE": 0
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 1,
+    "SECTION_CODE": "1S0202",
+    "SECTION_NAME": "FROZEN",
+    "SKU_COUNT": 198,
+    "STOCK_SKU": 181,
+    "TOTAL_OOS": 17,
+    "WH_STOCK": 6,
+    "WH_STOCK_NOTIN_STORE": 0
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 0,
+    "SECTION_CODE": "1S0102",
+    "SECTION_NAME": "BEVERAGES",
+    "SKU_COUNT": 209,
+    "STOCK_SKU": 202,
+    "TOTAL_OOS": 7,
+    "WH_STOCK": 50,
+    "WH_STOCK_NOTIN_STORE": 0
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 0,
+    "SECTION_CODE": "1S0304",
+    "SECTION_NAME": " DELICATTESEN (W)",
+    "SKU_COUNT": 8,
+    "STOCK_SKU": 7,
+    "TOTAL_OOS": 1,
+    "WH_STOCK": 0,
+    "WH_STOCK_NOTIN_STORE": 0
+  },
+  {
+    "LOC": 801,
+    "LOCATION": "CITY",
+    "NEG_STOCK": 0,
+    "SECTION_CODE": "1S0201",
+    "SECTION_NAME": "CHILLED  AND  DAIRY",
+    "SKU_COUNT": 60,
+    "STOCK_SKU": 52,
+    "TOTAL_OOS": 8,
+    "WH_STOCK": 7,
+    "WH_STOCK_NOTIN_STORE": 1
+  }
+]

@@ -1,0 +1,38 @@
+[
+  {
+    "created_at": "2026-01-05 11:49:44",
+    "id": 761,
+    "sales_area_id": "1",
+    "suggestion": "1: Hotfood required new items\n2: Reduce RSP based on competitor ",
+    "user_id": "SADAKU",
+    "user_name": "sadaku",
+    "yyyymm": 202512
+  },
+  {
+    "created_at": "2026-01-05 11:49:56",
+    "id": 762,
+    "sales_area_id": "1",
+    "suggestion": "Test 1",
+    "user_id": "SADAKU",
+    "user_name": "sadaku",
+    "yyyymm": 202512
+  },
+  {
+    "created_at": "2026-01-05 11:51:04",
+    "id": 763,
+    "sales_area_id": "2",
+    "suggestion": "1: Ageing Stock Clearance under progress",
+    "user_id": "SADAKU",
+    "user_name": "sadaku",
+    "yyyymm": 202512
+  },
+  {
+    "created_at": "2026-01-05 12:05:42",
+    "id": 764,
+    "sales_area_id": "140",
+    "suggestion": "1 : Required 1 cleaning staff ",
+    "user_id": "SADAKU",
+    "user_name": "sadaku",
+    "yyyymm": 202512
+  }
+]

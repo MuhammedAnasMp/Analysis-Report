@@ -1,5 +1,4 @@
-import base64
-import time
+import base64,os
 from flask import Flask, jsonify
 import oracledb
 from flask_cors import CORS
@@ -8,13 +7,14 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
-
+from dotenv import load_dotenv
+load_dotenv() 
 
 def connection():
-    username = "KHYPER"
-    password = "KHYPER"
-    dsn = "192.168.2.171:1521/ZEDEYE"
-    client_path = r"C:\instantclient_19_5"
+    username = os.getenv("ORACLE_USERNAME")
+    password = os.getenv("ORACLE_PASSWORD")
+    dsn = os.getenv("ORACLE_DSN")
+    client_path = os.getenv("ORACLE_CLIENT_PATH")
 
     try:
         print("Initializing Oracle client...")
@@ -32,10 +32,10 @@ def connection():
 
 
 def connection_v6_menu():
-    username = "V6MENU"
-    password = "V6MENU"
-    dsn = "172.16.4.101:1521/REGENCY"
-    client_path = r"C:\instantclient_19_5"
+    username=os.getenv("ORACLE_USERNAME2")
+    password=os.getenv("ORACLE_PASSWORD2")
+    dsn=os.getenv("ORACLE_DSN2")
+    client_path=os.getenv("ORACLE_CLIENT_PATH2")
 
     try:
         print("Initializing Oracle client...")
