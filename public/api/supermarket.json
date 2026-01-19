@@ -1,0 +1,29 @@
+{
+  "salesByCategory": {
+    "categories": ["Fruits", "Vegetables", "Dairy", "Meat", "Bakery"],
+    "values": [12000, 9000, 15000, 11000, 7000]
+  },
+  "monthlyRevenue": {
+    "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    "values": [32000, 35000, 30000, 40000, 42000, 46000]
+  },
+  "productShare": {
+    "labels": ["Apples", "Milk", "Bread", "Chicken", "Rice"],
+    "values": [25, 20, 18, 22, 15]
+  },
+  "dailyCustomers": {
+    "days": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    "values": [180, 200, 220, 210, 260, 320, 280]
+  },
+  "paymentMethods": {
+    "methods": ["Cash", "Card", "UPI"],
+    "values": [
+      { "name": "Weekdays", "data": [40, 45, 15] },
+      { "name": "Weekends", "data": [25, 50, 25] }
+    ]
+  },
+  "storePerformance": {
+    "metrics": ["Sales", "Customers", "Stock", "Profit", "Satisfaction"],
+    "values": [85, 90, 70, 80, 95]
+  }
+}

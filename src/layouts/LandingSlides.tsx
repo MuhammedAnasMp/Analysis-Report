@@ -17,6 +17,8 @@ import { useAnalyticsLogger } from "../types/useAnalyticsLogger";
 import { ArrowTrendingUpIcon, ChartPieIcon, CursorArrowRippleIcon, DocumentMagnifyingGlassIcon, HomeModernIcon, IdentificationIcon, InboxStackIcon, PresentationChartBarIcon, PresentationChartLineIcon, RectangleGroupIcon, ShoppingCartIcon, UserGroupIcon } from "@heroicons/react/24/solid";
 import StockOutLoss from "../slides/StockOutLoss";
 import CreditsWidget from "../componenets/CreditsWidget";
+import SupermarketDashboard from "../slides/Dashoboard";
+import Dashboard from "../slides/Dashoboard";
 export interface SlideProps {
   id: number;
   label: string;
@@ -41,13 +43,20 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
   const slides: SlideConfig[] = [
     {
       id: 1,
+      component: Dashboard,
+      label: "DASHBOARD",
+      headerTitle: "Overview",
+      icon: <CursorArrowRippleIcon />
+    },
+    {
+      id: 2,
       component: TargetVsAchievement,
       label: "TARGET",
       headerTitle: "Target v/s Achievement",
       icon: <CursorArrowRippleIcon />
     },
     {
-      id: 2,
+      id: 3,
       component: StockvsAgeing,
       label: "STOCK",
       headerTitle: "Stock v/s Ageing",
@@ -55,87 +64,87 @@ export default function LandingSlides({ onChange }: LandingSlidesProps) {
     },
 
     {
-      id: 3,
+      id: 4,
       component: MonthWiseSalesComparison,
       label: "ANNUAL \n SALES",
       headerTitle: "Yearly Sales Amount",
       icon: <ArrowTrendingUpIcon className="" />
     },
     {
-      id: 4,
+      id: 5,
       component: MonthWiseCustomerComparison,
       label: "ANNUAL CUSTOMERS",
       headerTitle: "Yearly Customer Count",
       icon: <UserGroupIcon />
     },
     {
-      id: 5,
+      id: 6,
       component: MonthWiseBasketValueComparison,
       label: "ANNUAL \n BV",
       headerTitle: "Yearly Basket Value",
       icon: <ShoppingCartIcon />
     },
     {
-      id: 6,
+      id: 7,
       component: MonthWiseLFL,
       label: "LFL",
       headerTitle: "Month Wise LFL",
       icon: <DocumentMagnifyingGlassIcon />
     },
     {
-      id: 7,
+      id: 8,
       component: MonthWiseFreshComparison,
       label: "FRESH \n SALES",
       headerTitle: "Yearly Fresh Sales Report",
       icon: <PresentationChartLineIcon />
     },
     {
-      id: 8,
+      id: 9,
       component: WeekWiseFresh,
       label: "WEEK WISE FRESH",
       headerTitle: "Week Wise Fresh Sales",
       icon: <PresentationChartBarIcon />
     },
     {
-      id: 9,
+      id: 10,
       component: YearWiseGP,
       label: "ANNUAL \n GP",
       headerTitle: "Yearwise Gross Profit",
       icon: <ChartPieIcon />
     },
     {
-      id: 10,
+      id: 11,
       component: YearWiseWeekEndSales,
       label: "WEEKEND SALES",
       headerTitle: "Weekdays & Weekend Sales",
       icon: <ArrowTrendingUpIcon className="" />
     },
     {
-      id: 11,
+      id: 12,
       component: StockInWereHouseNotInStore,
       label: "STOCK IN WAREHOUSE",
       headerTitle: "Stock In Ware House Not In Store ",
       icon: <HomeModernIcon />
     },
     {
-      id: 12,
+      id: 13,
       component: GMCustomer,
-      label: "LOYALTY CUSTOMER",
-      headerTitle: "Loyalty Customer",
+      label: "GRAND ME",
+      headerTitle: "Grand Me Customer",
       icon: <IdentificationIcon />
     },
     {
-      id: 13,
+      id: 14,
       component: Fastline,
       label: "FAST LINE",
       headerTitle: "Fast Line",
       icon: <RectangleGroupIcon />
     },
     {
-      id: 14,
+      id: 15,
       component: StockOutLoss,
       label: "STOCK OUT LOSS",
-      headerTitle: "Stock out Loss",
+      headerTitle: "Stock out Loss - ZedEye",
       icon: <RectangleGroupIcon />
     },
 
