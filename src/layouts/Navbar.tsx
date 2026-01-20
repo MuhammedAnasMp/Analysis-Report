@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSelectedDate, setSelectedStore } from "../redux/features/pptState/storeSlice";
 import type { RootState } from "../redux/app/rootReducer";
 import type { SlideProps } from "./LandingSlides";
-import { BeakerIcon, MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/solid'
+import {  MagnifyingGlassIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import FullScreenModal from "../componenets/ActionPlanModal";
-import { current } from "@reduxjs/toolkit";
 interface Locations {
   LOCATION_ID: number,
   LOCATION_NAME: string

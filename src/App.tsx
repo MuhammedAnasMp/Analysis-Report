@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import LandingSlides from './layouts/LandingSlides';
 import Navbar from './layouts/Navbar';
 

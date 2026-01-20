@@ -1,6 +1,6 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
+import type {  ColDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
 import '../layouts/table.css'
 
@@ -171,7 +171,7 @@ export default function TargetVsAchievement() {
 
     const { selectedStore, selectedDate } = useSelector((state: RootState) => state.store);
 
-    const lastEdit = useRef<{ code: string; value: any } | null>(null);
+
 
     // const handleCellValueChanged = async (event: CellValueChangedEvent) => {
     //     const { data, colDef, newValue, oldValue } = event;

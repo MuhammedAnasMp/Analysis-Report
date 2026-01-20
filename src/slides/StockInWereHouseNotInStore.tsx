@@ -1,6 +1,6 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef, ColGroupDef } from "ag-grid-community"
+import type {  ColDef, ColGroupDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
 import '../layouts/table.css'
 
@@ -127,12 +127,7 @@ export default function StockInWereHouseNotInStore(props: any) {
 
         setLoading(true);
 
-        const dateObj = selectedDate instanceof Date ? selectedDate : new Date(selectedDate);
 
-        // Convert to YYYYMM
-        const year = dateObj.getFullYear();
-        const month = dateObj.getMonth() + 1; // JS months are 0-indexed
-        const yyyymm = `${year}${month.toString().padStart(2, '0')}`;
 
         fetch(`${import.meta.env.VITE_API_BACKEND_URL}/api/stock-in-warehouse-not-in-store?location=${selectedStore?.LOCATION_ID}`)
             .then(result => result.json())

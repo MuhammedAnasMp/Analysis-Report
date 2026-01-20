@@ -1,6 +1,6 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
+import type {  ColDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
 import '../layouts/table.css'
 

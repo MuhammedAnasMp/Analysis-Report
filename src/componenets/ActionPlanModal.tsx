@@ -1,15 +1,12 @@
-import { BeakerIcon, BuildingStorefrontIcon, ChartBarIcon, ChartBarSquareIcon, ChatBubbleLeftIcon, CheckCircleIcon, CheckIcon, ExclamationCircleIcon, ExclamationTriangleIcon, PlusIcon, TicketIcon, TrashIcon, UserCircleIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { result } from "lodash";
+import { ChatBubbleLeftIcon, CheckCircleIcon, CheckIcon, ExclamationCircleIcon, ExclamationTriangleIcon, TrashIcon, UserCircleIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import type { RootState } from "../redux/app/rootReducer";
 import useToast from "../hooks/Toast";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
-import NoDatafound from "./vectorIllustrations/NoDataFound";
-import NotSelected from "./vectorIllustrations/NotSelected";
 import SmallDatePicker from "./SmallDatePicker";
-import { setSelectedDate } from "../redux/features/pptState/storeSlice";
 interface Option {
   added_by: number,
   area_id: number;
@@ -339,13 +336,6 @@ const FullScreenModal: React.FC = () => {
 
   }
 
-  const normalizeToYYYYMM = (input: Date | string | null | undefined) => {
-    if (!input) return null;
-    const d = input instanceof Date ? input : new Date(input);
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    return `${year}${month}`;
-  };
 
   return (
     <div>

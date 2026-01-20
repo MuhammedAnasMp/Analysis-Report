@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from 'react';
 import svg from '../componenets/vectorIllustrations/404.svg';
-import { ArrowLeftIcon, CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
-import { error } from 'jquery';
+import { ArrowLeftIcon, XCircleIcon } from '@heroicons/react/24/solid';
+
 import useToast from '../hooks/Toast';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';

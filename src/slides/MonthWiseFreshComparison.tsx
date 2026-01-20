@@ -1,7 +1,7 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
-import { ModuleRegistry, AllCommunityModule, ALWAYS_SYNC_GLOBAL_EVENTS } from 'ag-grid-community'
+import type {  ColDef } from "ag-grid-community"
+import { ModuleRegistry, AllCommunityModule,  } from 'ag-grid-community'
 import '../layouts/table.css'
 
 import NoDatafound from '../componenets/vectorIllustrations/NoDataFound'
@@ -9,7 +9,7 @@ import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
-import { param } from 'jquery'
+
 import ReactApexChart from 'react-apexcharts'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
@@ -232,7 +232,6 @@ export default function MonthWiseFreshComparison(props: any) {
 
             const { total } = calculateTotals(filtered.length ? filtered : rowData)
 
-            const data = filtered.length ? filtered : rowData
             const current = total
             const colCount = colDef.length
             const gridTemplate = `repeat(${colCount + 0}, 1fr)`

@@ -1,4 +1,4 @@
-import { ArrowTrendingUpIcon, ChartBarIcon, ChatBubbleLeftEllipsisIcon, CheckIcon, PresentationChartLineIcon, WindowIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { ArrowTrendingUpIcon, ChartBarIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import React, { useEffect, useRef, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import SingleChart from "./SingleChart";

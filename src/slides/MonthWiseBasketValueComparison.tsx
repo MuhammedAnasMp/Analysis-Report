@@ -1,6 +1,6 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
+import type {  ColDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
 import '../layouts/table.css'
 
@@ -9,7 +9,7 @@ import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
 import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
-import { param } from 'jquery'
+
 import ReactApexChart from 'react-apexcharts'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])

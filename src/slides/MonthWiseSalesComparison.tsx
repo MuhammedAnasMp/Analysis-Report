@@ -1,19 +1,15 @@
 import { AgGridReact } from 'ag-grid-react'
 import { useEffect, useRef, useState } from "react"
-import type { CellValueChangedEvent, ColDef } from "ag-grid-community"
+import type {  ColDef } from "ag-grid-community"
 import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community'
 import '../layouts/table.css'
 
 import NoDatafound from '../componenets/vectorIllustrations/NoDataFound'
 import NotSelected from '../componenets/vectorIllustrations/NotSelected'
 import type { RootState } from '../redux/app/rootReducer'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import CustomLoadingOverlay from '../componenets/CustomLoadingOverlay'
-import { param } from 'jquery'
 import ReactApexChart from 'react-apexcharts'
-import { ArrowUpRightIcon } from '@heroicons/react/24/solid'
-import type { AppDispatch } from '../redux/app/store'
-import { setIsChartOpened } from '../redux/features/global/globalSlice'
 import { useChartModal } from '../hooks/ChartModalContext'
 ModuleRegistry.registerModules([AllCommunityModule])
 
@@ -236,10 +232,8 @@ export default function MonthWiseSalesComparison(props: any) {
     const [options, setOptions] = useState({});
     const [series, setSeries] = useState<any>([]);
     const [hideView, setHideView] = useState<boolean>(false);
-    const dispatch = useDispatch<AppDispatch>();
-    const handleShowClick = () => {
-        dispatch(setIsChartOpened(true))
-    };
+
+
     useEffect(() => {
         const isAnyFilterActive = () => {
             const api = gridRef.current?.api;
