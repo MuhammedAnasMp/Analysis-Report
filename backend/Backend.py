@@ -1163,6 +1163,12 @@ def analyticslog():
     return jsonify({
         "status": "logged"
     })
+@app.route("/", methods=['GET'])
+def check():
+    return jsonify({
+        "status": "OK"
+    })
+
 
 
 if __name__ == "__main__":
