@@ -1,0 +1,87 @@
+
+[
+  {
+    "MM": "01-JAN",
+    "SALE_VALUE22": 15.295,
+    "SALE_VALUE23": 15.879,
+    "SALE_VALUE24": 14.76,
+    "SALE_VALUE25": 14.535
+  },
+  {
+    "MM": "02-FEB",
+    "SALE_VALUE22": 15.169,
+    "SALE_VALUE23": 15.181,
+    "SALE_VALUE24": 14.955,
+    "SALE_VALUE25": 14.249
+  },
+  {
+    "MM": "03-MAR",
+    "SALE_VALUE22": 15.833,
+    "SALE_VALUE23": 15.662,
+    "SALE_VALUE24": 15.48,
+    "SALE_VALUE25": 14.231
+  },
+  {
+    "MM": "04-APR",
+    "SALE_VALUE22": 15.203,
+    "SALE_VALUE23": 15.789,
+    "SALE_VALUE24": 15.108,
+    "SALE_VALUE25": 14.22
+  },
+  {
+    "MM": "05-MAY",
+    "SALE_VALUE22": 15.183,
+    "SALE_VALUE23": 14.847,
+    "SALE_VALUE24": 14.547,
+    "SALE_VALUE25": 14.327
+  },
+  {
+    "MM": "06-JUN",
+    "SALE_VALUE22": 15.455,
+    "SALE_VALUE23": 14.72,
+    "SALE_VALUE24": 14.849,
+    "SALE_VALUE25": 14.042
+  },
+  {
+    "MM": "07-JUL",
+    "SALE_VALUE22": 15.439,
+    "SALE_VALUE23": 15.054,
+    "SALE_VALUE24": 14.933,
+    "SALE_VALUE25": 14.213
+  },
+  {
+    "MM": "08-AUG",
+    "SALE_VALUE22": 15.735,
+    "SALE_VALUE23": 15.116,
+    "SALE_VALUE24": 14.838,
+    "SALE_VALUE25": 14.088
+  },
+  {
+    "MM": "09-SEP",
+    "SALE_VALUE22": 15.221,
+    "SALE_VALUE23": 14.797,
+    "SALE_VALUE24": 14.96,
+    "SALE_VALUE25": 13.916
+  },
+  {
+    "MM": "10-OCT",
+    "SALE_VALUE22": 15.832,
+    "SALE_VALUE23": 14.906,
+    "SALE_VALUE24": 14.105,
+    "SALE_VALUE25": 13.96
+  },
+  {
+    "MM": "11-NOV",
+    "SALE_VALUE22": 15.669,
+    "SALE_VALUE23": 14.594,
+    "SALE_VALUE24": 14.321,
+    "SALE_VALUE25": 13.845
+  },
+  {
+    "MM": "12-DEC",
+    "SALE_VALUE22": 15.174,
+    "SALE_VALUE23": 14.709,
+    "SALE_VALUE24": 14.299,
+    "SALE_VALUE25": 13.997
+  }
+]

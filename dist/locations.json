@@ -1,0 +1,194 @@
+[
+    {
+        "LOCATION_ID": 1,
+        "LOCATION_NAME": "Northpoint Wholesale"
+    },
+    {
+        "LOCATION_ID": 2,
+        "LOCATION_NAME": "Meadowridge Distribution"
+    },
+    {
+        "LOCATION_ID": 3,
+        "LOCATION_NAME": "Downtown Flagship"
+    },
+    {
+        "LOCATION_ID": 4,
+        "LOCATION_NAME": "Harborview Market"
+    },
+    {
+        "LOCATION_ID": 5,
+        "LOCATION_NAME": "Maple Street Store"
+    },
+    {
+        "LOCATION_ID": 6,
+        "LOCATION_NAME": "Eastside Community"
+    },
+    {
+        "LOCATION_ID": 7,
+        "LOCATION_NAME": "Riverside Express"
+    },
+    {
+        "LOCATION_ID": 8,
+        "LOCATION_NAME": "Lakeside Town Center"
+    },
+    {
+        "LOCATION_ID": 9,
+        "LOCATION_NAME": "Southport Central"
+    },
+    {
+        "LOCATION_ID": 10,
+        "LOCATION_NAME": "Southport South"
+    },
+    {
+        "LOCATION_ID": 11,
+        "LOCATION_NAME": "North Hills Main"
+    },
+    {
+        "LOCATION_ID": 12,
+        "LOCATION_NAME": "Business Park Retail"
+    },
+    {
+        "LOCATION_ID": 13,
+        "LOCATION_NAME": "Old Town Market"
+    },
+    {
+        "LOCATION_ID": 14,
+        "LOCATION_NAME": "Hillcrest Plaza"
+    },
+    {
+        "LOCATION_ID": 15,
+        "LOCATION_NAME": "Ridgeway Central"
+    },
+    {
+        "LOCATION_ID": 16,
+        "LOCATION_NAME": "Grand Bay Mall"
+    },
+    {
+        "LOCATION_ID": 17,
+        "LOCATION_NAME": "Seaview Downtown"
+    },
+    {
+        "LOCATION_ID": 18,
+        "LOCATION_NAME": "Parkside Commons"
+    },
+    {
+        "LOCATION_ID": 19,
+        "LOCATION_NAME": "Frontier City Center"
+    },
+    {
+        "LOCATION_ID": 20,
+        "LOCATION_NAME": "Industrial Wharf"
+    },
+    {
+        "LOCATION_ID": 21,
+        "LOCATION_NAME": "Seaview Coast"
+    },
+    {
+        "LOCATION_ID": 22,
+        "LOCATION_NAME": "Downtown Annex"
+    },
+    {
+        "LOCATION_ID": 23,
+        "LOCATION_NAME": "West End Market"
+    },
+    {
+        "LOCATION_ID": 24,
+        "LOCATION_NAME": "North Hills Plaza"
+    },
+    {
+        "LOCATION_ID": 25,
+        "LOCATION_NAME": "Financial District Store"
+    },
+    {
+        "LOCATION_ID": 26,
+        "LOCATION_NAME": "Greenfield Family Mart"
+    },
+    {
+        "LOCATION_ID": 27,
+        "LOCATION_NAME": "Ridgeway North"
+    },
+    {
+        "LOCATION_ID": 28,
+        "LOCATION_NAME": "Harbor Boulevard"
+    },
+    {
+        "LOCATION_ID": 29,
+        "LOCATION_NAME": "Garden District Market"
+    },
+    {
+        "LOCATION_ID": 30,
+        "LOCATION_NAME": "Stonebridge Retail"
+    },
+    {
+        "LOCATION_ID": 31,
+        "LOCATION_NAME": "Eastside Plaza"
+    },
+    {
+        "LOCATION_ID": 32,
+        "LOCATION_NAME": "Bayview Fresh Market"
+    },
+    {
+        "LOCATION_ID": 33,
+        "LOCATION_NAME": "Coastal Point Store"
+    },
+    {
+        "LOCATION_ID": 34,
+        "LOCATION_NAME": "Market Square Express"
+    },
+    {
+        "LOCATION_ID": 35,
+        "LOCATION_NAME": "Southgate Retail Hub"
+    },
+    {
+        "LOCATION_ID": 36,
+        "LOCATION_NAME": "North Hills Fresh"
+    },
+    {
+        "LOCATION_ID": 37,
+        "LOCATION_NAME": "Seaview Fresh One"
+    },
+    {
+        "LOCATION_ID": 38,
+        "LOCATION_NAME": "Downtown Block 12"
+    },
+    {
+        "LOCATION_ID": 39,
+        "LOCATION_NAME": "Downtown Block 11"
+    },
+    {
+        "LOCATION_ID": 40,
+        "LOCATION_NAME": "Downtown Block 10"
+    },
+    {
+        "LOCATION_ID": 41,
+        "LOCATION_NAME": "Harbor Fresh Hub"
+    },
+    {
+        "LOCATION_ID": 42,
+        "LOCATION_NAME": "Lakeside Fresh Market"
+    },
+    {
+        "LOCATION_ID": 43,
+        "LOCATION_NAME": "Bayview Fresh South"
+    },
+    {
+        "LOCATION_ID": 44,
+        "LOCATION_NAME": "Westside Logistics Center"
+    },
+    {
+        "LOCATION_ID": 45,
+        "LOCATION_NAME": "Hillcrest East"
+    },
+    {
+        "LOCATION_ID": 46,
+        "LOCATION_NAME": "Hillcrest West"
+    },
+    {
+        "LOCATION_ID": 47,
+        "LOCATION_NAME": "North Hills North"
+    },
+    {
+        "LOCATION_ID": 48,
+        "LOCATION_NAME": "Coastal Village Market"
+    }
+]

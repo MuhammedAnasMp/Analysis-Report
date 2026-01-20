@@ -1,0 +1,86 @@
+[
+  {
+    "CUSTOMER22": 61354,
+    "CUSTOMER23": 73557,
+    "CUSTOMER24": 67262,
+    "CUSTOMER25": 67410,
+    "MM": "01-JANUARY  "
+  },
+  {
+    "CUSTOMER22": 62914,
+    "CUSTOMER23": 70704,
+    "CUSTOMER24": 64627,
+    "CUSTOMER25": 60108,
+    "MM": "02-FEBRUARY "
+  },
+  {
+    "CUSTOMER22": 69443,
+    "CUSTOMER23": 74499,
+    "CUSTOMER24": 66824,
+    "CUSTOMER25": 57466,
+    "MM": "03-MARCH    "
+  },
+  {
+    "CUSTOMER22": 61606,
+    "CUSTOMER23": 70203,
+    "CUSTOMER24": 73049,
+    "CUSTOMER25": 72528,
+    "MM": "04-APRIL    "
+  },
+  {
+    "CUSTOMER22": 76812,
+    "CUSTOMER23": 73850,
+    "CUSTOMER24": 74543,
+    "CUSTOMER25": 76486,
+    "MM": "05-MAY      "
+  },
+  {
+    "CUSTOMER22": 69909,
+    "CUSTOMER23": 77874,
+    "CUSTOMER24": 69898,
+    "CUSTOMER25": 74149,
+    "MM": "06-JUNE     "
+  },
+  {
+    "CUSTOMER22": 76938,
+    "CUSTOMER23": 74411,
+    "CUSTOMER24": 67586,
+    "CUSTOMER25": 71426,
+    "MM": "07-JULY     "
+  },
+  {
+    "CUSTOMER22": 70621,
+    "CUSTOMER23": 73929,
+    "CUSTOMER24": 71061,
+    "CUSTOMER25": 72879,
+    "MM": "08-AUGUST   "
+  },
+  {
+    "CUSTOMER22": 72785,
+    "CUSTOMER23": 72768,
+    "CUSTOMER24": 65841,
+    "CUSTOMER25": 65252,
+    "MM": "09-SEPTEMBER"
+  },
+  {
+    "CUSTOMER22": 72156,
+    "CUSTOMER23": 71350,
+    "CUSTOMER24": 67658,
+    "CUSTOMER25": 68197,
+    "MM": "10-OCTOBER  "
+  },
+  {
+    "CUSTOMER22": 71101,
+    "CUSTOMER23": 54413,
+    "CUSTOMER24": 68041,
+    "CUSTOMER25": 64625,
+    "MM": "11-NOVEMBER "
+  },
+  {
+    "CUSTOMER22": 82749,
+    "CUSTOMER23": 77755,
+    "CUSTOMER24": 71338,
+    "CUSTOMER25": 67969,
+    "MM": "12-DECEMBER "
+  }
+]

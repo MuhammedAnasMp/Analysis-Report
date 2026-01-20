@@ -1,0 +1,194 @@
+{
+  "data": [
+    {
+      "LM_VALUE": 74148.735,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 87341.605,
+      "MTD_VALUE": 83355.166,
+      "SEC_CODE": "01  ",
+      "SEC_NAME": "FOOD                     ",
+      "TM_VS_LM_PCT": 12.42,
+      "TM_VS_LY_PCT": -4.56
+    },
+    {
+      "LM_VALUE": 1230.141,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 3239.634,
+      "MTD_VALUE": 2976.148,
+      "SEC_CODE": "01-2",
+      "SEC_NAME": "OWN BAKERY               ",
+      "TM_VS_LM_PCT": 141.94,
+      "TM_VS_LY_PCT": -8.13
+    },
+    {
+      "LM_VALUE": 10797.92,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 11515.645,
+      "MTD_VALUE": 11531.24,
+      "SEC_CODE": "02-1",
+      "SEC_NAME": "BEVERAGES                ",
+      "TM_VS_LM_PCT": 6.79,
+      "TM_VS_LY_PCT": 0.14
+    },
+    {
+      "LM_VALUE": 10626.365,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 11835.001,
+      "MTD_VALUE": 11134.284,
+      "SEC_CODE": "02-2",
+      "SEC_NAME": "FROZEN                   ",
+      "TM_VS_LM_PCT": 4.78,
+      "TM_VS_LY_PCT": -5.92
+    },
+    {
+      "LM_VALUE": 501.958,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 580.455,
+      "MTD_VALUE": 387.107,
+      "SEC_CODE": "02-3",
+      "SEC_NAME": "DELI                     ",
+      "TM_VS_LM_PCT": -22.88,
+      "TM_VS_LY_PCT": -33.31
+    },
+    {
+      "LM_VALUE": 29918.496,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 37049.095,
+      "MTD_VALUE": 32649.735,
+      "SEC_CODE": "03  ",
+      "SEC_NAME": "ROASTRY & SPICES         ",
+      "TM_VS_LM_PCT": 9.13,
+      "TM_VS_LY_PCT": -11.87
+    },
+    {
+      "LM_VALUE": 41572.081,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 42846.018,
+      "MTD_VALUE": 38717.678,
+      "SEC_CODE": "04  ",
+      "SEC_NAME": "FRUITS & VEG             ",
+      "TM_VS_LM_PCT": -6.87,
+      "TM_VS_LY_PCT": -9.64
+    },
+    {
+      "LM_VALUE": 6612.587,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 7226.027,
+      "MTD_VALUE": 7945.854,
+      "SEC_CODE": "05  ",
+      "SEC_NAME": "BUTCHERY                 ",
+      "TM_VS_LM_PCT": 20.16,
+      "TM_VS_LY_PCT": 9.96
+    },
+    {
+      "LM_VALUE": 8044.122,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 8659.302,
+      "MTD_VALUE": 8449.477,
+      "SEC_CODE": "06  ",
+      "SEC_NAME": "FISHERY                  ",
+      "TM_VS_LM_PCT": 5.04,
+      "TM_VS_LY_PCT": -2.42
+    },
+    {
+      "LM_VALUE": 49287.401,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 61813.983,
+      "MTD_VALUE": 55630.898,
+      "SEC_CODE": "07  ",
+      "SEC_NAME": "NON FOOD                 ",
+      "TM_VS_LM_PCT": 12.87,
+      "TM_VS_LY_PCT": -10
+    },
+    {
+      "LM_VALUE": 10617.07,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 19464.303,
+      "MTD_VALUE": 12358.504,
+      "SEC_CODE": "08  ",
+      "SEC_NAME": "GARMENTS                 ",
+      "TM_VS_LM_PCT": 16.4,
+      "TM_VS_LY_PCT": -36.51
+    },
+    {
+      "LM_VALUE": 4682.133,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 6843.38,
+      "MTD_VALUE": 5277.595,
+      "SEC_CODE": "09  ",
+      "SEC_NAME": "FOOTWEAR                 ",
+      "TM_VS_LM_PCT": 12.72,
+      "TM_VS_LY_PCT": -22.88
+    },
+    {
+      "LM_VALUE": 15830.658,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 23051.478,
+      "MTD_VALUE": 17604.057,
+      "SEC_CODE": "10  ",
+      "SEC_NAME": "ELECTRONICS              ",
+      "TM_VS_LM_PCT": 11.2,
+      "TM_VS_LY_PCT": -23.63
+    },
+    {
+      "LM_VALUE": 4775.646,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 7061.04,
+      "MTD_VALUE": 5894.398,
+      "SEC_CODE": "11  ",
+      "SEC_NAME": "APPLIANCES               ",
+      "TM_VS_LM_PCT": 23.43,
+      "TM_VS_LY_PCT": -16.52
+    },
+    {
+      "LM_VALUE": 5564.189,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 7096.038,
+      "MTD_VALUE": 7031.87,
+      "SEC_CODE": "12  ",
+      "SEC_NAME": "HOUSE HOLD               ",
+      "TM_VS_LM_PCT": 26.38,
+      "TM_VS_LY_PCT": -0.9
+    },
+    {
+      "LM_VALUE": 4791.29,
+      "LOCATION": "CITY",
+      "LOC_CODE": 801,
+      "LY_VALUE": 5139.277,
+      "MTD_VALUE": 4578.856,
+      "SEC_CODE": "13  ",
+      "SEC_NAME": "OTHERS                   ",
+      "TM_VS_LM_PCT": -4.43,
+      "TM_VS_LY_PCT": -10.9
+    }
+  ],
+  "dates": {
+    "current": [
+      "Mon, 01 Dec 2025 00:00:00 GMT",
+      "Wed, 31 Dec 2025 00:00:00 GMT"
+    ],
+    "prev_month": [
+      "Mon, 03 Nov 2025 00:00:00 GMT",
+      "Wed, 03 Dec 2025 00:00:00 GMT"
+    ],
+    "prev_year": [
+      "Mon, 02 Dec 2024 00:00:00 GMT",
+      "Wed, 01 Jan 2025 00:00:00 GMT"
+    ]
+  }
+}

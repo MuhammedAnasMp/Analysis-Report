@@ -1,0 +1,57 @@
+[
+  {
+    "added_by": null,
+    "area_id": 1,
+    "area_name": "Sales vs Budget "
+  },
+  {
+    "added_by": null,
+    "area_id": 2,
+    "area_name": "Stock"
+  },
+  {
+    "added_by": null,
+    "area_id": 3,
+    "area_name": "Customer & Basket Value"
+  },
+  {
+    "added_by": null,
+    "area_id": 4,
+    "area_name": "LFL"
+  },
+  {
+    "added_by": null,
+    "area_id": 5,
+    "area_name": "Fresh Related"
+  },
+  {
+    "added_by": null,
+    "area_id": 6,
+    "area_name": "Stock In WH, Not In Store"
+  },
+  {
+    "added_by": null,
+    "area_id": 7,
+    "area_name": "Fast Line"
+  },
+  {
+    "added_by": null,
+    "area_id": 8,
+    "area_name": "Grandme"
+  },
+  {
+    "added_by": null,
+    "area_id": 9,
+    "area_name": "Marketing "
+  },
+  {
+    "added_by": null,
+    "area_id": 10,
+    "area_name": "Other Income"
+  },
+  {
+    "added_by": "SADAKU",
+    "area_id": 140,
+    "area_name": "Hygiene"
+  }
+]

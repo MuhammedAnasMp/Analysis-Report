@@ -1,0 +1,122 @@
+[
+  {
+    "CUSTOMER_COUNT": 67410,
+    "GME_CONT": 36.66,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 24710,
+    "LOC_CODE": "0201",
+    "MONTH": "01-2025",
+    "PURCHASE_POINT": 143521.13,
+    "RED_POINT": 760
+  },
+  {
+    "CUSTOMER_COUNT": 60108,
+    "GME_CONT": 38.56,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 23180,
+    "LOC_CODE": "0201",
+    "MONTH": "02-2025",
+    "PURCHASE_POINT": 144910.327,
+    "RED_POINT": 633
+  },
+  {
+    "CUSTOMER_COUNT": 57466,
+    "GME_CONT": 44.4,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 25517,
+    "LOC_CODE": "0201",
+    "MONTH": "03-2025",
+    "PURCHASE_POINT": 162205.004,
+    "RED_POINT": 841.5
+  },
+  {
+    "CUSTOMER_COUNT": 72528,
+    "GME_CONT": 37.81,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 27422,
+    "LOC_CODE": "0201",
+    "MONTH": "04-2025",
+    "PURCHASE_POINT": 157851.02,
+    "RED_POINT": 821.5
+  },
+  {
+    "CUSTOMER_COUNT": 76486,
+    "GME_CONT": 34.52,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 26400,
+    "LOC_CODE": "0201",
+    "MONTH": "05-2025",
+    "PURCHASE_POINT": 157298.064,
+    "RED_POINT": 726
+  },
+  {
+    "CUSTOMER_COUNT": 74149,
+    "GME_CONT": 32.82,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 24337,
+    "LOC_CODE": "0201",
+    "MONTH": "06-2025",
+    "PURCHASE_POINT": 145064.763,
+    "RED_POINT": 778
+  },
+  {
+    "CUSTOMER_COUNT": 71426,
+    "GME_CONT": 34.28,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 24484,
+    "LOC_CODE": "0201",
+    "MONTH": "07-2025",
+    "PURCHASE_POINT": 134036.963,
+    "RED_POINT": 777
+  },
+  {
+    "CUSTOMER_COUNT": 72879,
+    "GME_CONT": 34.71,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 25295,
+    "LOC_CODE": "0201",
+    "MONTH": "08-2025",
+    "PURCHASE_POINT": 133363.218,
+    "RED_POINT": 740
+  },
+  {
+    "CUSTOMER_COUNT": 65252,
+    "GME_CONT": 34.55,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 22542,
+    "LOC_CODE": "0201",
+    "MONTH": "09-2025",
+    "PURCHASE_POINT": 119725.531,
+    "RED_POINT": 619
+  },
+  {
+    "CUSTOMER_COUNT": 68197,
+    "GME_CONT": 34.38,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 23446,
+    "LOC_CODE": "0201",
+    "MONTH": "10-2025",
+    "PURCHASE_POINT": 130678.331,
+    "RED_POINT": 663
+  },
+  {
+    "CUSTOMER_COUNT": 64625,
+    "GME_CONT": 35.61,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 23010,
+    "LOC_CODE": "0201",
+    "MONTH": "11-2025",
+    "PURCHASE_POINT": 123863.759,
+    "RED_POINT": 857
+  },
+  {
+    "CUSTOMER_COUNT": 64116,
+    "GME_CONT": 33.9,
+    "GOLD_LOC": "801",
+    "GRANDME_BILL": 21737,
+    "LOC_CODE": "0201",
+    "MONTH": "12-2025",
+    "PURCHASE_POINT": 122940.524,
+    "RED_POINT": 1104
+  }
+]
